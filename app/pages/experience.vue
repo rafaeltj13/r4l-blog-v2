@@ -13,7 +13,7 @@ const tabs = [
 
 <template>
   <div class="py-12 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div v-motion-slide-left class="mb-12">
+    <div v-motion-slide-left suppressHydrationWarning class="mb-12">
       <h1 class="text-4xl font-bold text-base-content mb-8">Professional Experience</h1>
       
       <div class="w-fit">
@@ -25,7 +25,7 @@ const tabs = [
     </div>
 
     <!-- Projects Content -->
-    <div v-motion-slide-bottom v-if="activeTab === 'projects'">
+    <div v-motion-slide-bottom suppressHydrationWarning v-if="activeTab === 'projects'">
       <ExperienceItem
         v-for="(item, index) in experienceData"
         :key="index"

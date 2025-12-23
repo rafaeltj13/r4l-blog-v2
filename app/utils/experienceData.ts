@@ -2,6 +2,15 @@ export const experienceData = [
   {
     "title": "Senior Software Engineer",
     "companyName": "Trio",
+    "technologies": ["Next.js", "FastAPI", "Google ADK", "MySQL", "Kubernetes"],
+    "dateStart": "2026-02-01",
+    "dateEnd": "2025-02-01",
+    "description": "Developed a web platform for managing advertisements data focused on TV platforms.",
+    "partner": "Stamp.tv"
+  },
+  {
+    "title": "Senior Software Engineer",
+    "companyName": "Trio",
     "technologies": ["React Native", "Node.js", "Maestro", "Jest"],
     "dateStart": "2024-02-01",
     "dateEnd": "2025-02-01",

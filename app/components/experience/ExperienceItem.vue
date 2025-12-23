@@ -16,7 +16,7 @@ const props = defineProps<{
 }>()
 
 const formatDateYear = (dateString: string) => {
-  return new Date(dateString).getFullYear()
+  return new Date(dateString).getUTCFullYear()
 }
 </script>
 

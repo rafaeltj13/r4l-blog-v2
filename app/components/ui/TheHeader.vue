@@ -35,7 +35,8 @@ onMounted(() => {
         <NuxtLink to="/" class="group flex items-center space-x-2">
           <span class="hidden font-bold sm:flex items-center transition-colors duration-300">
             <span class="text-primary transition-colors duration-300 group-hover:text-base-content">R4L</span>
-            <span class="text-base-content transition-colors duration-300 group-hover:text-primary">.blog.v2</span>
+            <span class="text-base-content transition-colors duration-300 group-hover:text-primary">.blog.</span>
+            <span class="text-primary transition-colors duration-300 group-hover:text-base-content">v2</span>
           </span>
         </NuxtLink>
       </div>
