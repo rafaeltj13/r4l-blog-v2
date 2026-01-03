@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{
 })
 
 const contactInfo = {
-  location: "Campina Grande/PB, Brazil (GMT -3)",
+  location: "João Pessoa/PB, Brazil (GMT -3)",
   phone: "+55 83 98113-1924",
   email: "rafael.damaciel@proton.me"
 }
@@ -133,20 +133,7 @@ const categorizedSkills = computed(() => {
 });
 
 const downloadPDF = async () => {
-  if (import.meta.client) {
-    const html2pdf = (await import('html2pdf.js')).default
-    const element = document.querySelector('.resume-wrapper')
-    if (!element) return
-
-    const opt = {
-      margin: 0,
-      filename: 'Rafael_Maciel_Resume.pdf',
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
-    }
-    html2pdf().set(opt).from(element as HTMLElement).save()
-  }
+  console.log('downloadPDF')
 }
 </script>
 
@@ -235,14 +222,16 @@ const downloadPDF = async () => {
         <section>
           <h2 class="text-2xl font-bold text-primary mb-6">Skills</h2>
           
-          <div class="flex flex-col gap-6">
-            <div v-for="(items, category) in categorizedSkills" :key="category">
-                <h3 class="font-bold text-slate-900 text-sm mb-2 uppercase tracking-wide opacity-90">{{ category }}</h3>
-                <div class="flex flex-wrap gap-x-1.5 gap-y-1">
-                    <span class="text-sm text-slate-600 leading-relaxed">
-                        {{ items.join(', ') }}
-                    </span>
-                </div>
+          <div class="border-l-2 border-primary/20 pl-4 py-1">
+            <div class="flex flex-col gap-6">
+              <div v-for="(items, category) in categorizedSkills" :key="category">
+                  <h3 class="font-bold text-slate-900 text-sm mb-2 uppercase tracking-wide opacity-90">{{ category }}</h3>
+                  <div class="flex flex-wrap gap-x-1.5 gap-y-1">
+                      <span class="text-sm text-slate-600 leading-relaxed">
+                          {{ items.join(', ') }}
+                      </span>
+                  </div>
+              </div>
             </div>
           </div>
         </section>
@@ -281,9 +270,7 @@ const downloadPDF = async () => {
     >
       <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
         <button @click="downloadPDF" class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
+          <Icon name="uil:download-alt" :size="24" />
         </button>
       </div>
     </Transition>
