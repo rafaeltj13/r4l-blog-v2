@@ -258,23 +258,23 @@ const downloadPDF = async () => {
   </div>
   
   <!-- Floating Export Button -->
-  <Teleport to="body">
-    <Transition 
-      appear
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="opacity-0 translate-y-4"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 translate-y-4"
-    >
-      <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
-        <button @click="downloadPDF" class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
-          <Icon name="uil:download-alt" :size="24" />
-        </button>
-      </div>
-    </Transition>
-  </Teleport>
+    <Teleport to="body">
+      <Transition 
+        appear
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 translate-y-4"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-4"
+      >
+        <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
+        <button @click="downloadPDF" class="btn btnircle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
+            <Icon name="uil:download-alt" :size="24" />
+          </button>
+        </div>
+      </Transition>
+    </Teleport>
 </template>
 
 <style scoped>

@@ -9,33 +9,28 @@ const router = useRouter()
 
 const validTabs = ['projects', 'resume']
 
-// Get initial tab from URL hash or default to 'projects'
-const getTabFromHash = (): string => {
-  const hash = route.hash
-  if (hash) {
-    const params = new URLSearchParams(hash.slice(1)) // Remove the '#'
-    const tabParam = params.get('tab')
-    if (tabParam && validTabs.includes(tabParam)) {
-      return tabParam
-    }
+// Get initial tab from URL query param or default to 'projects'
+const getTabFromQuery = (): string => {
+  const tabParam = route.query.tab as string | undefined
+  if (tabParam && validTabs.includes(tabParam)) {
+    return tabParam
   }
   return 'projects'
 }
 
-const activeTab = useState('experience-active-tab', () => getTabFromHash())
+// Initialize tab from query param (works on both server and client)
+const activeTab = useState('experience-active-tab', () => getTabFromQuery())
 
-// Sync URL hash when tab changes
+// Sync URL query param when tab changes
 watch(activeTab, (newTab) => {
-  router.replace({ hash: `#tab=${newTab}` })
+  router.replace({ query: { ...route.query, tab: newTab } })
 })
 
-// Initialize the hash if not present
-onMounted(() => {
-  if (!route.hash) {
-    router.replace({ hash: `#tab=${activeTab.value}` })
-  } else {
-    // Sync state with URL on mount (for SSR/navigation)
-    activeTab.value = getTabFromHash()
+// Sync state with URL on navigation (handles browser back/forward)
+watch(() => route.query.tab, (newTabQuery) => {
+  const newTab = (newTabQuery as string) || 'projects'
+  if (validTabs.includes(newTab) && activeTab.value !== newTab) {
+    activeTab.value = newTab
   }
 })
 
