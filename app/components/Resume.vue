@@ -157,7 +157,7 @@ const downloadPDF = async () => {
     <header class="flex flex-col md:flex-row justify-between items-start mb-12 border-b border-gray-200 pb-8">
       <!-- Name & Title -->
       <div class="max-w-2xl">
-        <h1 class="text-5xl font-bold text-blue-600 mb-4 tracking-tight">{{ header.name }}</h1>
+        <h1 class="text-5xl font-bold text-primary mb-4 tracking-tight">{{ header.name }}</h1>
         <div class="text-slate-600 text-sm leading-relaxed max-w-xl">
           {{ header.summary }}
         </div>
@@ -165,14 +165,14 @@ const downloadPDF = async () => {
       
       <!-- Contact Info -->
       <div class="flex flex-col items-start md:items-end gap-1.5 text-sm font-mono mt-6 md:mt-1 shrink-0">
-        <a :href="'mailto:' + contactInfo.email" class="text-slate-500 hover:text-blue-600 transition-colors">{{ contactInfo.email }}</a>
-        <a :href="'tel:' + contactInfo.phone" class="text-slate-500 hover:text-blue-600 transition-colors">{{ contactInfo.phone }}</a>
+        <a :href="'mailto:' + contactInfo.email" class="text-slate-500 hover:text-primary transition-colors">{{ contactInfo.email }}</a>
+        <a :href="'tel:' + contactInfo.phone" class="text-slate-500 hover:text-primary transition-colors">{{ contactInfo.phone }}</a>
         
         <div class="flex flex-col items-start md:items-end">
              <a v-for="link in header.links" :key="link.url" 
                 :href="link.url" 
                 target="_blank" 
-                class="text-blue-600 hover:text-blue-800 hover:underline transition-colors block max-w-[200px] md:max-w-none truncate md:overflow-visible md:whitespace-normal text-right">
+                class="text-primary hover:text-primary/80 hover:underline transition-colors block max-w-[200px] md:max-w-none truncate md:overflow-visible md:whitespace-normal text-right">
               {{ link.text.includes('linkedin') ? 'linkedin.com/in/rafael-de-araujo' : link.text.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') }}
             </a>
         </div>
@@ -188,7 +188,7 @@ const downloadPDF = async () => {
         
         <!-- Experience Section -->
         <section>
-          <h2 class="text-2xl font-bold text-blue-600 mb-6 flex items-center gap-2">
+          <h2 class="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
             Relevant Experience
           </h2>
           
@@ -198,7 +198,7 @@ const downloadPDF = async () => {
               <!-- Job Header -->
               <div class="mb-3">
                 <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1">
-                   <h3 class="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{{ group.title }}</h3>
+                   <h3 class="font-bold text-slate-900 text-lg group-hover:text-primary transition-colors">{{ group.title }}</h3>
                    <span class="text-xs font-mono text-slate-500 whitespace-nowrap hidden sm:block">{{ group.period }}</span>
                 </div>
                 <div class="flex items-center text-sm text-slate-600 font-medium">
@@ -211,7 +211,7 @@ const downloadPDF = async () => {
               </div>
 
               <!-- Projects List -->
-              <ul class="list-disc list-outside ml-4 space-y-4 marker:text-blue-400/50">
+              <ul class="list-disc list-outside ml-4 space-y-4 marker:text-primary/50">
                 <li v-for="(project, idx) in group.items" :key="idx" class="text-sm leading-relaxed text-slate-600 pl-1">
                    <span class="block mb-1">{{ project.description }}</span>
                    <div v-if="project.technologies && project.technologies.length" class="flex flex-wrap gap-1 mt-1.5 opacity-90">
@@ -233,7 +233,7 @@ const downloadPDF = async () => {
         
         <!-- Skills -->
         <section>
-          <h2 class="text-2xl font-bold text-blue-600 mb-6">Skills</h2>
+          <h2 class="text-2xl font-bold text-primary mb-6">Skills</h2>
           
           <div class="flex flex-col gap-6">
             <div v-for="(items, category) in categorizedSkills" :key="category">
@@ -249,15 +249,15 @@ const downloadPDF = async () => {
 
         <!-- Education -->
         <section>
-          <h2 class="text-2xl font-bold text-blue-600 mb-6">Education</h2>
+          <h2 class="text-2xl font-bold text-primary mb-6">Education</h2>
           
-          <div class="border-l-2 border-blue-600/20 pl-4 py-1">
+          <div class="border-l-2 border-primary/20 pl-4 py-1">
             <h3 class="font-bold text-slate-900 leading-tight">{{ education.institution }}</h3>
             <div class="text-sm text-slate-700 mt-2 font-medium">{{ education.degree }}</div>
             <div class="text-xs text-slate-500 mt-1 mb-3 font-mono">{{ education.period }}</div>
             <ul class="list-none space-y-1 text-sm text-slate-600">
                <li v-for="(line, idx) in education.details" :key="idx" class="flex items-start gap-2">
-                 <span class="mt-1.5 w-1 h-1 bg-blue-600 rounded-full shrink-0"></span>
+                 <span class="mt-1.5 w-1 h-1 bg-primary rounded-full shrink-0"></span>
                  <span>{{ line }}</span>
                </li>
             </ul>
@@ -280,7 +280,7 @@ const downloadPDF = async () => {
       leave-to-class="opacity-0 translate-y-4"
     >
       <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
-        <button @click="downloadPDF" class="btn btn-circle btn-lg bg-blue-600 hover:bg-blue-700 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
+        <button @click="downloadPDF" class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
