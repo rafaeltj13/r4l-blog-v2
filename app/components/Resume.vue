@@ -2,6 +2,12 @@
 import { experienceData } from '~/utils/experienceData'
 import { computed } from 'vue'
 
+const props = withDefaults(defineProps<{
+  showButton?: boolean
+}>(), {
+  showButton: true
+})
+
 const contactInfo = {
   location: "Campina Grande/PB, Brazil (GMT -3)",
   phone: "+55 83 98113-1924",
@@ -125,13 +131,30 @@ const categorizedSkills = computed(() => {
     
     return result;
 });
+
+const downloadPDF = async () => {
+  if (import.meta.client) {
+    const html2pdf = (await import('html2pdf.js')).default
+    const element = document.querySelector('.resume-wrapper')
+    if (!element) return
+
+    const opt = {
+      margin: 0,
+      filename: 'Rafael_Maciel_Resume.pdf',
+      image: { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' as const }
+    }
+    html2pdf().set(opt).from(element as HTMLElement).save()
+  }
+}
 </script>
 
 <template>
-  <div class="resume-wrapper w-full max-w-5xl mx-auto bg-white shadow-2xl p-8 md:p-12 print:p-0 print:shadow-none print:max-w-none text-slate-800">
+  <div class="resume-wrapper w-full max-w-5xl mx-auto bg-white shadow-xl p-8 md:p-12 print:p-0 print:shadow-none print:max-w-none text-slate-800">
     
     <!-- Top Header -->
-    <header class="flex flex-col md:flex-row justify-between items-start mb-12 border-b border-gray-100 pb-8">
+    <header class="flex flex-col md:flex-row justify-between items-start mb-12 border-b border-gray-200 pb-8">
       <!-- Name & Title -->
       <div class="max-w-2xl">
         <h1 class="text-5xl font-bold text-blue-600 mb-4 tracking-tight">{{ header.name }}</h1>
@@ -188,10 +211,10 @@ const categorizedSkills = computed(() => {
               </div>
 
               <!-- Projects List -->
-              <ul class="list-disc list-outside ml-4 space-y-4 marker:text-blue-300">
+              <ul class="list-disc list-outside ml-4 space-y-4 marker:text-blue-400/50">
                 <li v-for="(project, idx) in group.items" :key="idx" class="text-sm leading-relaxed text-slate-600 pl-1">
                    <span class="block mb-1">{{ project.description }}</span>
-                   <div v-if="project.technologies && project.technologies.length" class="flex flex-wrap gap-1 mt-1.5 opacity-80">
+                   <div v-if="project.technologies && project.technologies.length" class="flex flex-wrap gap-1 mt-1.5 opacity-90">
                        <span v-for="tech in project.technologies" :key="tech" 
                              class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">
                          {{ tech }}
@@ -214,7 +237,7 @@ const categorizedSkills = computed(() => {
           
           <div class="flex flex-col gap-6">
             <div v-for="(items, category) in categorizedSkills" :key="category">
-                <h3 class="font-bold text-slate-900 text-sm mb-2 uppercase tracking-wide">{{ category }}</h3>
+                <h3 class="font-bold text-slate-900 text-sm mb-2 uppercase tracking-wide opacity-90">{{ category }}</h3>
                 <div class="flex flex-wrap gap-x-1.5 gap-y-1">
                     <span class="text-sm text-slate-600 leading-relaxed">
                         {{ items.join(', ') }}
@@ -228,13 +251,13 @@ const categorizedSkills = computed(() => {
         <section>
           <h2 class="text-2xl font-bold text-blue-600 mb-6">Education</h2>
           
-          <div class="border-l-2 border-blue-100 pl-4 py-1">
+          <div class="border-l-2 border-blue-600/20 pl-4 py-1">
             <h3 class="font-bold text-slate-900 leading-tight">{{ education.institution }}</h3>
             <div class="text-sm text-slate-700 mt-2 font-medium">{{ education.degree }}</div>
             <div class="text-xs text-slate-500 mt-1 mb-3 font-mono">{{ education.period }}</div>
             <ul class="list-none space-y-1 text-sm text-slate-600">
                <li v-for="(line, idx) in education.details" :key="idx" class="flex items-start gap-2">
-                 <span class="mt-1.5 w-1 h-1 bg-blue-400 rounded-full shrink-0"></span>
+                 <span class="mt-1.5 w-1 h-1 bg-blue-600 rounded-full shrink-0"></span>
                  <span>{{ line }}</span>
                </li>
             </ul>
@@ -244,6 +267,27 @@ const categorizedSkills = computed(() => {
       </div>
     </div>
   </div>
+  
+  <!-- Floating Export Button -->
+  <Teleport to="body">
+    <Transition 
+      appear
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="opacity-0 translate-y-4"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-4"
+    >
+      <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
+        <button @click="downloadPDF" class="btn btn-circle btn-lg bg-blue-600 hover:bg-blue-700 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </button>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
