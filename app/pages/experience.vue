@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { experienceData } from '~/utils/experienceData'
 import ExperienceItem from '~/components/experience/ExperienceItem.vue'
+import Resume from '~/components/Resume.vue'
 import AppTabs from '~/components/ui/AppTabs.vue'
 
 const activeTab = useState('experience-active-tab', () => 'projects')
@@ -33,9 +34,9 @@ const tabs = [
       />
     </div>
 
-    <!-- Resume Placeholder -->
-    <div v-else class="text-center py-20 text-gray-400">
-      <p class="text-lg">Projects showcase coming soon...</p>
+    <!-- Resume Content -->
+    <div v-else v-motion-slide-bottom suppressHydrationWarning>
+      <Resume />
     </div>
   </div>
 </template>
