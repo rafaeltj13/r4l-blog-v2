@@ -21,22 +21,28 @@ const scrollToSection = (id: string) => {
 let observer: IntersectionObserver | null = null
 
 onMounted(() => {
-  observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        activeSection.value = entry.target.id
-      }
+  // Wait for the DOM to update so we can get the scroll container
+  nextTick(() => { 
+    const scrollContainer = document.getElementById('scroll-container')
+    
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeSection.value = entry.target.id
+        }
+      })
+    }, {
+      root: scrollContainer || null, // Use the scroll container as root
+      rootMargin: '-10% 0px -70% 0px', // Trigger when element is near the top
+      threshold: 0
     })
-  }, {
-    root: null, // Watch the viewport
-    threshold: 0.5 // Trigger when 50% visible
-  })
 
-  // Observe sections
-  const sections = ['about', 'projects', 'posts']
-  sections.forEach(id => {
-    const element = document.getElementById(id)
-    if (element) observer?.observe(element)
+    // Observe sections
+    const sections = ['about', 'projects', 'posts']
+    sections.forEach(id => {
+      const element = document.getElementById(id)
+      if (element) observer?.observe(element)
+    })
   })
 })
 
@@ -48,10 +54,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto max-w-screen-xl px-4 md:px-8 py-12">
-    <div class="flex flex-col md:flex-row gap-0 md:gap-12 relative">
+  <!-- Main container with fixed height on desktop to enable internal scrolling -->
+  <div class="container mx-auto max-w-screen-xl px-4 md:px-8 py-12 lg:h-[calc(100vh-3.5rem)] lg:overflow-hidden lg:py-0">
+    <div class="flex flex-col lg:flex-row gap-0 lg:gap-12 relative h-full">
       <!-- Left Column: Static Profile -->
-      <aside class="w-full md:w-[40%] flex flex-col justify-between md:sticky md:top-24 md:h-[calc(100vh-6rem)]" v-motion-slide-left>
+      <aside class="w-full lg:w-[40%] flex flex-col justify-between h-auto lg:h-full lg:py-12" v-motion-slide-left>
         <div>
           <h1 class="text-4xl font-bold mb-2">Rafael de Araújo Maciel</h1>
           <h2 class="text-xl text-primary/80 mb-6">Senior Software Engineer</h2>
@@ -60,7 +67,7 @@ onUnmounted(() => {
           </p>
         </div>
 
-        <nav class="space-y-4 mb-8 md:mb-0">
+        <nav class="space-y-4 mb-8 lg:mb-0">
           <button 
             @click="scrollToSection('about')"
             class="block text-lg font-medium transition-colors text-left w-full"
@@ -86,7 +93,11 @@ onUnmounted(() => {
       </aside>
 
       <!-- Right Column: Scrollable Content -->
-      <main class="w-full md:w-[60%] pt-2" v-motion-slide-bottom>
+      <main 
+        id="scroll-container"
+        class="w-full lg:w-[60%] pt-2 lg:overflow-y-auto lg:h-full lg:py-12 lg:no-scrollbar scroll-smooth" 
+        v-motion-slide-bottom
+      >
         <div id="about" class="prose prose-lg max-w-none mb-16">
           <h3 class="text-2xl font-bold mb-6">About me</h3>
           <p class="mb-6">
@@ -128,3 +139,16 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.lg\:no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.lg\:no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+</style>
