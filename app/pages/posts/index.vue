@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: 'R4L - Blog'
+})
+
 import { posts as postsData } from '~/utils/postsData'
 
 const { data: posts } = await useAsyncData('posts', async () => {

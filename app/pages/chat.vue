@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: 'R4L - Chat'
+})
+
 import { ref, nextTick } from 'vue'
 
 definePageMeta({

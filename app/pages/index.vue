@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: 'R4L'
+})
+
 import { experienceData } from '~/utils/experienceData'
 import { posts } from '~/utils/postsData'
 import ExperienceItem from '~/components/experience/ExperienceItem.vue'

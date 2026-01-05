@@ -19,7 +19,7 @@ if (!post.value) {
 
 // Update title meta
 useHead({
-  title: post.value?.title ? `${post.value.title} | Blog` : 'Blog Post'
+  title: post.value?.title ? `R4L - ${post.value.title}` : 'R4L - Blog Post'
 })
 </script>
 
