@@ -269,7 +269,7 @@ const downloadPDF = async () => {
         leave-to-class="opacity-0 translate-y-4"
       >
         <div v-if="showButton" class="fixed bottom-8 right-8 print:hidden z-[100]">
-        <button @click="downloadPDF" class="btn btnircle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
+          <button @click="downloadPDF" class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left" data-tip="Download PDF">
             <Icon name="uil:download-alt" :size="24" />
           </button>
         </div>
