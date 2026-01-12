@@ -16,6 +16,13 @@ interface Message {
   timestamp: string
 }
 
+interface ChatResponse {
+  message: {
+    role: string
+    content: string
+  }
+}
+
 const messages = ref<Message[]>([
   {
     id: 1,
@@ -27,6 +34,8 @@ const messages = ref<Message[]>([
 
 const userInput = ref('')
 const messagesContainer = ref<HTMLElement | null>(null)
+const isLoading = ref(false)
+const error = ref<string | null>(null)
 
 const scrollToBottom = async () => {
   await nextTick()
@@ -36,7 +45,9 @@ const scrollToBottom = async () => {
 }
 
 const sendMessage = async () => {
-  if (!userInput.value.trim()) return
+  if (!userInput.value.trim() || isLoading.value) return
+
+  error.value = null
 
   // Add user message
   const userMsg: Message = {
@@ -51,17 +62,36 @@ const sendMessage = async () => {
   userInput.value = ''
   await scrollToBottom()
   
-  // Simulate bot response (mock)
-  setTimeout(async () => {
+  // Call the AI chat API
+  isLoading.value = true
+  try {
+    const response = await $fetch<ChatResponse>('/api/chat', {
+      method: 'POST',
+      body: { message: input }
+    })
+
     const botMsg: Message = {
       id: Date.now() + 1,
-      text: `I received: "${input}". This is a mock response from Digital Me!`,
+      text: response.message.content,
       sender: 'bot',
       timestamp: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     }
     messages.value.push(botMsg)
+  } catch (err: unknown) {
+    console.error('Chat error:', err)
+    error.value = 'Sorry, I couldn\'t process your message. Please try again.'
+    
+    const errorMsg: Message = {
+      id: Date.now() + 1,
+      text: '⚠️ Sorry, I encountered an error processing your message. Please try again.',
+      sender: 'bot',
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    }
+    messages.value.push(errorMsg)
+  } finally {
+    isLoading.value = false
     await scrollToBottom()
-  }, 1000)
+  }
 }
 </script>
 
@@ -72,7 +102,7 @@ const sendMessage = async () => {
     </div>
 
     <!-- Chat Messages Area -->
-    <div ref="messagesContainer" class="flex-1 overflow-y-auto mb-8 pr-2 space-y-4 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-100">
+    <div ref="messagesContainer" class="flex-1 overflow-y-auto overflow-x-hidden mb-8 pr-2 space-y-4 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-100">
       <template v-for="msg in messages" :key="msg.id">
         <!-- Bot Message -->
         <div 
@@ -112,6 +142,26 @@ const sendMessage = async () => {
           </div>
         </div>
       </template>
+
+      <!-- Typing Indicator -->
+      <div 
+        v-if="isLoading"
+        class="flex items-center gap-3 pl-1"
+      >
+        <div class="w-10 h-10 rounded-full border border-base-content/10 overflow-hidden">
+          <img 
+            alt="Digital Me Avatar" 
+            src="~/assets/images/profile-cutted.jpg"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="flex items-center gap-1">
+          <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0ms;"></span>
+          <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 150ms;"></span>
+          <span class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 300ms;"></span>
+        </div>
+        <span class="text-sm text-base-content/50">Digital Me is typing...</span>
+      </div>
     </div>
 
     <!-- Input Area -->

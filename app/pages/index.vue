@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-    title: "R4L",
+    title: "R4L - Rafael Maciel",
 });
 
 import { experienceData } from "~/utils/experienceData";

@@ -184,8 +184,467 @@ const categorizedSkills = computed(() => {
     return result;
 });
 
-const downloadCV = () => {
-    window.print();
+// Primary color for PDF (replacing oklch)
+const PRIMARY_COLOR = "#7c3238"; // Dark red/maroon matching your theme
+
+const downloadCV = async () => {
+    const element = document.querySelector(
+        ".resume-wrapper",
+    ) as HTMLElement | null;
+    if (!element) return;
+
+    // Dynamically import libraries only on client side
+    const { default: jsPDF } = await import("jspdf");
+    const { default: html2canvas } = await import("html2canvas");
+
+    // Create an isolated iframe to avoid oklch color issues
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "absolute";
+    iframe.style.left = "-9999px";
+    iframe.style.top = "0";
+    iframe.style.width = "800px";
+    iframe.style.height = "1200px";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) {
+        document.body.removeChild(iframe);
+        return;
+    }
+
+    // Build complete HTML with inline styles (no external CSS that might have oklch)
+    const buildStyledHTML = () => {
+        const clone = element.cloneNode(true) as HTMLElement;
+
+        return `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1e293b;
+            background: #ffffff;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        /* Resume wrapper */
+        .resume-wrapper {
+            padding: 24px 32px;
+            max-width: 100%;
+            background: #ffffff;
+        }
+
+        /* Header */
+        header {
+            display: grid !important;
+            grid-template-columns: 65% 35% !important;
+            gap: 32px !important;
+            align-items: flex-start !important;
+            margin-bottom: 24px !important;
+            padding-bottom: 20px !important;
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+        header > div:first-child {
+            max-width: 100%;
+        }
+
+        header > div:last-child {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            gap: 3px !important;
+            text-align: right !important;
+        }
+
+        /* Contact links - each on own line */
+        header > div:last-child a {
+            display: block !important;
+            text-align: right !important;
+            white-space: nowrap !important;
+        }
+
+        header > div:last-child > div {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-end !important;
+            gap: 2px !important;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2.25rem !important;
+            font-weight: 700 !important;
+            color: ${PRIMARY_COLOR} !important;
+            margin-bottom: 10px !important;
+            letter-spacing: -0.025em;
+        }
+
+        h2 {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            color: ${PRIMARY_COLOR} !important;
+            margin-bottom: 14px !important;
+        }
+
+        h3 {
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+        }
+
+        /* Main grid layout */
+        .grid {
+            display: grid !important;
+            grid-template-columns: 65% 35% !important;
+            gap: 32px !important;
+        }
+
+        /* Left column */
+        [class*="col-span-8"] {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 20px !important;
+        }
+
+        /* Right column */
+        [class*="col-span-4"] {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 20px !important;
+        }
+
+        /* Job groups */
+        .group {
+            margin-bottom: 16px;
+        }
+
+        /* Job title row - title and period on same line */
+        [class*="sm:flex-row"] {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: baseline !important;
+            justify-content: space-between !important;
+            margin-bottom: 2px !important;
+        }
+
+        /* Show desktop period */
+        [class*="hidden"][class*="sm:block"] {
+            display: block !important;
+        }
+
+        /* Hide mobile period */
+        [class*="sm:hidden"] {
+            display: none !important;
+        }
+
+        /* Period styling */
+        [class*="font-mono"][class*="text-xs"] {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace !important;
+            font-size: 11px !important;
+            color: #64748b !important;
+            white-space: nowrap !important;
+        }
+
+        /* Company row */
+        [class*="flex"][class*="items-center"][class*="text-sm"] {
+            display: flex !important;
+            align-items: center !important;
+            font-size: 13px !important;
+            color: #475569 !important;
+            font-weight: 500 !important;
+            margin-bottom: 8px !important;
+        }
+
+        /* Separator */
+        [class*="mx-2"][class*="text-slate-300"] {
+            margin: 0 8px !important;
+            color: #cbd5e1 !important;
+        }
+
+        /* Location text */
+        [class*="text-slate-500"][class*="font-normal"] {
+            color: #64748b !important;
+            font-weight: 400 !important;
+        }
+
+        /* Project list - use custom bullets instead of list-style */
+        ul[class*="list-disc"] {
+            list-style-type: none !important;
+            padding-left: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        ul[class*="list-disc"] > li {
+            margin-bottom: 14px !important;
+            color: #475569 !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            padding-left: 20px !important;
+            position: relative !important;
+        }
+
+        /* Custom bullet point for list items */
+        ul[class*="list-disc"] > li::before {
+            content: "•" !important;
+            position: absolute !important;
+            left: 6px !important;
+            top: 0 !important;
+            color: ${PRIMARY_COLOR} !important;
+            font-size: 14px !important;
+        }
+
+        /* Description text block */
+        ul[class*="list-disc"] > li > span.block,
+        ul[class*="list-disc"] > li > span:first-child {
+            display: block !important;
+            margin-bottom: 6px !important;
+        }
+
+        /* Space between job items */
+        [class*="space-y-10"] > * + * {
+            margin-top: 20px !important;
+        }
+
+        [class*="space-y-4"] > * + * {
+            margin-top: 10px !important;
+        }
+
+        /* Tech badges container */
+        [class*="flex-wrap"] {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+            margin-top: 8px !important;
+            margin-bottom: 2px !important;
+            align-items: center !important;
+        }
+
+        /* Tech badges */
+        [class*="bg-slate-100"] {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            padding: 5px 12px !important;
+            border-radius: 4px !important;
+            font-size: 11px !important;
+            font-weight: 500 !important;
+            margin-bottom: 6px !important;
+            border: none !important;
+        }
+
+        /* Ensure no bullets appear on badge spans */
+        [class*="flex-wrap"] > span::before {
+            content: none !important;
+            display: none !important;
+        }
+
+        /* Sidebar sections border */
+        [class*="border-l-2"][class*="border-primary"] {
+            border-left: 2px solid ${PRIMARY_COLOR}40 !important;
+            padding-left: 14px !important;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        /* Skills category */
+        [class*="gap-6"] {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+        }
+
+        /* Skills category title */
+        [class*="uppercase"][class*="tracking-wide"] {
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            font-size: 11px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            margin-bottom: 4px !important;
+        }
+
+        /* Skills list text */
+        [class*="text-sm"][class*="text-slate-600"][class*="leading-relaxed"] {
+            color: #475569 !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+        }
+
+        /* Education institution */
+        [class*="font-bold"][class*="text-slate-900"][class*="leading-tight"] {
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            line-height: 1.3 !important;
+            font-size: 14px !important;
+        }
+
+        /* Education degree */
+        [class*="text-sm"][class*="text-slate-700"][class*="font-medium"] {
+            font-size: 13px !important;
+            color: #334155 !important;
+            margin-top: 6px !important;
+            font-weight: 500 !important;
+        }
+
+        /* Education period */
+        [class*="text-xs"][class*="text-slate-500"][class*="font-mono"] {
+            font-size: 11px !important;
+            color: #64748b !important;
+            margin-top: 2px !important;
+            margin-bottom: 10px !important;
+            font-family: ui-monospace, SFMono-Regular, monospace !important;
+        }
+
+        /* Education details list */
+        ul[class*="list-none"] {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        ul[class*="list-none"] li {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            font-size: 13px !important;
+            color: #475569 !important;
+            margin-bottom: 4px !important;
+            line-height: 1.5 !important;
+        }
+
+        /* Education bullet - small dot */
+        [class*="w-1"][class*="h-1"][class*="bg-primary"] {
+            width: 5px !important;
+            height: 5px !important;
+            min-width: 5px !important;
+            max-width: 5px !important;
+            background-color: ${PRIMARY_COLOR} !important;
+            border-radius: 50% !important;
+            margin-top: 6px !important;
+            flex-shrink: 0 !important;
+            display: inline-block !important;
+        }
+
+        /* Contact info */
+        [class*="font-mono"][class*="text-sm"] {
+            font-family: ui-monospace, SFMono-Regular, monospace !important;
+            font-size: 12px !important;
+        }
+
+        /* Links */
+        a {
+            text-decoration: none !important;
+        }
+
+        a[class*="text-primary"] {
+            color: ${PRIMARY_COLOR} !important;
+        }
+
+        a[class*="text-slate-500"] {
+            color: #64748b !important;
+        }
+
+        /* Location text */
+        p[class*="text-slate-400"] {
+            color: #94a3b8 !important;
+            margin-top: 4px !important;
+        }
+
+        /* Summary text */
+        [class*="text-slate-600"][class*="text-sm"][class*="leading-relaxed"] {
+            color: #475569 !important;
+            font-size: 13px !important;
+            line-height: 1.6 !important;
+        }
+
+        /* Contact links container */
+        header [class*="flex-col"][class*="items-end"] {
+            align-items: flex-end !important;
+        }
+
+        /* General text colors */
+        [class*="text-slate-800"] { color: #1e293b !important; }
+        [class*="text-slate-700"] { color: #334155 !important; }
+        [class*="text-slate-600"] { color: #475569 !important; }
+        [class*="text-slate-500"] { color: #64748b !important; }
+        [class*="text-slate-400"] { color: #94a3b8 !important; }
+        [class*="text-slate-300"] { color: #cbd5e1 !important; }
+        [class*="text-slate-900"] { color: #0f172a !important; }
+
+        /* Primary text */
+        [class*="text-primary"]:not(a) {
+            color: ${PRIMARY_COLOR} !important;
+        }
+    </style>
+</head>
+<body>
+    ${clone.outerHTML}
+</body>
+</html>`;
+    };
+
+    // Write HTML to iframe
+    iframeDoc.open();
+    iframeDoc.write(buildStyledHTML());
+    iframeDoc.close();
+
+    // Wait for iframe to render
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    const iframeElement = iframeDoc.querySelector(
+        ".resume-wrapper",
+    ) as HTMLElement;
+    if (!iframeElement) {
+        document.body.removeChild(iframe);
+        return;
+    }
+
+    try {
+        // Render to canvas
+        const canvas = await html2canvas(iframeElement, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+        });
+
+        // Create PDF
+        const pdf = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4",
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = 0;
+
+        pdf.addImage(
+            imgData,
+            "JPEG",
+            imgX,
+            imgY,
+            imgWidth * ratio,
+            imgHeight * ratio,
+        );
+        pdf.save("Rafael_Maciel_CV.pdf");
+    } finally {
+        // Clean up
+        document.body.removeChild(iframe);
+    }
 };
 </script>
 
@@ -381,7 +840,7 @@ const downloadCV = () => {
                             <li
                                 v-for="(line, idx) in education.details"
                                 :key="idx"
-                                class="flex items-start gap-2"
+                                class="flex items-center gap-2"
                             >
                                 <span
                                     class="mt-1.5 w-1 h-1 bg-primary rounded-full shrink-0"
