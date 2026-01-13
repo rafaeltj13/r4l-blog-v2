@@ -216,6 +216,8 @@ const downloadCV = async () => {
     // Build complete HTML with inline styles (no external CSS that might have oklch)
     const buildStyledHTML = () => {
         const clone = element.cloneNode(true) as HTMLElement;
+        const buttons = clone.querySelectorAll('button');
+        buttons.forEach(btn => btn.remove());
 
         return `
 <!DOCTYPE html>
@@ -244,9 +246,9 @@ const downloadCV = async () => {
 
         /* Header */
         header {
-            display: grid !important;
-            grid-template-columns: 65% 35% !important;
-            gap: 32px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
             align-items: flex-start !important;
             margin-bottom: 24px !important;
             padding-bottom: 20px !important;
@@ -254,15 +256,21 @@ const downloadCV = async () => {
         }
 
         header > div:first-child {
-            max-width: 100%;
+            width: 60% !important;
+            margin-right: 24px !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
 
         header > div:last-child {
+            width: 40% !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: flex-end !important;
-            gap: 3px !important;
             text-align: right !important;
+            padding-right: 48px !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
 
         /* Contact links - each on own line */
@@ -270,6 +278,7 @@ const downloadCV = async () => {
             display: block !important;
             text-align: right !important;
             white-space: nowrap !important;
+            margin-bottom: 3px !important;
         }
 
         header > div:last-child > div {
@@ -286,6 +295,9 @@ const downloadCV = async () => {
             color: ${PRIMARY_COLOR} !important;
             margin-bottom: 10px !important;
             letter-spacing: -0.025em;
+            line-height: 1 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
 
         h2 {
@@ -301,25 +313,29 @@ const downloadCV = async () => {
             color: #0f172a !important;
         }
 
-        /* Main grid layout */
+        /* Main layout - Flexbox instead of Grid */
         .grid {
-            display: grid !important;
-            grid-template-columns: 65% 35% !important;
-            gap: 32px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            width: 100% !important;
         }
 
         /* Left column */
         [class*="col-span-8"] {
+            width: 65% !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 20px !important;
+            padding-right: 32px !important;
+            padding-left: 0 !important;
         }
 
         /* Right column */
         [class*="col-span-4"] {
+            width: 35% !important;
             display: flex !important;
             flex-direction: column !important;
-            gap: 20px !important;
+            padding-left: 0 !important;
         }
 
         /* Job groups */
@@ -376,7 +392,7 @@ const downloadCV = async () => {
             font-weight: 400 !important;
         }
 
-        /* Project list - use custom bullets instead of list-style */
+        /* Project list */
         ul[class*="list-disc"] {
             list-style-type: none !important;
             padding-left: 0 !important;
@@ -388,7 +404,7 @@ const downloadCV = async () => {
             color: #475569 !important;
             font-size: 13px !important;
             line-height: 1.5 !important;
-            padding-left: 20px !important;
+            padding-left: 14px !important;
             position: relative !important;
         }
 
@@ -396,7 +412,7 @@ const downloadCV = async () => {
         ul[class*="list-disc"] > li::before {
             content: "•" !important;
             position: absolute !important;
-            left: 6px !important;
+            left: 0 !important;
             top: 0 !important;
             color: ${PRIMARY_COLOR} !important;
             font-size: 14px !important;
@@ -422,22 +438,32 @@ const downloadCV = async () => {
         [class*="flex-wrap"] {
             display: flex !important;
             flex-wrap: wrap !important;
-            gap: 6px !important;
-            margin-top: 8px !important;
+            gap: 4px !important;
+            margin-top: 6px !important;
             margin-bottom: 2px !important;
             align-items: center !important;
+            justify-content: flex-start !important;
         }
 
         /* Tech badges */
+        /* Tech badges */
+        /* Tech badges */
         [class*="bg-slate-100"] {
+            display: inline-block !important;
             background-color: #f1f5f9 !important;
             color: #475569 !important;
-            padding: 5px 12px !important;
+            padding: 2px 8px !important;
             border-radius: 4px !important;
-            font-size: 11px !important;
-            font-weight: 500 !important;
+            font-size: 10px !important;
+            font-weight: 600 !important;
+            margin-right: 6px !important;
             margin-bottom: 6px !important;
             border: none !important;
+            box-sizing: border-box !important;
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+            line-height: 1 !important;
+            height: auto !important;
         }
 
         /* Ensure no bullets appear on badge spans */
@@ -449,9 +475,10 @@ const downloadCV = async () => {
         /* Sidebar sections border */
         [class*="border-l-2"][class*="border-primary"] {
             border-left: 2px solid ${PRIMARY_COLOR}40 !important;
-            padding-left: 14px !important;
+            padding-left: 10px !important;
             padding-top: 2px !important;
             padding-bottom: 2px !important;
+            margin-left: 0 !important;
         }
 
         /* Skills category */
@@ -654,7 +681,7 @@ const downloadCV = async () => {
     >
         <!-- Top Header -->
         <header
-            class="flex flex-col md:flex-row justify-between items-start mb-12 border-b border-gray-200 pb-8"
+            class="flex flex-col md:flex-row justify-between items-start mb-8 border-b border-gray-200 pb-8"
         >
             <!-- Name & Title -->
             <div class="max-w-2xl">

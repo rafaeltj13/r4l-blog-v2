@@ -70,6 +70,12 @@ onMounted(() => {
                         >Experience</NuxtLink
                     >
                     <NuxtLink
+                        to="/projects"
+                        class="transition-colors hover:text-primary text-base-content/60"
+                        active-class="text-primary"
+                        >Projects</NuxtLink
+                    >
+                    <NuxtLink
                         to="/chat"
                         class="transition-colors hover:text-primary text-base-content/60"
                         active-class="text-primary"

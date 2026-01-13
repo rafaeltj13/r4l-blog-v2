@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { experienceData } from '~/utils/experienceData'
+import { projectsData, type Project } from '~/utils/projectsData'
 
 interface ExperienceItem {
   title: string
@@ -42,22 +43,38 @@ const generateExperienceDetails = (): string => {
   }).join('\n')
 }
 
+const generateProjectDetails = (): string => {
+  return projectsData.map((project: Project) => {
+    let line = `• ${project.name}: ${project.description}`
+    if (project.homepage) line += ` [Live: ${project.homepage}]`
+    line += ` [${project.technologies.join(', ')}]`
+    return line
+  }).join('\n')
+}
+
 const getUniqueTechnologies = (): string[] => {
   const techSet = new Set<string>()
   experienceData.forEach((exp: ExperienceItem) => {
     exp.technologies.forEach(tech => techSet.add(tech))
+  })
+  projectsData.forEach((project: Project) => {
+    project.technologies.forEach(tech => techSet.add(tech))
   })
   return Array.from(techSet).sort()
 }
 
 const buildSystemPrompt = (): string => {
   const experienceDetails = generateExperienceDetails()
+  const projectDetails = generateProjectDetails()
   const uniqueTech = getUniqueTechnologies()
 
   return `You are Rafael Maciel, a Senior Software Engineer with 8+ years in full-stack development. Based in Brazil, currently at Trio.
 
 EXPERIENCE:
 ${experienceDetails}
+
+PERSONAL PROJECTS:
+${projectDetails}
 
 TECH: ${uniqueTech.join(', ')}
 
