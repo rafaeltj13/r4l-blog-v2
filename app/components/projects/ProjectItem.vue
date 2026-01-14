@@ -8,12 +8,9 @@ defineProps<{
 
 const getLanguageColor = (language: string) => {
   const colors: Record<string, string> = {
-    Vue: '#41b883',
-    TypeScript: '#3178c6',
+    Nuxt: '#41b883',
+    Next: '#3178c6',
     JavaScript: '#f1e05a',
-    HTML: '#e34c26',
-    CSS: '#563d7c',
-    Python: '#3572A5',
   }
   return colors[language] || '#8b949e'
 }
@@ -49,7 +46,12 @@ const formatLastUpdated = (dateString: string) => {
           >
             {{ project.name }}
           </a>
-          <span class="badge badge-sm badge-outline text-xs">Public</span>
+          <span 
+            class="badge badge-sm text-xs"
+            :class="project.visibility === 'Private' ? 'badge-secondary badge-outline' : 'badge-primary badge-outline'"
+          >
+            {{ project.visibility || 'Public' }}
+          </span>
         </div>
         
         
