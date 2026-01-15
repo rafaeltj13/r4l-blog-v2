@@ -114,11 +114,9 @@ const categorizedSkills = computed(() => {
         item.technologies?.forEach((t) => allTechs.add(t));
     });
 
-    // Add manual skills that might not be in the projects data but are in the original list
     ["TypeScript", "JavaScript", "Git"].forEach((s) => allTechs.add(s));
 
     const categories = {
-        Languages: ["JavaScript", "TypeScript", "SQL", "HTML", "CSS", "MIML"],
         "Frameworks & Libraries": [
             "React.js",
             "React",
@@ -270,7 +268,7 @@ const downloadCV = async () => {
             text-align: right !important;
             padding-right: 48px !important;
             margin-top: 0 !important;
-            padding-top: 0 !important;
+            padding-top: 15px !important;
         }
 
         /* Contact links - each on own line */
@@ -293,7 +291,7 @@ const downloadCV = async () => {
             font-size: 2.25rem !important;
             font-weight: 700 !important;
             color: ${PRIMARY_COLOR} !important;
-            margin-bottom: 10px !important;
+            margin-bottom: 20px !important;
             letter-spacing: -0.025em;
             line-height: 1 !important;
             margin-top: 0 !important;
@@ -434,11 +432,10 @@ const downloadCV = async () => {
             margin-top: 10px !important;
         }
 
-        /* Tech badges container */
         [class*="flex-wrap"] {
             display: flex !important;
             flex-wrap: wrap !important;
-            gap: 4px !important;
+            gap: 0 !important;
             margin-top: 6px !important;
             margin-bottom: 2px !important;
             align-items: center !important;
@@ -452,7 +449,7 @@ const downloadCV = async () => {
             display: inline-block !important;
             background-color: #f1f5f9 !important;
             color: #475569 !important;
-            padding: 2px 8px !important;
+            padding: 4px 8px !important;
             border-radius: 4px !important;
             font-size: 10px !important;
             font-weight: 600 !important;
@@ -462,8 +459,7 @@ const downloadCV = async () => {
             box-sizing: border-box !important;
             white-space: nowrap !important;
             vertical-align: middle !important;
-            line-height: 1 !important;
-            height: auto !important;
+            line-height: 1.3 !important;
         }
 
         /* Ensure no bullets appear on badge spans */
