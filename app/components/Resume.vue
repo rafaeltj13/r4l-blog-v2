@@ -183,7 +183,7 @@ const categorizedSkills = computed(() => {
 });
 
 // Primary color for PDF (replacing oklch)
-const PRIMARY_COLOR = "#7c3238"; // Dark red/maroon matching your theme
+const PRIMARY_COLOR = "#1c4e80";
 
 const downloadCV = async () => {
     const element = document.querySelector(
@@ -336,6 +336,11 @@ const downloadCV = async () => {
             padding-left: 0 !important;
         }
 
+        /* Right column sections spacing */
+        [class*="col-span-4"] > section {
+            margin-bottom: 32px !important;
+        }
+
         /* Job groups */
         .group {
             margin-bottom: 16px;
@@ -443,23 +448,25 @@ const downloadCV = async () => {
         }
 
         /* Tech badges */
-        /* Tech badges */
-        /* Tech badges */
         [class*="bg-slate-100"] {
             display: inline-block !important;
-            background-color: #f1f5f9 !important;
+            background-color: transparent !important;
+            border: 1px solid #cbd5e1 !important;
             color: #475569 !important;
-            padding: 4px 8px !important;
+            padding-top: 0px !important;
+            padding-bottom: 4px !important;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
             border-radius: 4px !important;
             font-size: 10px !important;
             font-weight: 600 !important;
             margin-right: 6px !important;
             margin-bottom: 6px !important;
-            border: none !important;
             box-sizing: border-box !important;
             white-space: nowrap !important;
+            line-height: normal !important;
+            height: auto !important;
             vertical-align: middle !important;
-            line-height: 1.3 !important;
         }
 
         /* Ensure no bullets appear on badge spans */
