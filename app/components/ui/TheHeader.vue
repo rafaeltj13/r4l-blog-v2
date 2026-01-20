@@ -81,6 +81,12 @@ onMounted(() => {
                         active-class="text-primary"
                         >Chat</NuxtLink
                     >
+                    <NuxtLink
+                        to="/about"
+                        class="transition-colors hover:text-primary text-base-content/60"
+                        active-class="text-primary"
+                        >About</NuxtLink
+                    >
                 </nav>
             </div>
 
