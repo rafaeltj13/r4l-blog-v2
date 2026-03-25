@@ -31,8 +31,8 @@ const header = {
     name: "Rafael de Araújo Maciel",
     links: [
         {
-            text: "https://www.linkedin.com/in/rafael-de-ara%C3%BAjo-14b5b1117/",
-            url: "https://www.linkedin.com/in/rafael-de-ara%C3%BAjo-14b5b1117/",
+            text: "https://www.linkedin.com/in/rafaeldamaciel/",
+            url: "https://www.linkedin.com/in/rafaeldamaciel/",
         },
         {
             text: "https://github.com/rafaeltj13",
@@ -40,7 +40,7 @@ const header = {
         },
     ],
     summary:
-        "Senior Software Engineer with 7+ years of expertise specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
+        "Senior Software Engineer with 8+ years of expertise specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
 };
 
 // Helper to group experience by company
@@ -48,7 +48,7 @@ const groupedExperience = computed(() => {
     const groups: Record<string, any> = {};
 
     // Use only the last 7 experiences for the resume
-    const recentExperiences = experienceData.slice(0, 7);
+    const recentExperiences = experienceData.slice(0, 9);
 
     recentExperiences.forEach((item) => {
         if (!groups[item.companyName]) {
@@ -151,13 +151,7 @@ const categorizedSkills = computed(() => {
 
     // Sort into categories
     Object.entries(categories).forEach(([cat, keywords]) => {
-        // keywords are candidates. We check if 'allTechs' has them.
-        // Also check if 'allTechs' has items that CONTAIN these keywords? No, precise match or close match.
-        // experienceData usually has formatting; e.g. "React.js" vs "React".
-        // Let's filter allTechs based on our categorization lists.
-
         const matched = Array.from(allTechs).filter((tech) => {
-            // simplified normalization for check
             if (used.has(tech)) return false;
 
             const isMatch = keywords.some(
@@ -176,14 +170,60 @@ const categorizedSkills = computed(() => {
         }
     });
 
-    // Add "Other" if needed, or explicitly ensure important ones are present.
-    // Let's assume the mapping covers most.
-
     return result;
 });
 
-// Primary color for PDF (replacing oklch)
-const PRIMARY_COLOR = "#1c4e80";
+/**
+ * Fix html2canvas word-spacing bug by wrapping whitespace segments in
+ * <span style="white-space:pre"> elements. html2canvas uses canvas
+ * measureText() for text positioning, which returns different metrics
+ * than the browser's CSS layout engine — causing spaces to collapse.
+ * By making each space segment its own inline element, html2canvas
+ * positions it via the browser's layout instead of its own math.
+ */
+function preserveTextSpacing(container: HTMLElement) {
+    const doc = container.ownerDocument;
+    const walker = doc.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+
+    const textNodes: Text[] = [];
+    while (walker.nextNode()) {
+        textNodes.push(walker.currentNode as Text);
+    }
+
+    for (const node of textNodes) {
+        const text = node.nodeValue;
+        if (!text || !text.trim()) continue;
+
+        const parent = node.parentElement;
+        if (
+            !parent ||
+            parent.tagName === "STYLE" ||
+            parent.tagName === "SCRIPT"
+        )
+            continue;
+
+        // Split into word and whitespace tokens, preserving both
+        const tokens = text.split(/(\s+)/);
+        if (tokens.length <= 1) continue;
+
+        const fragment = doc.createDocumentFragment();
+        for (const token of tokens) {
+            if (!token) continue;
+            if (/^\s+$/.test(token)) {
+                // Wrap whitespace in a span with white-space:pre-wrap so
+                // html2canvas renders it as a positioned element but
+                // line breaking is still allowed at these points
+                const ws = doc.createElement("span");
+                ws.style.whiteSpace = "pre-wrap";
+                ws.textContent = token;
+                fragment.appendChild(ws);
+            } else {
+                fragment.appendChild(doc.createTextNode(token));
+            }
+        }
+        parent.replaceChild(fragment, node);
+    }
+}
 
 const downloadCV = async () => {
     const element = document.querySelector(
@@ -193,488 +233,51 @@ const downloadCV = async () => {
 
     // Dynamically import libraries only on client side
     const { default: jsPDF } = await import("jspdf");
-    const { default: html2canvas } = await import("html2canvas");
+    const { default: html2canvas } = await import("html2canvas-pro");
 
-    // Create an isolated iframe to avoid oklch color issues
-    const iframe = document.createElement("iframe");
-    iframe.style.position = "absolute";
-    iframe.style.left = "-9999px";
-    iframe.style.top = "0";
-    iframe.style.width = "800px";
-    iframe.style.height = "1200px";
-    iframe.style.border = "none";
-    document.body.appendChild(iframe);
+    // Render the original element directly — html2canvas-pro handles oklch
+    // natively, and its onclone callback lets us clean up the internal clone
+    const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        onclone: (_doc: Document, clonedEl: HTMLElement) => {
+            // Remove interactive elements not needed in the PDF
+            clonedEl.querySelectorAll("button").forEach((btn) => btn.remove());
 
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!iframeDoc) {
-        document.body.removeChild(iframe);
-        return;
-    }
+            // Fix collapsed word spacing in html2canvas text rendering
+            preserveTextSpacing(clonedEl);
+        },
+    });
 
-    // Build complete HTML with inline styles (no external CSS that might have oklch)
-    const buildStyledHTML = () => {
-        const clone = element.cloneNode(true) as HTMLElement;
-        const buttons = clone.querySelectorAll('button');
-        buttons.forEach(btn => btn.remove());
+    // Create PDF at A4 size
+    const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+    });
 
-        return `
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #1e293b;
-            background: #ffffff;
-            line-height: 1.5;
-            font-size: 14px;
-        }
+    const imgData = canvas.toDataURL("image/jpeg", 0.98);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
 
-        /* Resume wrapper */
-        .resume-wrapper {
-            padding: 24px 32px;
-            max-width: 100%;
-            background: #ffffff;
-        }
+    // Scale the image to fit the PDF page while preserving aspect ratio
+    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    const imgX = (pdfWidth - imgWidth * ratio) / 2;
+    const imgY = 0;
 
-        /* Header */
-        header {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: space-between !important;
-            align-items: flex-start !important;
-            margin-bottom: 24px !important;
-            padding-bottom: 20px !important;
-            border-bottom: 1px solid #e5e7eb !important;
-        }
-
-        header > div:first-child {
-            width: 60% !important;
-            margin-right: 24px !important;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        header > div:last-child {
-            width: 40% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: flex-end !important;
-            text-align: right !important;
-            padding-right: 48px !important;
-            margin-top: 0 !important;
-            padding-top: 15px !important;
-        }
-
-        /* Contact links - each on own line */
-        header > div:last-child a {
-            display: block !important;
-            text-align: right !important;
-            white-space: nowrap !important;
-            margin-bottom: 3px !important;
-        }
-
-        header > div:last-child > div {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: flex-end !important;
-            gap: 2px !important;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 2.25rem !important;
-            font-weight: 700 !important;
-            color: ${PRIMARY_COLOR} !important;
-            margin-bottom: 20px !important;
-            letter-spacing: -0.025em;
-            line-height: 1 !important;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        h2 {
-            font-size: 1.25rem !important;
-            font-weight: 700 !important;
-            color: ${PRIMARY_COLOR} !important;
-            margin-bottom: 14px !important;
-        }
-
-        h3 {
-            font-size: 1rem !important;
-            font-weight: 700 !important;
-            color: #0f172a !important;
-        }
-
-        /* Main layout - Flexbox instead of Grid */
-        .grid {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: space-between !important;
-            width: 100% !important;
-        }
-
-        /* Left column */
-        [class*="col-span-8"] {
-            width: 65% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            padding-right: 32px !important;
-            padding-left: 0 !important;
-        }
-
-        /* Right column */
-        [class*="col-span-4"] {
-            width: 35% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            padding-left: 0 !important;
-        }
-
-        /* Right column sections spacing */
-        [class*="col-span-4"] > section {
-            margin-bottom: 32px !important;
-        }
-
-        /* Job groups */
-        .group {
-            margin-bottom: 16px;
-        }
-
-        /* Job title row - title and period on same line */
-        [class*="sm:flex-row"] {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: baseline !important;
-            justify-content: space-between !important;
-            margin-bottom: 2px !important;
-        }
-
-        /* Show desktop period */
-        [class*="hidden"][class*="sm:block"] {
-            display: block !important;
-        }
-
-        /* Hide mobile period */
-        [class*="sm:hidden"] {
-            display: none !important;
-        }
-
-        /* Period styling */
-        [class*="font-mono"][class*="text-xs"] {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace !important;
-            font-size: 11px !important;
-            color: #64748b !important;
-            white-space: nowrap !important;
-        }
-
-        /* Company row */
-        [class*="flex"][class*="items-center"][class*="text-sm"] {
-            display: flex !important;
-            align-items: center !important;
-            font-size: 13px !important;
-            color: #475569 !important;
-            font-weight: 500 !important;
-            margin-bottom: 8px !important;
-        }
-
-        /* Separator */
-        [class*="mx-2"][class*="text-slate-300"] {
-            margin: 0 8px !important;
-            color: #cbd5e1 !important;
-        }
-
-        /* Location text */
-        [class*="text-slate-500"][class*="font-normal"] {
-            color: #64748b !important;
-            font-weight: 400 !important;
-        }
-
-        /* Project list */
-        ul[class*="list-disc"] {
-            list-style-type: none !important;
-            padding-left: 0 !important;
-            margin-left: 0 !important;
-        }
-
-        ul[class*="list-disc"] > li {
-            margin-bottom: 14px !important;
-            color: #475569 !important;
-            font-size: 13px !important;
-            line-height: 1.5 !important;
-            padding-left: 14px !important;
-            position: relative !important;
-        }
-
-        /* Custom bullet point for list items */
-        ul[class*="list-disc"] > li::before {
-            content: "•" !important;
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            color: ${PRIMARY_COLOR} !important;
-            font-size: 14px !important;
-        }
-
-        /* Description text block */
-        ul[class*="list-disc"] > li > span.block,
-        ul[class*="list-disc"] > li > span:first-child {
-            display: block !important;
-            margin-bottom: 6px !important;
-        }
-
-        /* Space between job items */
-        [class*="space-y-10"] > * + * {
-            margin-top: 20px !important;
-        }
-
-        [class*="space-y-4"] > * + * {
-            margin-top: 10px !important;
-        }
-
-        [class*="flex-wrap"] {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 0 !important;
-            margin-top: 6px !important;
-            margin-bottom: 2px !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-        }
-
-        /* Tech badges */
-        [class*="bg-slate-100"] {
-            display: inline-block !important;
-            background-color: transparent !important;
-            border: 1px solid #cbd5e1 !important;
-            color: #475569 !important;
-            padding-top: 0px !important;
-            padding-bottom: 4px !important;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
-            border-radius: 4px !important;
-            font-size: 10px !important;
-            font-weight: 600 !important;
-            margin-right: 6px !important;
-            margin-bottom: 6px !important;
-            box-sizing: border-box !important;
-            white-space: nowrap !important;
-            line-height: normal !important;
-            height: auto !important;
-            vertical-align: middle !important;
-        }
-
-        /* Ensure no bullets appear on badge spans */
-        [class*="flex-wrap"] > span::before {
-            content: none !important;
-            display: none !important;
-        }
-
-        /* Sidebar sections border */
-        [class*="border-l-2"][class*="border-primary"] {
-            border-left: 2px solid ${PRIMARY_COLOR}40 !important;
-            padding-left: 10px !important;
-            padding-top: 2px !important;
-            padding-bottom: 2px !important;
-            margin-left: 0 !important;
-        }
-
-        /* Skills category */
-        [class*="gap-6"] {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 14px !important;
-        }
-
-        /* Skills category title */
-        [class*="uppercase"][class*="tracking-wide"] {
-            font-weight: 700 !important;
-            color: #0f172a !important;
-            font-size: 11px !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.05em !important;
-            margin-bottom: 4px !important;
-        }
-
-        /* Skills list text */
-        [class*="text-sm"][class*="text-slate-600"][class*="leading-relaxed"] {
-            color: #475569 !important;
-            font-size: 13px !important;
-            line-height: 1.5 !important;
-        }
-
-        /* Education institution */
-        [class*="font-bold"][class*="text-slate-900"][class*="leading-tight"] {
-            font-weight: 700 !important;
-            color: #0f172a !important;
-            line-height: 1.3 !important;
-            font-size: 14px !important;
-        }
-
-        /* Education degree */
-        [class*="text-sm"][class*="text-slate-700"][class*="font-medium"] {
-            font-size: 13px !important;
-            color: #334155 !important;
-            margin-top: 6px !important;
-            font-weight: 500 !important;
-        }
-
-        /* Education period */
-        [class*="text-xs"][class*="text-slate-500"][class*="font-mono"] {
-            font-size: 11px !important;
-            color: #64748b !important;
-            margin-top: 2px !important;
-            margin-bottom: 10px !important;
-            font-family: ui-monospace, SFMono-Regular, monospace !important;
-        }
-
-        /* Education details list */
-        ul[class*="list-none"] {
-            list-style: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        ul[class*="list-none"] li {
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-            font-size: 13px !important;
-            color: #475569 !important;
-            margin-bottom: 4px !important;
-            line-height: 1.5 !important;
-        }
-
-        /* Education bullet - small dot */
-        [class*="w-1"][class*="h-1"][class*="bg-primary"] {
-            width: 5px !important;
-            height: 5px !important;
-            min-width: 5px !important;
-            max-width: 5px !important;
-            background-color: ${PRIMARY_COLOR} !important;
-            border-radius: 50% !important;
-            margin-top: 6px !important;
-            flex-shrink: 0 !important;
-            display: inline-block !important;
-        }
-
-        /* Contact info */
-        [class*="font-mono"][class*="text-sm"] {
-            font-family: ui-monospace, SFMono-Regular, monospace !important;
-            font-size: 12px !important;
-        }
-
-        /* Links */
-        a {
-            text-decoration: none !important;
-        }
-
-        a[class*="text-primary"] {
-            color: ${PRIMARY_COLOR} !important;
-        }
-
-        a[class*="text-slate-500"] {
-            color: #64748b !important;
-        }
-
-        /* Location text */
-        p[class*="text-slate-400"] {
-            color: #94a3b8 !important;
-            margin-top: 4px !important;
-        }
-
-        /* Summary text */
-        [class*="text-slate-600"][class*="text-sm"][class*="leading-relaxed"] {
-            color: #475569 !important;
-            font-size: 13px !important;
-            line-height: 1.6 !important;
-        }
-
-        /* Contact links container */
-        header [class*="flex-col"][class*="items-end"] {
-            align-items: flex-end !important;
-        }
-
-        /* General text colors */
-        [class*="text-slate-800"] { color: #1e293b !important; }
-        [class*="text-slate-700"] { color: #334155 !important; }
-        [class*="text-slate-600"] { color: #475569 !important; }
-        [class*="text-slate-500"] { color: #64748b !important; }
-        [class*="text-slate-400"] { color: #94a3b8 !important; }
-        [class*="text-slate-300"] { color: #cbd5e1 !important; }
-        [class*="text-slate-900"] { color: #0f172a !important; }
-
-        /* Primary text */
-        [class*="text-primary"]:not(a) {
-            color: ${PRIMARY_COLOR} !important;
-        }
-    </style>
-</head>
-<body>
-    ${clone.outerHTML}
-</body>
-</html>`;
-    };
-
-    // Write HTML to iframe
-    iframeDoc.open();
-    iframeDoc.write(buildStyledHTML());
-    iframeDoc.close();
-
-    // Wait for iframe to render
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    const iframeElement = iframeDoc.querySelector(
-        ".resume-wrapper",
-    ) as HTMLElement;
-    if (!iframeElement) {
-        document.body.removeChild(iframe);
-        return;
-    }
-
-    try {
-        // Render to canvas
-        const canvas = await html2canvas(iframeElement, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: "#ffffff",
-        });
-
-        // Create PDF
-        const pdf = new jsPDF({
-            orientation: "portrait",
-            unit: "mm",
-            format: "a4",
-        });
-
-        const imgData = canvas.toDataURL("image/jpeg", 0.98);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-        const imgX = (pdfWidth - imgWidth * ratio) / 2;
-        const imgY = 0;
-
-        pdf.addImage(
-            imgData,
-            "JPEG",
-            imgX,
-            imgY,
-            imgWidth * ratio,
-            imgHeight * ratio,
-        );
-        pdf.save("Rafael_Maciel_CV.pdf");
-    } finally {
-        // Clean up
-        document.body.removeChild(iframe);
-    }
+    pdf.addImage(
+        imgData,
+        "JPEG",
+        imgX,
+        imgY,
+        imgWidth * ratio,
+        imgHeight * ratio,
+    );
+    pdf.save("Rafael_Maciel_CV.pdf");
 };
 </script>
 
@@ -721,7 +324,7 @@ const downloadCV = async () => {
                     >
                         {{
                             link.text.includes("linkedin")
-                                ? "linkedin.com/in/rafael-de-araujo"
+                                ? "linkedin.com/in/rafaeldamaciel"
                                 : link.text
                                       .replace(/^https?:\/\/(www\.)?/, "")
                                       .replace(/\/$/, "")

@@ -20,7 +20,7 @@
     "@unhead/vue": "^2.0.3",
     "@vueuse/motion": "^3.0.3",
     "eslint": "^9.0.0",
-    "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^2.0.2",
     "jspdf": "^4.0.0",
     "nuxt": "^4.2.2",
     "openai": "^6.16.0",
