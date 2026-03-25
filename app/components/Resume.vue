@@ -198,7 +198,8 @@ function preserveTextSpacing(container: HTMLElement) {
         if (
             !parent ||
             parent.tagName === "STYLE" ||
-            parent.tagName === "SCRIPT"
+            parent.tagName === "SCRIPT" ||
+            /^H[1-6]$/.test(parent.tagName)
         )
             continue;
 
