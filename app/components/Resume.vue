@@ -11,44 +11,53 @@ const props = withDefaults(
     },
 );
 
+// Easily editable header info
+const fullName = "Rafael de Araújo Maciel";
+const position = "Senior Software Engineer";
+
 const contactInfo = {
     location: "João Pessoa/PB, Brazil (GMT -3)",
     phone: "+55 83 98113-1924",
     email: "rafael.damaciel@proton.me",
+    linkedin: {
+        label: "linkedin.com/in/rafaeldamaciel",
+        url: "https://www.linkedin.com/in/rafaeldamaciel/",
+    },
+    github: {
+        label: "github.com/rafaeltj13",
+        url: "https://github.com/rafaeltj13",
+    },
 };
+
+const summary =
+    "Senior Software Engineer with 8+ years of expertise specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
 
 const education = {
     institution: "Federal University of Campina Grande - UFCG",
-    degree: "Bachelor of Computer Science", // Inferred from "Bachelor" and typical UFCG degree
+    degree: "Bachelor of Computer Science",
     period: "2015 - 2019",
     details: [
-        "Participation in Monitoring Projects:",
-        "Programming Laboratory II",
+        "Participation in Monitoring Projects: Programming Laboratory II",
     ],
-};
-
-const header = {
-    name: "Rafael de Araújo Maciel",
-    links: [
-        {
-            text: "https://www.linkedin.com/in/rafaeldamaciel/",
-            url: "https://www.linkedin.com/in/rafaeldamaciel/",
-        },
-        {
-            text: "https://github.com/rafaeltj13",
-            url: "https://github.com/rafaeltj13",
-        },
-    ],
-    summary:
-        "Senior Software Engineer with 8+ years of expertise specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
 };
 
 // Helper to group experience by company
 const groupedExperience = computed(() => {
     const groups: Record<string, any> = {};
 
-    // Use only the last 7 experiences for the resume
-    const recentExperiences = experienceData.slice(0, 9);
+    // Hide specific Trio entries from the resume to keep it concise
+    const HIDDEN_TRIO_PARTNERS = new Set(["Optel Group", "Path"]);
+
+    const recentExperiences = experienceData.slice(0, 7).filter((item) => {
+        if (item.companyName !== "Trio") return true;
+        // Hide the older Path entry (Software Engineer, Vue.js)
+        // and the Optel Group entry
+        if (item.partner === "Optel Group") return false;
+        if (item.partner === "Studylog") return false;
+        if (item.partner === "Path" && item.title === "Software Engineer")
+            return false;
+        return true;
+    });
 
     recentExperiences.forEach((item) => {
         if (!groups[item.companyName]) {
@@ -66,10 +75,6 @@ const groupedExperience = computed(() => {
     });
 
     return Object.values(groups).map((group) => {
-        const dates = group.items.map((i: any) => ({
-            start: new Date(i.dateStart),
-            end: new Date(i.dateEnd),
-        }));
         const latestItem = group.items[0];
         const earliestItem = group.items[group.items.length - 1];
 
@@ -85,7 +90,7 @@ const groupedExperience = computed(() => {
         if (group.name === "Trio") {
             const hasFuture = new Date(latestItem.dateEnd) > new Date();
             if (hasFuture || latestItem.dateEnd.startsWith("2026"))
-                period = "Jul/2021 - Current";
+                period = "Jul 2021 - Present";
         }
 
         return {
@@ -114,8 +119,6 @@ const categorizedSkills = computed(() => {
         item.technologies?.forEach((t) => allTechs.add(t));
     });
 
-    ["TypeScript", "JavaScript", "Git"].forEach((s) => allTechs.add(s));
-
     const categories = {
         "Frameworks & Libraries": [
             "React.js",
@@ -127,15 +130,19 @@ const categorizedSkills = computed(() => {
             "Node.js",
             "Express",
             "FastAPI",
+            "NestJS",
             "Angular.js",
             "ASP.NET",
             "Pinia",
             "Storybook",
+            "Apollo GraphQL",
+            "GraphQL",
         ],
         Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
         "Data & Cloud": [
             "MySQL",
             "MongoDB",
+            "PostgreSQL",
             "SQL Server",
             "Google BigQuery",
             "Google ADK",
@@ -149,7 +156,6 @@ const categorizedSkills = computed(() => {
     const result: Record<string, string[]> = {};
     const used = new Set<string>();
 
-    // Sort into categories
     Object.entries(categories).forEach(([cat, keywords]) => {
         const matched = Array.from(allTechs).filter((tech) => {
             if (used.has(tech)) return false;
@@ -174,56 +180,14 @@ const categorizedSkills = computed(() => {
 });
 
 /**
- * Fix html2canvas word-spacing bug by wrapping whitespace segments in
- * <span style="white-space:pre"> elements. html2canvas uses canvas
- * measureText() for text positioning, which returns different metrics
- * than the browser's CSS layout engine — causing spaces to collapse.
- * By making each space segment its own inline element, html2canvas
- * positions it via the browser's layout instead of its own math.
+ * Split a description into individual bullet points.
+ * Multi-line descriptions (template literals) are split on double-newlines.
  */
-function preserveTextSpacing(container: HTMLElement) {
-    const doc = container.ownerDocument;
-    const walker = doc.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-
-    const textNodes: Text[] = [];
-    while (walker.nextNode()) {
-        textNodes.push(walker.currentNode as Text);
-    }
-
-    for (const node of textNodes) {
-        const text = node.nodeValue;
-        if (!text || !text.trim()) continue;
-
-        const parent = node.parentElement;
-        if (
-            !parent ||
-            parent.tagName === "STYLE" ||
-            parent.tagName === "SCRIPT" ||
-            /^H[1-6]$/.test(parent.tagName)
-        )
-            continue;
-
-        // Split into word and whitespace tokens, preserving both
-        const tokens = text.split(/(\s+)/);
-        if (tokens.length <= 1) continue;
-
-        const fragment = doc.createDocumentFragment();
-        for (const token of tokens) {
-            if (!token) continue;
-            if (/^\s+$/.test(token)) {
-                // Wrap whitespace in a span with white-space:pre-wrap so
-                // html2canvas renders it as a positioned element but
-                // line breaking is still allowed at these points
-                const ws = doc.createElement("span");
-                ws.style.whiteSpace = "pre-wrap";
-                ws.textContent = token;
-                fragment.appendChild(ws);
-            } else {
-                fragment.appendChild(doc.createTextNode(token));
-            }
-        }
-        parent.replaceChild(fragment, node);
-    }
+function splitDescription(description: string): string[] {
+    return description
+        .split(/\n\s*\n/)
+        .map((p) => p.replace(/\s+/g, " ").trim())
+        .filter(Boolean);
 }
 
 const downloadCV = async () => {
@@ -232,27 +196,46 @@ const downloadCV = async () => {
     ) as HTMLElement | null;
     if (!element) return;
 
-    // Dynamically import libraries only on client side
     const { default: jsPDF } = await import("jspdf");
     const { default: html2canvas } = await import("html2canvas-pro");
 
-    // Render the original element directly — html2canvas-pro handles oklch
-    // natively, and its onclone callback lets us clean up the internal clone
+    // A4 at 2x scale: 210mm × 297mm → ~794px width at 96dpi
+    const A4_WIDTH_PX = 794;
+
     const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        width: A4_WIDTH_PX,
+        windowWidth: A4_WIDTH_PX,
         onclone: (_doc: Document, clonedEl: HTMLElement) => {
-            // Remove interactive elements not needed in the PDF
+            // Remove interactive elements
             clonedEl.querySelectorAll("button").forEach((btn) => btn.remove());
 
-            // Fix collapsed word spacing in html2canvas text rendering
-            preserveTextSpacing(clonedEl);
+            // Force the clone to A4-friendly sizing
+            clonedEl.style.width = A4_WIDTH_PX + "px";
+            clonedEl.style.maxWidth = "none";
+            clonedEl.style.padding = "40px 48px";
+            clonedEl.style.boxShadow = "none";
+            clonedEl.style.margin = "0";
+
+            /*
+             * Workaround for html2canvas-pro word-spacing bug:
+             * html2canvas's fast text path uses ctx.measureText() which
+             * returns different widths than CSS layout, causing word
+             * collisions. Setting an explicit non-default letter-spacing
+             * on every text-containing element forces the per-character
+             * rendering path that respects real glyph widths.
+             */
+            const allEls = clonedEl.querySelectorAll<HTMLElement>("*");
+            allEls.forEach((el) => {
+                el.style.letterSpacing = "0.01px";
+            });
+            clonedEl.style.letterSpacing = "0.01px";
         },
     });
 
-    // Create PDF at A4 size
     const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
@@ -265,227 +248,264 @@ const downloadCV = async () => {
     const imgWidth = canvas.width;
     const imgHeight = canvas.height;
 
-    // Scale the image to fit the PDF page while preserving aspect ratio
-    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-    const imgX = (pdfWidth - imgWidth * ratio) / 2;
-    const imgY = 0;
+    // Scale to fit width, then paginate if needed
+    const scaledWidth = pdfWidth;
+    const scaledHeight = (imgHeight * pdfWidth) / imgWidth;
 
-    pdf.addImage(
-        imgData,
-        "JPEG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio,
-    );
+    if (scaledHeight <= pdfHeight) {
+        // Fits on one page
+        pdf.addImage(imgData, "JPEG", 0, 0, scaledWidth, scaledHeight);
+    } else {
+        // Multi-page: slice the canvas into page-sized chunks
+        const pageCanvasHeight = (pdfHeight / pdfWidth) * imgWidth;
+        const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
+
+        for (let i = 0; i < totalPages; i++) {
+            if (i > 0) pdf.addPage();
+
+            const srcY = i * pageCanvasHeight;
+            const srcH = Math.min(pageCanvasHeight, imgHeight - srcY);
+            const destH = (srcH * pdfWidth) / imgWidth;
+
+            // Create a temporary canvas for this page slice
+            const pageCanvas = document.createElement("canvas");
+            pageCanvas.width = imgWidth;
+            pageCanvas.height = srcH;
+            const ctx = pageCanvas.getContext("2d")!;
+            ctx.drawImage(
+                canvas,
+                0,
+                srcY,
+                imgWidth,
+                srcH,
+                0,
+                0,
+                imgWidth,
+                srcH,
+            );
+
+            const pageData = pageCanvas.toDataURL("image/jpeg", 0.98);
+            pdf.addImage(pageData, "JPEG", 0, 0, pdfWidth, destH);
+        }
+    }
+
     pdf.save("Rafael_Maciel_CV.pdf");
 };
 </script>
 
 <template>
     <div
-        class="resume-wrapper w-full max-w-5xl mx-auto bg-white shadow-xl p-8 md:p-12 print:p-0 print:shadow-none print:max-w-none text-slate-800"
+        class="resume-wrapper w-full max-w-3xl mx-auto bg-white shadow-xl p-6 md:p-8 print:p-0 print:shadow-none print:max-w-none text-slate-800"
     >
-        <!-- Top Header -->
-        <header
-            class="flex flex-col md:flex-row justify-between items-start mb-8 border-b border-gray-200 pb-8"
-        >
-            <!-- Name & Title -->
-            <div class="max-w-2xl">
-                <h1 class="text-5xl font-bold text-primary mb-4 tracking-tight">
-                    {{ header.name }}
-                </h1>
-                <div class="text-slate-600 text-sm leading-relaxed max-w-xl">
-                    {{ header.summary }}
-                </div>
-            </div>
-
-            <!-- Contact Info -->
-            <div
-                class="flex flex-col items-start md:items-end gap-1.5 text-sm font-mono mt-6 md:mt-1 shrink-0"
+        <!-- ===== Header ===== -->
+        <header class="mb-4 pb-3 text-center">
+            <h1
+                class="text-xl font-bold text-primary tracking-tight leading-tight"
             >
-                <a
-                    :href="'mailto:' + contactInfo.email"
-                    class="text-slate-500 hover:text-primary transition-colors"
-                    >{{ contactInfo.email }}</a
-                >
+                {{ fullName }}
+            </h1>
+            <p class="text-[11px] text-slate-700 font-medium mt-0.5">
+                {{ position }}
+            </p>
+
+            <!-- Contact: row 1 (location, phone, email) -->
+            <div
+                class="mt-1.5 flex flex-nowrap items-center justify-center gap-x-2 text-[10px] text-slate-600 whitespace-nowrap"
+            >
+                <span>{{ contactInfo.location }}</span>
+                <span class="text-slate-300">|</span>
                 <a
                     :href="'tel:' + contactInfo.phone"
-                    class="text-slate-500 hover:text-primary transition-colors"
+                    class="hover:text-primary transition-colors"
                     >{{ contactInfo.phone }}</a
                 >
+                <span class="text-slate-300">|</span>
+                <a
+                    :href="'mailto:' + contactInfo.email"
+                    class="hover:text-primary transition-colors"
+                    >{{ contactInfo.email }}</a
+                >
+            </div>
 
-                <div class="flex flex-col items-start md:items-end">
-                    <a
-                        v-for="link in header.links"
-                        :key="link.url"
-                        :href="link.url"
-                        target="_blank"
-                        class="text-primary hover:text-primary/80 hover:underline transition-colors block max-w-[200px] md:max-w-none truncate md:overflow-visible md:whitespace-normal text-right"
-                    >
-                        {{
-                            link.text.includes("linkedin")
-                                ? "linkedin.com/in/rafaeldamaciel"
-                                : link.text
-                                      .replace(/^https?:\/\/(www\.)?/, "")
-                                      .replace(/\/$/, "")
-                        }}
-                    </a>
-                </div>
-
-                <p class="text-slate-400 mt-1">{{ contactInfo.location }}</p>
+            <!-- Contact: row 2 (linkedin, github) -->
+            <div
+                class="mt-0.5 flex flex-nowrap items-center justify-center gap-x-2 text-[10px] whitespace-nowrap"
+            >
+                <a
+                    :href="contactInfo.linkedin.url"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-primary hover:underline"
+                    >{{ contactInfo.linkedin.label }}</a
+                >
+                <span class="text-slate-300">|</span>
+                <a
+                    :href="contactInfo.github.url"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-primary hover:underline"
+                    >{{ contactInfo.github.label }}</a
+                >
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-            <!-- Left Column (Main Experience) - 66% width -->
-            <div class="md:col-span-8 flex flex-col gap-10">
-                <!-- Experience Section -->
-                <section>
-                    <h2
-                        class="text-2xl font-bold text-primary mb-6 flex items-center gap-2"
-                    >
-                        Relevant Experience
-                    </h2>
+        <!-- ===== Summary ===== -->
+        <section class="mb-4">
+            <h2
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-1.5 pb-1 border-b border-primary/20"
+            >
+                Summary
+            </h2>
+            <p class="text-[11px] text-slate-700 leading-relaxed">
+                {{ summary }}
+            </p>
+        </section>
 
-                    <div class="space-y-10">
+        <!-- ===== Skills ===== -->
+        <section class="mb-4">
+            <h2
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
+            >
+                Skills
+            </h2>
+            <dl
+                class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-x-3 gap-y-1"
+            >
+                <template
+                    v-for="(items, category) in categorizedSkills"
+                    :key="category"
+                >
+                    <dt class="text-[11px] font-semibold text-slate-900">
+                        {{ category }}
+                    </dt>
+                    <dd class="text-[11px] text-slate-600 leading-relaxed">
+                        {{ items.join(" · ") }}
+                    </dd>
+                </template>
+            </dl>
+        </section>
+
+        <!-- ===== Professional Experience ===== -->
+        <section class="mb-4">
+            <h2
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2.5 pb-1 border-b border-primary/20"
+            >
+                Professional Experience
+            </h2>
+
+            <div class="space-y-3">
+                <div
+                    v-for="group in groupedExperience"
+                    :key="group.name"
+                    class="group"
+                >
+                    <!-- Job Header -->
+                    <div class="mb-2">
                         <div
-                            v-for="group in groupedExperience"
-                            :key="group.name"
-                            class="group"
+                            class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1"
                         >
-                            <!-- Job Header -->
-                            <div class="mb-3">
-                                <div
-                                    class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-1"
-                                >
-                                    <h3
-                                        class="font-bold text-slate-900 text-lg group-hover:text-primary transition-colors"
-                                    >
-                                        {{ group.title }}
-                                    </h3>
-                                    <span
-                                        class="text-xs font-mono text-slate-500 whitespace-nowrap hidden sm:block"
-                                        >{{ group.period }}</span
-                                    >
-                                </div>
-                                <div
-                                    class="flex items-center text-sm text-slate-600 font-medium"
-                                >
-                                    <span>{{ group.name }}</span>
-                                    <span
-                                        v-if="group.location"
-                                        class="mx-2 text-slate-300"
-                                        >|</span
-                                    >
-                                    <span
-                                        v-if="group.location"
-                                        class="text-slate-500 font-normal"
-                                        >{{ group.location }}</span
-                                    >
-                                    <!-- Mobile Period -->
-                                    <span
-                                        class="sm:hidden ml-auto text-xs font-mono text-slate-500"
-                                        >{{ group.period }}</span
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Projects List -->
-                            <ul
-                                class="list-disc list-outside ml-4 space-y-4 marker:text-primary/50"
+                            <h3
+                                class="font-bold text-slate-900 text-[12px] leading-tight"
                             >
-                                <li
-                                    v-for="(project, idx) in group.items"
-                                    :key="idx"
-                                    class="text-sm leading-relaxed text-slate-600 pl-1"
-                                >
-                                    <span class="block mb-1">{{
-                                        project.description
-                                    }}</span>
-                                    <div
-                                        v-if="
-                                            project.technologies &&
-                                            project.technologies.length
-                                        "
-                                        class="flex flex-wrap gap-1 mt-1.5 opacity-90"
-                                    >
-                                        <span
-                                            v-for="tech in project.technologies"
-                                            :key="tech"
-                                            class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600"
-                                        >
-                                            {{ tech }}
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Right Column (Sidebar) - 33% width -->
-            <div class="md:col-span-4 flex flex-col gap-10">
-                <!-- Skills -->
-                <section>
-                    <h2 class="text-2xl font-bold text-primary mb-6">Skills</h2>
-
-                    <div class="border-l-2 border-primary/20 pl-4 py-1">
-                        <div class="flex flex-col gap-6">
-                            <div
-                                v-for="(items, category) in categorizedSkills"
-                                :key="category"
+                                {{ group.title }}
+                                <span class="text-slate-500 font-normal">
+                                    @ {{ group.name }}
+                                </span>
+                            </h3>
+                            <span
+                                class="text-[10px] font-mono text-slate-500 whitespace-nowrap"
+                                >{{ group.period }}</span
                             >
-                                <h3
-                                    class="font-bold text-slate-900 text-sm mb-2 uppercase tracking-wide opacity-90"
-                                >
-                                    {{ category }}
-                                </h3>
-                                <div class="flex flex-wrap gap-x-1.5 gap-y-1">
-                                    <span
-                                        class="text-sm text-slate-600 leading-relaxed"
-                                    >
-                                        {{ items.join(", ") }}
-                                    </span>
-                                </div>
-                            </div>
                         </div>
+                        <p
+                            v-if="group.location"
+                            class="text-[10px] text-slate-500 mt-0.5"
+                        >
+                            {{ group.location }}
+                        </p>
                     </div>
-                </section>
 
-                <!-- Education -->
-                <section>
-                    <h2 class="text-2xl font-bold text-primary mb-6">
-                        Education
-                    </h2>
+                    <!-- Projects List -->
+                    <div
+                        v-for="(project, idx) in group.items"
+                        :key="idx"
+                        class="mb-2 last:mb-0"
+                    >
+                        <p
+                            v-if="project.partner"
+                            class="text-[11px] font-semibold text-slate-800 mb-0.5"
+                        >
+                            {{ project.partner }}
+                        </p>
 
-                    <div class="border-l-2 border-primary/20 pl-4 py-1">
-                        <h3 class="font-bold text-slate-900 leading-tight">
-                            {{ education.institution }}
-                        </h3>
-                        <div class="text-sm text-slate-700 mt-2 font-medium">
-                            {{ education.degree }}
-                        </div>
-                        <div class="text-xs text-slate-500 mt-1 mb-3 font-mono">
-                            {{ education.period }}
-                        </div>
-                        <ul class="list-none space-y-1 text-sm text-slate-600">
+                        <ul
+                            class="list-disc list-outside ml-4 space-y-0 marker:text-slate-400"
+                        >
                             <li
-                                v-for="(line, idx) in education.details"
-                                :key="idx"
-                                class="flex items-center gap-2"
+                                v-for="(point, pIdx) in splitDescription(
+                                    project.description,
+                                )"
+                                :key="pIdx"
+                                class="text-[10.5px] leading-snug text-slate-700 pl-0.5"
                             >
-                                <span
-                                    class="mt-1.5 w-1 h-1 bg-primary rounded-full shrink-0"
-                                ></span>
-                                <span>{{ line }}</span>
+                                {{ point }}
                             </li>
                         </ul>
+
+                        <div
+                            v-if="
+                                project.technologies &&
+                                project.technologies.length
+                            "
+                            class="flex flex-wrap gap-0.5 mt-1 ml-4"
+                        >
+                            <span
+                                v-for="tech in project.technologies"
+                                :key="tech"
+                                class="inline-flex items-center px-1 py-0 rounded text-[9px] font-medium bg-slate-100 text-slate-600"
+                            >
+                                {{ tech }}
+                            </span>
+                        </div>
                     </div>
-                </section>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <!-- ===== Education ===== -->
+        <section>
+            <h2
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
+            >
+                Education
+            </h2>
+            <div>
+                <div
+                    class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1"
+                >
+                    <h3
+                        class="font-bold text-slate-900 text-[12px] leading-tight"
+                    >
+                        {{ education.institution }}
+                    </h3>
+                    <span
+                        class="text-[10px] font-mono text-slate-500 whitespace-nowrap"
+                    >
+                        {{ education.period }}
+                    </span>
+                </div>
+                <div class="text-[11px] text-slate-700 mt-0.5 font-medium">
+                    {{ education.degree }}
+                </div>
+                <ul
+                    class="list-disc list-outside ml-4 mt-1 space-y-0 text-[10.5px] text-slate-600 marker:text-primary/60"
+                >
+                    <li v-for="(line, idx) in education.details" :key="idx">
+                        {{ line }}
+                    </li>
+                </ul>
+            </div>
+        </section>
     </div>
 
     <!-- Floating Export Button -->
@@ -532,7 +552,6 @@ const downloadCV = async () => {
         Arial,
         sans-serif;
 }
-/* For print PDF accuracy */
 @media print {
     .resume-wrapper {
         box-shadow: none;
