@@ -114,22 +114,7 @@ export const experienceData = [
     dateStart: "2020-02-01",
     dateEnd: "2020-12-01",
     description:
-      "Developed a mobile application to book, manage and offer appointments to the client",
-  },
-  {
-    title: "Software Engineer",
-    companyName: "Lella.co",
-    technologies: [
-      "React.js",
-      "Stripe (Software)",
-      "Express",
-      "Node.js",
-      "MongoDB",
-    ],
-    dateStart: "2020-02-01",
-    dateEnd: "2020-12-01",
-    description:
-      "Developed web application for data visualization for the mobile app.",
+      "Developed a mobile application to book, manage and offer appointments to the client; Built a web application for data visualization for the mobile app.",
   },
   {
     title: "Junior System Analyst",
