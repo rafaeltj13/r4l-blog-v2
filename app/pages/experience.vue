@@ -72,6 +72,7 @@ const tabs = [
                     v-for="(item, index) in experienceData"
                     :key="index"
                     :experience="item"
+                    timeline
                     :is-first="index === 0"
                     :is-last="index === experienceData.length - 1"
                 />
