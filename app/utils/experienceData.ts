@@ -97,9 +97,11 @@ export const experienceData = [
     technologies: ["Vue.js", "Express", "Node.js", "MongoDB"],
     dateStart: "2020-11-01",
     dateEnd: "2021-06-01",
-    description: `Built a traceability system that tracks beers all the way to their raw materials, creating a system that generates spreadsheets to replace manually work by the customer employees;
+    description: `Improved a private social network using Vue, Node, Express, and MongoDB;
 
-    Automated all the tracking internal systems into a single platform to help identify problems during the process and increase the control of the customer with their own products.`,
+    Developed from scratch the social platform using new frameworks and libraries using Vue 3;
+
+    Helped define and refine requirements for this new enhanced social network`,
   },
   {
     title: "Software Engineer",
@@ -113,8 +115,9 @@ export const experienceData = [
     ],
     dateStart: "2020-02-01",
     dateEnd: "2020-12-01",
-    description:
-      "Developed a mobile application to book, manage and offer appointments to the client; Built a web application for data visualization for the mobile app.",
+    description: `Developed a mobile application to book, manage and offer appointments to the client;
+
+      Built a web application for data visualization for the mobile app.`,
   },
   {
     title: "Junior System Analyst",

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { experienceData } from "~/utils/experienceData";
-import { computed } from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -17,7 +16,7 @@ const position = "Senior Software Engineer";
 
 const contactInfo = {
     location: "João Pessoa/PB, Brazil (GMT -3)",
-    phone: "+55 83 98113-1924",
+    phone: "+55 83 98152-4508",
     email: "rafael.damaciel@proton.me",
     linkedin: {
         label: "linkedin.com/in/rafaeldamaciel",
@@ -45,19 +44,7 @@ const education = {
 const groupedExperience = computed(() => {
     const groups: Record<string, any> = {};
 
-    // Hide specific Trio entries from the resume to keep it concise
-    const HIDDEN_TRIO_PARTNERS = new Set(["Optel Group", "Path"]);
-
-    const recentExperiences = experienceData.slice(0, 7).filter((item) => {
-        if (item.companyName !== "Trio") return true;
-        // Hide the older Path entry (Software Engineer, Vue.js)
-        // and the Optel Group entry
-        if (item.partner === "Optel Group") return false;
-        if (item.partner === "Studylog") return false;
-        if (item.partner === "Path" && item.title === "Software Engineer")
-            return false;
-        return true;
-    });
+    const recentExperiences = experienceData;
 
     recentExperiences.forEach((item) => {
         if (!groups[item.companyName]) {
@@ -520,13 +507,13 @@ const downloadCV = async () => {
             leave-to-class="opacity-0 translate-y-4"
         >
             <div
-                v-if="showButton"
-                class="fixed bottom-8 right-8 print:hidden z-[100]"
+                v-if="props.showButton"
+                class="fixed bottom-8 right-8 print:hidden z-100"
             >
                 <button
-                    @click="downloadCV"
-                    class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
                     data-tip="Download CV"
+                    class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
+                    @click="downloadCV"
                 >
                     <Icon name="uil:download-alt" :size="24" />
                 </button>

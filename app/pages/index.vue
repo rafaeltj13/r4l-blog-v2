@@ -1,12 +1,10 @@
 <script setup lang="ts">
+import { experienceData } from "~/utils/experienceData";
+import { posts } from "~/utils/postsData";
+
 useHead({
     title: "R4L - Rafael Maciel",
 });
-
-import { experienceData } from "~/utils/experienceData";
-import { posts } from "~/utils/postsData";
-import ExperienceItem from "~/components/experience/ExperienceItem.vue";
-import PostItem from "~/components/posts/PostItem.vue";
 
 const relevantProjects = experienceData.slice(0, 3);
 const relevantPosts = [...posts].reverse().slice(0, 3);
@@ -57,14 +55,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="container mx-auto max-w-screen-xl px-4 md:px-8 py-12 lg:py-0">
+    <div class="container mx-auto max-w-7xl px-4 md:px-8 py-12 lg:py-0">
         <div class="flex flex-col lg:flex-row gap-0 lg:gap-12 relative">
             <!-- Left Column: Sticky Profile (on desktop) -->
             <aside
-                class="w-full lg:w-[40%] flex flex-col justify-between h-auto lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:py-12"
                 v-motion-slide-left
+                class="w-full lg:w-[40%] flex flex-col justify-between h-auto lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:py-12"
             >
                 <div>
+                    <NuxtImg
+                        class="rounded-xl mb-4"
+                        alt="Avatar"
+                        src="images/IMG_5076.jpg"
+                    />
                     <h1 class="text-4xl font-bold mb-2">
                         Rafael de Araújo Maciel
                     </h1>
@@ -82,35 +85,35 @@ onUnmounted(() => {
 
                 <nav class="hidden lg:block space-y-4 mb-8 lg:mb-0">
                     <button
-                        @click="scrollToSection('about')"
                         class="block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'about'
                                 ? 'text-primary'
                                 : 'hover:text-primary'
                         "
+                        @click="scrollToSection('about')"
                     >
                         About me
                     </button>
                     <button
-                        @click="scrollToSection('projects')"
                         class="block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'projects'
                                 ? 'text-primary'
                                 : 'hover:text-primary'
                         "
+                        @click="scrollToSection('projects')"
                     >
                         Relevant projects
                     </button>
                     <button
-                        @click="scrollToSection('posts')"
                         class="block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'posts'
                                 ? 'text-primary'
                                 : 'hover:text-primary'
                         "
+                        @click="scrollToSection('posts')"
                     >
                         Relevant posts
                     </button>
@@ -118,7 +121,7 @@ onUnmounted(() => {
             </aside>
 
             <!-- Right Column: Scrollable Content (scrolls with page) -->
-            <main class="w-full lg:w-[60%] pt-2 lg:py-12" v-motion-slide-bottom>
+            <main v-motion-slide-bottom class="w-full lg:w-[60%] pt-2 lg:py-12">
                 <div id="about" class="prose prose-lg max-w-none mb-16">
                     <h3 class="text-2xl font-bold mb-6">About me</h3>
                     <p class="mb-6">
@@ -136,7 +139,7 @@ onUnmounted(() => {
                         combine clean code with thoughtful design.
                     </p>
                     <p class="mb-6">
-                        I have 7+ years of experience specializing in full-stack
+                        I have 8+ years of experience specializing in full-stack
                         web development. Advanced proficiency in modern
                         TypeScript frameworks including React, Vue.js, Next.js,
                         and Node.js. Successfully collaborated with global teams
@@ -164,7 +167,7 @@ onUnmounted(() => {
                 <div id="posts" class="mb-16">
                     <h3 class="text-2xl font-bold mb-6">Relevant posts</h3>
                     <div class="space-y-8">
-                        <PostItem
+                        <PostsPostItem
                             v-for="post in relevantPosts"
                             :key="post.id"
                             :post="post"

@@ -30,7 +30,7 @@ onMounted(() => {
         ]"
     >
         <div
-            class="container mx-auto flex h-14 items-center justify-between max-w-screen-xl px-4 md:px-8"
+            class="container mx-auto flex h-14 items-center justify-between max-w-7xl px-4 md:px-8"
         >
             <!-- Left: Logo -->
             <div class="flex flex-1 justify-start">
