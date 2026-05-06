@@ -518,16 +518,17 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                         </p>
 
                         <ul
-                            class="list-disc list-outside ml-4 space-y-0 marker:text-slate-400"
+                            class="space-y-0.5 ml-1"
                         >
                             <li
                                 v-for="(point, pIdx) in splitDescription(
                                     project.description,
                                 )"
                                 :key="pIdx"
-                                class="text-[10.5px] leading-snug text-slate-700 pl-0.5"
+                                class="flex items-start gap-2 text-[10.5px] leading-snug text-slate-700"
                             >
-                                {{ point }}
+                                <span class="mt-[5px] w-1 h-1 shrink-0 bg-slate-400 rounded-full"></span>
+                                <span>{{ point }}</span>
                             </li>
                         </ul>
 
@@ -577,10 +578,11 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                     {{ education.degree }}
                 </div>
                 <ul
-                    class="list-disc list-outside ml-4 mt-1 space-y-0 text-[10.5px] text-slate-600 marker:text-primary/60"
+                    class="mt-1 space-y-0.5 ml-1 text-[10.5px] text-slate-600"
                 >
-                    <li v-for="(line, idx) in education.details" :key="idx">
-                        {{ line }}
+                    <li v-for="(line, idx) in education.details" :key="idx" class="flex items-start gap-2">
+                        <span class="mt-[5px] w-1 h-1 shrink-0 bg-slate-400 rounded-full"></span>
+                        <span>{{ line }}</span>
                     </li>
                 </ul>
             </div>
