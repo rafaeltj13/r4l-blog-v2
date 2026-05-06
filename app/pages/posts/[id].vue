@@ -2,7 +2,6 @@
 import { posts } from "~/utils/postsData";
 
 const route = useRoute();
-const router = useRouter();
 
 const post = computed(() => {
     return posts.find((p) => p.id === route.params.id);
@@ -24,7 +23,7 @@ useHead({
 </script>
 
 <template>
-    <div class="py-12 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div v-if="post" class="max-w-4xl mx-auto">
             <!-- Title & Meta -->
             <div v-motion-slide-left class="mb-12">
@@ -68,7 +67,7 @@ useHead({
 
             <!-- Content -->
             <div v-motion-slide-bottom :delay="200">
-                <!-- We use the htmlContent from the data -->
+                <!-- eslint-disable-next-line vue/no-v-html -->
                 <div v-html="post.htmlContent"></div>
             </div>
         </div>

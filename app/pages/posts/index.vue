@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { posts as postsData } from "~/utils/postsData";
+
 useHead({
     title: "R4L - Blog",
 });
-
-import { posts as postsData } from "~/utils/postsData";
 
 const { data: posts } = await useAsyncData("posts", async () => {
     return postsData;
@@ -11,7 +11,7 @@ const { data: posts } = await useAsyncData("posts", async () => {
 </script>
 
 <template>
-    <div class="py-12 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
         <div v-motion-slide-left suppressHydrationWarning class="mb-12">
             <h1 class="text-4xl font-bold text-base-content mb-8">Blog</h1>
@@ -23,7 +23,7 @@ const { data: posts } = await useAsyncData("posts", async () => {
             class="grid grid-cols-1 md:grid-cols-2 gap-10"
         >
             <NuxtLink
-                v-for="post in posts"
+                v-for="post in posts?.reverse()"
                 :key="post.id"
                 :to="`/posts/${post.id}`"
                 class="group card bg-base-100 shadow-xl border border-base-200 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"

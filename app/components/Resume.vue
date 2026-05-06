@@ -10,6 +10,8 @@ const props = withDefaults(
     },
 );
 
+const { dialogRef, open, close } = useDialog();
+
 // Easily editable header info
 const fullName = "Rafael de Araújo Maciel";
 const position = "Senior Software Engineer";
@@ -177,7 +179,8 @@ function splitDescription(description: string): string[] {
         .filter(Boolean);
 }
 
-const downloadCV = async () => {
+const downloadCV = async (type: "front" | "full" = "front") => {
+    console.log({ type });
     const element = document.querySelector(
         ".resume-wrapper",
     ) as HTMLElement | null;
@@ -277,6 +280,7 @@ const downloadCV = async () => {
     }
 
     pdf.save("Rafael_Maciel_CV.pdf");
+    close();
 };
 </script>
 
@@ -513,12 +517,49 @@ const downloadCV = async () => {
                 <button
                     data-tip="Download CV"
                     class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
-                    @click="downloadCV"
+                    @click="open()"
                 >
                     <Icon name="uil:download-alt" :size="24" />
                 </button>
             </div>
         </Transition>
+        <dialog ref="dialogRef" class="modal">
+            <div class="modal-box max-w-sm">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <Icon
+                            name="uil:download-alt"
+                            class="text-2xl text-primary shrink-0"
+                        />
+                        <h3 class="font-bold text-lg truncate">Download CV</h3>
+                    </div>
+                    <form method="dialog">
+                        <button
+                            class="btn btn-ghost btn-sm btn-circle"
+                            aria-label="Close"
+                        >
+                            <Icon name="uil:x" class="text-2xl" />
+                        </button>
+                    </form>
+                </div>
+                <div
+                    class="w-full gap-2 flex flex-col justify-center items-center"
+                >
+                    <button
+                        className="btn btn-outline btn-block btn-primary"
+                        @click="downloadCV('front')"
+                    >
+                        Download Frontend CV
+                    </button>
+                    <button
+                        className="btn btn-outline btn-block btn-primary"
+                        @click="downloadCV('full')"
+                    >
+                        Download Full-stack CV
+                    </button>
+                </div>
+            </div>
+        </dialog>
     </Teleport>
 </template>
 
