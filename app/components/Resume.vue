@@ -58,9 +58,20 @@ const groupedExperience = computed(() => {
 
     let recentExperiences = experienceData;
     if (cvType.value === "front") {
-        recentExperiences = experienceData.filter(e => ["Studylog", "Path", "Tally"].includes(e.partner || "")).slice(0, 3);
+        let pathSeen = false;
+        recentExperiences = experienceData.filter(e => {
+            const name = e.partner || e.companyName || "";
+            if (["Studylog", "Path", "Tally", "Lella.co"].includes(name)) {
+                if (name === "Path") {
+                    if (pathSeen) return false;
+                    pathSeen = true;
+                }
+                return true;
+            }
+            return false;
+        }).slice(0, 4);
     } else if (cvType.value === "full") {
-        recentExperiences = experienceData.filter(e => ["Stamp.tv", "Studylog", "Optel Group", "Xtra Holdings LLC"].includes(e.partner || e.companyName || "")).slice(0, 3);
+        recentExperiences = experienceData.filter(e => ["Stamp.tv", "Studylog", "Optel Group", "Xtra Holdings LLC", "Software Practices Laboratory"].includes(e.partner || e.companyName || "")).slice(0, 5);
     }
 
     recentExperiences.forEach((item) => {
