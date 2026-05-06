@@ -77,9 +77,9 @@ onUnmounted(() => {
                     <p
                         class="text-base-content/70 leading-relaxed mb-8 max-w-md"
                     >
-                        I'm a full-stack developer with a passion for creating
-                        seamless user experiences. I build accessible,
-                        pixel-perfect digital experiences for the web.
+                        I'm a web developer with a passion for creating seamless
+                        user experiences. I build accessible, pixel-perfect
+                        digital experiences for the web.
                     </p>
                 </div>
 

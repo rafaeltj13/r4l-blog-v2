@@ -38,8 +38,8 @@ watch(
 );
 
 const tabs = [
-    { label: "Projects", value: "projects" },
     { label: "Resume", value: "resume" },
+    { label: "Projects", value: "projects" },
 ];
 </script>
 

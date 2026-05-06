@@ -10,11 +10,17 @@ const props = withDefaults(
     },
 );
 
-const { dialogRef, open, close } = useDialog();
+const { dialogRef, open, close, isOpen } = useDialog();
+
+const cvType = ref<"front" | "full" | "all">("all");
 
 // Easily editable header info
 const fullName = "Rafael de Araújo Maciel";
-const position = "Senior Software Engineer";
+
+const position = computed(() => {
+    if (cvType.value === "front") return "Senior Frontend Engineer";
+    return "Senior Software Engineer";
+});
 
 const contactInfo = {
     location: "João Pessoa/PB, Brazil (GMT -3)",
@@ -30,8 +36,12 @@ const contactInfo = {
     },
 };
 
-const summary =
-    "Senior Software Engineer with 8+ years of expertise specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
+const summary = computed(() => {
+    if (cvType.value === "front") {
+        return "Senior Software Engineer with 8+ years of expertise specializing in frontend development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and React Native. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
+    }
+    return "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
+});
 
 const education = {
     institution: "Federal University of Campina Grande - UFCG",
@@ -46,7 +56,12 @@ const education = {
 const groupedExperience = computed(() => {
     const groups: Record<string, any> = {};
 
-    const recentExperiences = experienceData;
+    let recentExperiences = experienceData;
+    if (cvType.value === "front") {
+        recentExperiences = experienceData.filter(e => ["Studylog", "Path", "Tally"].includes(e.partner || "")).slice(0, 3);
+    } else if (cvType.value === "full") {
+        recentExperiences = experienceData.filter(e => ["Stamp.tv", "Studylog", "Optel Group", "Xtra Holdings LLC"].includes(e.partner || e.companyName || "")).slice(0, 3);
+    }
 
     recentExperiences.forEach((item) => {
         if (!groups[item.companyName]) {
@@ -108,39 +123,90 @@ const categorizedSkills = computed(() => {
         item.technologies?.forEach((t) => allTechs.add(t));
     });
 
-    const categories = {
-        "Frameworks & Libraries": [
-            "React.js",
-            "React",
-            "Vue.js",
-            "Next.js",
-            "Nuxt.js",
-            "React Native",
-            "Node.js",
-            "Express",
-            "FastAPI",
-            "NestJS",
-            "Angular.js",
-            "ASP.NET",
-            "Pinia",
-            "Storybook",
-            "Apollo GraphQL",
-            "GraphQL",
-        ],
-        Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
-        "Data & Cloud": [
-            "MySQL",
-            "MongoDB",
-            "PostgreSQL",
-            "SQL Server",
-            "Google BigQuery",
-            "Google ADK",
-            "AWS",
-            "Kubernetes",
-            "Sequelize",
-            "Stripe (Software)",
-        ],
-    };
+    let categories: Record<string, string[]> = {};
+
+    if (cvType.value === "front") {
+        categories = {
+            "Frameworks & Libraries": [
+                "React.js",
+                "React",
+                "Vue.js",
+                "Next.js",
+                "Nuxt.js",
+                "React Native",
+                "Pinia",
+                "Storybook",
+                "Apollo GraphQL",
+                "GraphQL",
+            ],
+            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
+        };
+    } else if (cvType.value === "full") {
+        categories = {
+            "Frameworks & Libraries": [
+                "React.js",
+                "React",
+                "Vue.js",
+                "Next.js",
+                "Nuxt.js",
+                "Node.js",
+                "Express",
+                "FastAPI",
+                "NestJS",
+                "Angular.js",
+                "ASP.NET",
+                "Apollo GraphQL",
+                "GraphQL",
+            ],
+            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
+            "Data & Cloud": [
+                "MySQL",
+                "MongoDB",
+                "PostgreSQL",
+                "SQL Server",
+                "Google BigQuery",
+                "Google ADK",
+                "AWS",
+                "Kubernetes",
+                "Sequelize",
+                "Stripe (Software)",
+            ],
+        };
+    } else {
+        categories = {
+            "Frameworks & Libraries": [
+                "React.js",
+                "React",
+                "Vue.js",
+                "Next.js",
+                "Nuxt.js",
+                "React Native",
+                "Node.js",
+                "Express",
+                "FastAPI",
+                "NestJS",
+                "Angular.js",
+                "ASP.NET",
+                "Pinia",
+                "Storybook",
+                "Apollo GraphQL",
+                "GraphQL",
+            ],
+            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
+            "Data & Cloud": [
+                "MySQL",
+                "MongoDB",
+                "PostgreSQL",
+                "SQL Server",
+                "Google BigQuery",
+                "Google ADK",
+                "AWS",
+                "Kubernetes",
+                "Sequelize",
+                "Stripe (Software)",
+            ],
+        };
+    }
 
     const result: Record<string, string[]> = {};
     const used = new Set<string>();
@@ -180,7 +246,12 @@ function splitDescription(description: string): string[] {
 }
 
 const downloadCV = async (type: "front" | "full" = "front") => {
-    console.log({ type });
+    cvType.value = type;
+    
+    // Wait for Vue reactivity and DOM updates
+    await nextTick();
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     const element = document.querySelector(
         ".resume-wrapper",
     ) as HTMLElement | null;
@@ -279,8 +350,14 @@ const downloadCV = async (type: "front" | "full" = "front") => {
         }
     }
 
-    pdf.save("Rafael_Maciel_CV.pdf");
+    const filename = type === "front" 
+        ? "Rafael_Maciel_Frontend_CV.pdf" 
+        : "Rafael_Maciel_Fullstack_CV.pdf";
+    pdf.save(filename);
     close();
+    
+    // Reset to showing everything on the page
+    cvType.value = "all";
 };
 </script>
 
@@ -500,67 +577,71 @@ const downloadCV = async (type: "front" | "full" = "front") => {
     </div>
 
     <!-- Floating Export Button -->
-    <Teleport to="body">
-        <Transition
-            appear
-            enter-active-class="transition ease-out duration-300"
-            enter-from-class="opacity-0 translate-y-4"
-            enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition ease-in duration-200"
-            leave-from-class="opacity-100 translate-y-0"
-            leave-to-class="opacity-0 translate-y-4"
-        >
-            <div
-                v-if="props.showButton"
-                class="fixed bottom-8 right-8 print:hidden z-100"
+    <ClientOnly>
+        <Teleport to="body">
+            <Transition
+                appear
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0 translate-y-4"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 translate-y-4"
             >
-                <button
-                    data-tip="Download CV"
-                    class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
-                    @click="open()"
-                >
-                    <Icon name="uil:download-alt" :size="24" />
-                </button>
-            </div>
-        </Transition>
-        <dialog ref="dialogRef" class="modal">
-            <div class="modal-box max-w-sm">
-                <div class="flex items-start justify-between gap-3 mb-4">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <Icon
-                            name="uil:download-alt"
-                            class="text-2xl text-primary shrink-0"
-                        />
-                        <h3 class="font-bold text-lg truncate">Download CV</h3>
-                    </div>
-                    <form method="dialog">
-                        <button
-                            class="btn btn-ghost btn-sm btn-circle"
-                            aria-label="Close"
-                        >
-                            <Icon name="uil:x" class="text-2xl" />
-                        </button>
-                    </form>
-                </div>
                 <div
-                    class="w-full gap-2 flex flex-col justify-center items-center"
+                    v-if="props.showButton"
+                    class="fixed bottom-8 right-8 print:hidden z-100"
                 >
                     <button
-                        className="btn btn-outline btn-block btn-primary"
-                        @click="downloadCV('front')"
+                        data-tip="Download CV"
+                        class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
+                        @click="open()"
                     >
-                        Download Frontend CV
-                    </button>
-                    <button
-                        className="btn btn-outline btn-block btn-primary"
-                        @click="downloadCV('full')"
-                    >
-                        Download Full-stack CV
+                        <Icon name="uil:download-alt" :size="24" />
                     </button>
                 </div>
-            </div>
-        </dialog>
-    </Teleport>
+            </Transition>
+            <dialog ref="dialogRef" class="modal">
+                <div class="modal-box max-w-sm">
+                    <div class="flex items-start justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <Icon
+                                name="uil:download-alt"
+                                class="text-2xl text-primary shrink-0"
+                            />
+                            <h3 class="font-bold text-lg truncate">
+                                Download CV
+                            </h3>
+                        </div>
+                        <form method="dialog">
+                            <button
+                                class="btn btn-ghost btn-sm btn-circle"
+                                aria-label="Close"
+                            >
+                                <Icon name="uil:x" class="text-2xl" />
+                            </button>
+                        </form>
+                    </div>
+                    <div
+                        class="w-full gap-2 flex flex-col justify-center items-center"
+                    >
+                        <button
+                            className="btn btn-outline btn-block btn-primary"
+                            @click="downloadCV('front')"
+                        >
+                            Frontend CV
+                        </button>
+                        <button
+                            className="btn btn-outline btn-block btn-primary"
+                            @click="downloadCV('full')"
+                        >
+                            Full-stack CV
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        </Teleport>
+    </ClientOnly>
 </template>
 
 <style scoped>
