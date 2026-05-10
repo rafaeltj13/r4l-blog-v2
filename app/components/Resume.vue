@@ -10,7 +10,7 @@ const props = withDefaults(
     },
 );
 
-const { dialogRef, open, close, isOpen } = useDialog();
+const { dialogRef, open, close } = useDialog();
 
 const cvType = ref<"front" | "full" | "all">("all");
 
@@ -59,19 +59,31 @@ const groupedExperience = computed(() => {
     let recentExperiences = experienceData;
     if (cvType.value === "front") {
         let pathSeen = false;
-        recentExperiences = experienceData.filter(e => {
-            const name = e.partner || e.companyName || "";
-            if (["Studylog", "Path", "Tally", "Lella.co"].includes(name)) {
-                if (name === "Path") {
-                    if (pathSeen) return false;
-                    pathSeen = true;
+        recentExperiences = experienceData
+            .filter((e) => {
+                const name = e.partner || e.companyName || "";
+                if (["Studylog", "Path", "Tally", "Lella.co"].includes(name)) {
+                    if (name === "Path") {
+                        if (pathSeen) return false;
+                        pathSeen = true;
+                    }
+                    return true;
                 }
-                return true;
-            }
-            return false;
-        }).slice(0, 4);
+                return false;
+            })
+            .slice(0, 4);
     } else if (cvType.value === "full") {
-        recentExperiences = experienceData.filter(e => ["Stamp.tv", "Studylog", "Optel Group", "Xtra Holdings LLC", "Software Practices Laboratory"].includes(e.partner || e.companyName || "")).slice(0, 5);
+        recentExperiences = experienceData
+            .filter((e) =>
+                [
+                    "Stamp.tv",
+                    "Studylog",
+                    "Optel Group",
+                    "Xtra Holdings LLC",
+                    "Software Practices Laboratory",
+                ].includes(e.partner || e.companyName || ""),
+            )
+            .slice(0, 5);
     }
 
     recentExperiences.forEach((item) => {
@@ -258,10 +270,10 @@ function splitDescription(description: string): string[] {
 
 const downloadCV = async (type: "front" | "full" = "front") => {
     cvType.value = type;
-    
+
     // Wait for Vue reactivity and DOM updates
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const element = document.querySelector(
         ".resume-wrapper",
@@ -361,12 +373,13 @@ const downloadCV = async (type: "front" | "full" = "front") => {
         }
     }
 
-    const filename = type === "front" 
-        ? "Rafael_Maciel_Frontend_CV.pdf" 
-        : "Rafael_Maciel_Fullstack_CV.pdf";
+    const filename =
+        type === "front"
+            ? "Rafael_Maciel_Frontend_CV.pdf"
+            : "Rafael_Maciel_Fullstack_CV.pdf";
     pdf.save(filename);
     close();
-    
+
     // Reset to showing everything on the page
     cvType.value = "all";
 };
@@ -517,9 +530,7 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                             {{ project.partner }}
                         </p>
 
-                        <ul
-                            class="space-y-0.5 ml-1"
-                        >
+                        <ul class="space-y-0.5 ml-1">
                             <li
                                 v-for="(point, pIdx) in splitDescription(
                                     project.description,
@@ -527,7 +538,9 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                                 :key="pIdx"
                                 class="flex items-start gap-2 text-[10.5px] leading-snug text-slate-700"
                             >
-                                <span class="mt-[5px] w-1 h-1 shrink-0 bg-slate-400 rounded-full"></span>
+                                <span
+                                    class="mt-1.25 w-1 h-1 shrink-0 bg-slate-400 rounded-full"
+                                ></span>
                                 <span>{{ point }}</span>
                             </li>
                         </ul>
@@ -577,11 +590,15 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                 <div class="text-[11px] text-slate-700 mt-0.5 font-medium">
                     {{ education.degree }}
                 </div>
-                <ul
-                    class="mt-1 space-y-0.5 ml-1 text-[10.5px] text-slate-600"
-                >
-                    <li v-for="(line, idx) in education.details" :key="idx" class="flex items-start gap-2">
-                        <span class="mt-[5px] w-1 h-1 shrink-0 bg-slate-400 rounded-full"></span>
+                <ul class="mt-1 space-y-0.5 ml-1 text-[10.5px] text-slate-600">
+                    <li
+                        v-for="(line, idx) in education.details"
+                        :key="idx"
+                        class="flex items-start gap-2"
+                    >
+                        <span
+                            class="mt-[5px] w-1 h-1 shrink-0 bg-slate-400 rounded-full"
+                        ></span>
                         <span>{{ line }}</span>
                     </li>
                 </ul>

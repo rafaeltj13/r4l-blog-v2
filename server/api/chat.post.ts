@@ -1,4 +1,5 @@
-import OpenAI from 'openai'
+import { generateText } from 'ai'
+import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { experienceData } from '~/utils/experienceData'
 import { projectsData, type Project } from '~/utils/projectsData'
 
@@ -111,38 +112,31 @@ export default defineEventHandler(async (event) => {
     }
 
     const config = useRuntimeConfig()
+    const apiKey = config.geminiApiKey || process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY
 
-    if (!config.openaiApiKey) {
+    if (!apiKey) {
       throw createError({
         statusCode: 500,
-        statusMessage: 'OpenAI API key is not configured'
+        statusMessage: 'Gemini API key is not configured'
       })
     }
 
-    const openai = new OpenAI({
-      apiKey: config.openaiApiKey,
+    const google = createGoogleGenerativeAI({
+      apiKey: apiKey,
     })
 
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: buildSystemPrompt(),
-        },
-        {
-          role: 'user',
-          content: message,
-        },
-      ],
-      model: 'gpt-3.5-turbo',
-      max_tokens: 200,
+    const { text } = await generateText({
+      model: google('gemini-1.5-flash'),
+      system: buildSystemPrompt(),
+      prompt: message,
+      maxTokens: 200,
       temperature: 0.7,
     })
 
     return {
       message: {
         role: 'assistant',
-        content: completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response.',
+        content: text,
       },
     }
   } catch (error: unknown) {
