@@ -47,8 +47,8 @@ const technologies = [
         why: "Type safety makes refactoring confident and reduces runtime bugs. The developer experience with autocomplete and inline documentation is invaluable for maintaining code long-term.",
     },
     {
-        name: "OpenAI",
-        icon: "simple-icons:openai",
+        name: "Gemini",
+        icon: "simple-icons:googlegemini",
         description:
             "Powers the Chat feature, allowing visitors to have AI-powered conversations about my experience and projects.",
         why: "Adds an interactive element to the portfolio. The API is easy to integrate and provides a unique way for visitors to learn about my background.",
