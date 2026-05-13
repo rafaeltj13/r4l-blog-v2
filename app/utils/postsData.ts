@@ -170,7 +170,7 @@ export const posts: Post[] = [
     id: "3",
     date: "2026-05-13",
     image: "d2b",
-    title: "B2Brain is out!",
+    title: "D2Brain is out!",
     content: `D2Brain is a place where players can share ideas and thoughts about the game. With the help
     of AI, we can utilize features like summarization and with some research even create ideas from scrach.`,
     htmlContent: `
