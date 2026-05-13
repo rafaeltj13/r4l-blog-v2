@@ -6,7 +6,7 @@ useHead({
 });
 
 const { data: posts } = await useAsyncData("posts", async () => {
-    return postsData;
+    return [...postsData].reverse();
 });
 </script>
 
@@ -23,7 +23,7 @@ const { data: posts } = await useAsyncData("posts", async () => {
             class="grid grid-cols-1 md:grid-cols-2 gap-10"
         >
             <NuxtLink
-                v-for="post in posts?.reverse()"
+                v-for="post in posts"
                 :key="post.id"
                 :to="`/posts/${post.id}`"
                 class="group card bg-base-100 shadow-xl border border-base-200 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"

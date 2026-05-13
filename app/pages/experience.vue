@@ -15,7 +15,7 @@ const getTabFromQuery = (): string => {
     if (tabParam && validTabs.includes(tabParam)) {
         return tabParam;
     }
-    return "projects";
+    return "resume";
 };
 
 // Initialize tab from query param (works on both server and client)

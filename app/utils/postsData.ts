@@ -166,4 +166,106 @@ export const posts: Post[] = [
     </article>
     `,
   },
+  {
+    id: "3",
+    date: "2026-05-13",
+    image: "d2b",
+    title: "B2Brain is out!",
+    content: `D2Brain is a place where players can share ideas and thoughts about the game. With the help
+    of AI, we can utilize features like summarization and with some research even create ideas from scrach.`,
+    htmlContent: `
+      <article class="prose lg:prose-xl dark:prose-invert relative z-10 bg-background/50 backdrop-blur-sm rounded-xl p-8 shadow-xl mx-auto mb-12">
+
+        <!-- Intro CTA card -->
+        <div class="not-prose mb-10 flex flex-col sm:flex-row sm:items-center gap-5 p-6 bg-base-200/70 backdrop-blur-sm rounded-xl border border-base-300 shadow-lg">
+          <p class="text-lg leading-relaxed flex-1 m-0">
+            D2Brain is out and you can access it at
+            <a class="text-sky-500 hover:text-sky-600 transition-colors underline" href="https://d2b.vercel.app">this link</a>,
+            your support will be very appreciated. I'm still on early stages of the platform but I've already have a lot of ideas to implement.
+          </p>
+          <a href="https://d2b.vercel.app" class="not-prose shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-content font-semibold rounded-lg hover:opacity-90 transition-opacity text-sm no-underline">
+            Visit D2Brain &rarr;
+          </a>
+        </div>
+
+        <h2 class="text-3xl font-bold mt-12 mb-6">Side Projects &amp; Motivation</h2>
+        <p class="text-lg leading-relaxed mb-6">
+          My idea of a side project is something that can be helpful for my career(at least on the stage I'm at right now) and it maybe can generate
+          some passive income. The dream scenario is a project that can improve my skills making money in the process, but this is very hard since
+          I don't have the skills to do all of that, so let's keep on the study and improvement focus so it is harder to get unmotivated.
+        </p>
+        <p class="text-lg leading-relaxed mb-6">
+          In the first blog post I commented about how easy it is to lose track and eventually let your side project die, I have a nice example at
+          the <a class="text-sky-500 hover:text-sky-600 transition-colors underline" href="/projects">projects</a> page on this website. With the popularity of
+          AI tools I started to redo some of the old ideas that I had in mind because it is easy to get started and with more experience that I have now,
+          I'm able to move way faster. Honestly, I let another side project die again but this website is the result of combining something that can be helpful for me
+          and improving my skills.
+        </p>
+
+        <!-- Callout quote -->
+        <div class="my-10 p-8 border-l-4 border-primary bg-base-200/70 backdrop-blur-sm rounded-xl shadow-lg not-prose">
+          <h3 class="text-xl font-semibold mb-3">A lesson learned</h3>
+          <p class="text-lg italic">I consume a lot of programming related content and I've heard this sentence a lot of times: &ldquo;Build something that can make your life easier&rdquo;. And for some reason I always try to make something that can make money instead.</p>
+        </div>
+
+        <h2 class="text-3xl font-bold mt-12 mb-6">The Journey</h2>
+        <p class="text-lg leading-relaxed mb-6">
+          The D2Brain project is another "successful" side project in the sense that I started it to help me with my work and it has been a great learning experience.
+          I've already tried to create a platform like that a few years back but I never really got the hang of it and gave up. This time I decided to give it another shot
+          and I'm glad I did. And most important, I had an idea that I wanted to implement from start to finish and I was able to execute it successfully. Now I'm on the path
+          to improve the platform and make it even better.
+        </p>
+        <p class="text-lg leading-relaxed mb-6">
+          I consume a lot of programming related content and I've heard this sentence a lot of times: "Build something that can make your life easier". And for some reason I always
+          try to make something that can make money instead. Eventually I realized that I'm building something that is pointless and not useful for me, and after this realization
+          it's basically impossible to get motivated to continue working on it. This blog is the first example of a platform that can be helpful for me, building some features that
+          can actually be useful and display my work to others.
+        </p>
+        <p class="text-lg leading-relaxed mb-6">
+          The idea to revive the D2Brain platform is my love for the game and my desire to bring something that is meaningful for me and for others. So working with the game
+          that I love is very rewarding and adding meanful features feel even more rewarding. Finishing that was a huge step forward and I'm excited to see what the next steps will be.
+          I struggled so much to finish a product and now I'm even creating roadmaps, improving existing features and making the platform always better.
+        </p>
+
+        <h2 class="text-3xl font-bold mt-12 mb-6">AI Integration</h2>
+        <p class="text-lg leading-relaxed mb-6">
+          I can't lie, AI tools are making my life so much easier and convenient. Around a year ago I've used some capable models to help me build this blog and today we have even
+          powerful ones, that I can trust a bit more and with the correct context and structure I can use them to help me build even better products. Another thing that I'm exploring
+          is adding AI to the product itself, not just the tools to help me build it.
+        </p>
+
+        <!-- AI features grid -->
+        <div class="not-prose grid grid-cols-1 sm:grid-cols-3 gap-4 my-8">
+          <div class="bg-base-200/70 backdrop-blur-sm p-5 rounded-xl shadow-md text-center transition-all hover:scale-105">
+            <div class="text-3xl mb-3">&#9889;</div>
+            <h4 class="font-bold mb-2">Summarization</h4>
+            <p class="text-sm text-base-content/70">AI-powered summaries to quickly digest platform content.</p>
+          </div>
+          <div class="bg-base-200/70 backdrop-blur-sm p-5 rounded-xl shadow-md text-center transition-all hover:scale-105">
+            <div class="text-3xl mb-3">&#128161;</div>
+            <h4 class="font-bold mb-2">Idea Generator</h4>
+            <p class="text-sm text-base-content/70">An AI assistant that creates ideas from scratch using external APIs.</p>
+          </div>
+          <div class="bg-base-200/70 backdrop-blur-sm p-5 rounded-xl shadow-md text-center transition-all hover:scale-105">
+            <div class="text-3xl mb-3">&#128172;</div>
+            <h4 class="font-bold mb-2">Chat Agent <span class="text-xs font-normal opacity-60">(soon)</span></h4>
+            <p class="text-sm text-base-content/70">A chat interface to interact with the platform and help users with their gameplay.</p>
+          </div>
+        </div>
+
+        <p class="text-lg leading-relaxed mb-6">
+          On the D2Brain platform, I'm exploring the idea of adding AI to the product itself and I'm having a lot of fun with it. We already have summarization and a
+          AI assistant that can create ideas for the platform, making requests to external APIs and generating content on the fly. I'm playing around with different models
+          to test the outputs and see how capable they can be on this context as well. After all of that the main goal is to create a chat interface and create an agent to
+          interact with the platform and help users with their gameplay.
+        </p>
+
+        <h2 class="text-3xl font-bold mt-12 mb-6">What's Next</h2>
+        <p class="text-lg leading-relaxed mb-6">
+          Hopefully I can get back to this blog soon and share more about what I'm working on. Working on something that can be useful to me is changing how I think about
+          building and creating products. It is harder to get unmotivated when you are building something that you like.
+        </p>
+      </article>
+    `,
+  },
 ];
