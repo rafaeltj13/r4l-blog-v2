@@ -64,7 +64,7 @@ onUnmounted(() => {
             >
                 <div>
                     <NuxtImg
-                        class="rounded-xl mb-4"
+                        class="rounded-xl mb-4 w-full max-w-sm lg:max-w-[360px] xl:max-w-md 2xl:max-w-lg object-cover"
                         alt="Avatar"
                         src="images/IMG_5076.jpg"
                     />
