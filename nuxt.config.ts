@@ -6,8 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
-    openaiApiKey: process.env.NUXT_OPENAI_API_KEY || '',
-    geminiApiKey: process.env.NUXT_GEMINI_API_KEY || '',
+    deepseekApiKey: process.env.NUXT_DEEPSEEK_API_KEY || '',
   },
   vite: {
     plugins: [

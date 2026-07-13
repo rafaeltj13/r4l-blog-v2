@@ -1,5 +1,6 @@
 import { generateText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+
 import { experienceData } from "~/utils/experienceData";
 import { projectsData, type Project } from "~/utils/projectsData";
 
@@ -117,23 +118,22 @@ export default defineEventHandler(async (event) => {
 
     const config = useRuntimeConfig();
     const apiKey =
-      config.geminiApiKey ||
-      process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
-      process.env.GEMINI_API_KEY;
+      config.deepseekApiKey ||
+      process.env.NUXT_DEEPSEEK_API_KEY
 
     if (!apiKey) {
       throw createError({
         statusCode: 500,
-        statusMessage: "Gemini API key is not configured",
+        statusMessage: "Deepseek API key is not configured",
       });
     }
 
-    const google = createGoogleGenerativeAI({
+    const deepseek = createDeepSeek({
       apiKey: apiKey,
     });
 
     const { text } = await generateText({
-      model: google("gemini-2.5-flash-lite"),
+      model: deepseek("deepseek-v4-flash"),
       system: buildSystemPrompt(),
       prompt: message,
       maxTokens: 200,
