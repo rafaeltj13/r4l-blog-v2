@@ -60,6 +60,7 @@ onUnmounted(() => {
             <!-- Left Column: Sticky Profile (on desktop) -->
             <aside
                 v-motion-slide-left
+                suppressHydrationWarning
                 class="w-full lg:w-[40%] flex flex-col justify-between h-auto lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:py-12"
             >
                 <div>
@@ -67,6 +68,10 @@ onUnmounted(() => {
                         class="rounded-xl mb-4 w-full max-w-sm lg:max-w-[300px] xl:max-w-[340px] 2xl:max-w-[360px] max-h-[36vh] 2xl:max-h-[42vh] object-cover"
                         alt="Avatar"
                         src="images/IMG_5076.jpg"
+                        width="360"
+                        height="480"
+                        sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 300px, (max-width: 1535px) 340px, 360px"
+                        fetchpriority="high"
                     />
                     <h1 class="text-4xl font-bold mb-2">
                         Rafael de Araújo Maciel
@@ -121,7 +126,7 @@ onUnmounted(() => {
             </aside>
 
             <!-- Right Column: Scrollable Content (scrolls with page) -->
-            <main v-motion-slide-bottom class="w-full lg:w-[60%] pt-2 lg:py-12">
+            <main v-motion-slide-bottom suppressHydrationWarning class="w-full lg:w-[60%] pt-2 lg:py-12">
                 <div id="about" class="prose prose-lg max-w-none mb-16">
                     <h3 class="text-2xl font-bold mb-6">About me</h3>
                     <p class="mb-6">

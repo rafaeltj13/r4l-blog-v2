@@ -2,3 +2,34 @@
 @plugin "daisyui" {
   themes: all;
 }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Bungee', sans-serif;
+}
+
+/* Form controls and DaisyUI components don't inherit body's font-family by default */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+}
+
+.btn,
+.btn-primary,
+.btn-ghost,
+.btn-square,
+.menu,
+.modal-box,
+.input,
+.textarea,
+.badge,
+.tabs,
+.tab {
+  font-family: inherit;
+}

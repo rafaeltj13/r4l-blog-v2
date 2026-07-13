@@ -39,4 +39,14 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@vueuse/motion/nuxt'
   ],
+  fonts: {
+    families: [
+      { name: 'Bungee', provider: 'google' },
+      { name: 'Exo 2', provider: 'google' },
+    ],
+  },
+  image: {
+    format: ['webp'],
+    quality: 80,
+  },
 })

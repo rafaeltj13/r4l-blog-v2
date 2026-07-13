@@ -28,6 +28,7 @@ onMounted(() => {
 <template>
     <header
         v-motion-fade
+        suppressHydrationWarning
         class="sticky top-0 z-50 w-full border-b transition-all duration-300"
         :class="[
             isScrolled
@@ -50,7 +51,7 @@ onMounted(() => {
                 </button>
 
                 <NuxtLink to="/" class="group flex items-center space-x-2">
-                    <NuxtImg src="/images/logo.png" alt="Logo" class="size-14 mt-2" />
+                    <NuxtImg src="/images/logo.png" alt="Logo" width="56" height="56" class="size-14 mt-2 transition-transform duration-300 group-hover:scale-110" />
                     <span
                         class="hidden font-bold sm:flex items-center transition-colors duration-300"
                     >
