@@ -49,8 +49,9 @@ const scrollToTop = () => {
 </script>
 
 <template>
-    <!-- Reading progress bar -->
-    <div class="fixed top-14 left-0 right-0 z-40 h-0.5 bg-base-200">
+    <div>
+        <!-- Reading progress bar -->
+        <div class="fixed top-14 left-0 right-0 z-40 h-0.5 bg-base-200">
         <div
             class="h-full bg-primary transition-all duration-100 ease-out"
             :style="{ width: `${readingProgress}%` }"
@@ -128,16 +129,9 @@ const scrollToTop = () => {
             <!-- Hero Image -->
             <figure
                 v-motion-slide-bottom
-                class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl mb-12 ring-1 ring-base-content/10"
+                class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl mb-12 ring-1 ring-base-content/10 bg-base-200"
             >
-                <NuxtImg
-                    :src="`images/${post.image}.jpg`"
-                    :alt="post.title"
-                    class="w-full h-full object-cover"
-                    width="1200"
-                    height="675"
-                    placeholder
-                />
+                <PostsPostImage variant="hero" :post="post" />
             </figure>
 
             <!-- Content -->
@@ -172,6 +166,7 @@ const scrollToTop = () => {
                 </button>
             </div>
         </div>
+    </div>
     </div>
 </template>
 

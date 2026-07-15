@@ -1,3 +1,5 @@
+export type PostImageAspectRatio = "16:9" | "9:16";
+
 export interface Post {
   id: string;
   image: string;
@@ -5,12 +7,14 @@ export interface Post {
   content: string;
   date: string;
   htmlContent: string;
+  aspectRatio?: PostImageAspectRatio;
 }
 
 export const posts: Post[] = [
   {
     id: "1",
     image: "cfc31a16-48e0-4f31-8cab-87e9ba009b3d",
+    aspectRatio: "9:16",
     title: "Welcome to my blog!",
     content:
       "This is my very first post! I'm excited to share my thoughts and experiences with you. I never really done anything like this before, but I'm sure I'll get the hang of it.",
@@ -111,6 +115,7 @@ export const posts: Post[] = [
     title: "AI code editor battle",
     date: "2025-02-24",
     image: "9b2b1b27aaf74aa3961c47062e0ab85c",
+    aspectRatio: "9:16",
     content:
       "I've testes all the popular code editors: Cursor, Windsurf, Trae and even Zed AI. Here are some thoughts on all of this AI stuff.",
     htmlContent: `<article class="prose lg:prose-xl dark:prose-invert relative z-10 bg-background/50 backdrop-blur-sm rounded-xl p-8 shadow-xl mx-auto mb-12">
@@ -268,4 +273,12 @@ export const posts: Post[] = [
       </article>
     `,
   },
+  {
+    id: "4",
+    image: "{653DB11E-B417-4A81-B915-169327A11AB9}",
+    title: "How AI is helping me build D2Brain",
+    date: "2026-07-15",
+    content: "I want to dive a bit deeper into how I use AI to build my project, also the decisions I made on how to integrate AI into the platform.",
+    htmlContent: "",
+  }
 ];

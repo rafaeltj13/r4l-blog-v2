@@ -691,6 +691,11 @@ const downloadCV = async (type: "front" | "full" = "front") => {
         Arial,
         sans-serif;
 }
+
+.resume-wrapper :is(h1, h2, h3, h4, h5, h6) {
+    font-family: inherit;
+}
+
 @media print {
     .resume-wrapper {
         box-shadow: none;

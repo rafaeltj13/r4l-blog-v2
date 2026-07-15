@@ -20,13 +20,13 @@ const formatDate = (dateString: string) => {
         class="group/item grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 mb-8 hover:bg-base-content/5 p-4 rounded-2xl transition-all duration-300"
     >
         <!-- Left: Image -->
-        <div class="h-48 md:h-32 rounded-xl overflow-hidden">
-            <NuxtImg
-                :src="`images/${post.image}.jpg`"
-                :alt="post.title"
-                class="w-full h-full object-cover transform group-hover/item:scale-105 transition-transform duration-500"
-                width="400"
-                height="250"
+        <div
+            class="h-48 md:h-32 rounded-xl overflow-hidden bg-base-200"
+        >
+            <PostsPostImage
+                variant="thumbnail"
+                :post="post"
+                class="transform group-hover/item:scale-105 transition-transform duration-500"
             />
         </div>
 

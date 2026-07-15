@@ -29,14 +29,11 @@ const { data: posts } = await useAsyncData("posts", async () => {
                 class="group card bg-base-100 shadow-xl border border-base-200 overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
             >
                 <!-- Image Container -->
-                <figure class="relative h-64 overflow-hidden">
-                    <NuxtImg
-                        :src="`images/${post.image}.jpg`"
-                        :alt="post.title"
-                        class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
-                        width="800"
-                        height="400"
-                        placeholder
+                <figure class="relative h-64 overflow-hidden bg-base-200">
+                    <PostsPostImage
+                        variant="card"
+                        :post="post"
+                        class="transform group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div
                         class="absolute inset-0 bg-linear-to-t from-base-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
