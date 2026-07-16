@@ -54,6 +54,7 @@ onMounted(() => {
                     <NuxtImg src="/images/logo.png" alt="Logo" width="56" height="56" class="size-14 mt-2 transition-transform duration-300 group-hover:scale-110" />
                     <span
                         class="hidden font-bold sm:flex items-center transition-colors duration-300"
+                        style="font-family: 'Bungee', sans-serif;"
                     >
                         <span
                             class="text-base-content transition-colors duration-300 group-hover:text-primary"
@@ -74,7 +75,7 @@ onMounted(() => {
                         v-for="link in navigationLinks"
                         :key="link.to"
                         :to="link.to"
-                        class="transition-colors hover:text-primary text-base-content/60"
+                        class="font-title transition-colors hover:text-primary text-base-content/60"
                         active-class="text-primary"
                         >{{ link.label }}</NuxtLink
                     >
@@ -92,23 +93,12 @@ onMounted(() => {
     <!-- Mobile navigation modal (bottom sheet) -->
     <dialog ref="dialogRef" class="modal modal-bottom">
             <div class="modal-box p-0 rounded-t-2xl">
-                <div class="flex items-center justify-between p-4 border-b border-base-200">
-                    <span class="font-bold text-lg">Navigation</span>
-                    <button
-                        type="button"
-                        class="btn btn-ghost btn-square"
-                        aria-label="Close navigation menu"
-                        @click="close"
-                    >
-                        <Icon name="uil:times" :size="20" />
-                    </button>
-                </div>
                 <nav class="flex flex-col p-4">
                     <NuxtLink
                         v-for="link in navigationLinks"
                         :key="link.to"
                         :to="link.to"
-                        class="flex items-center gap-3 py-3 text-lg font-medium transition-colors hover:text-primary text-base-content/60"
+                        class="font-title flex items-center gap-3 py-3 text-lg font-medium transition-colors hover:text-primary text-base-content/60"
                         active-class="text-primary"
                         @click="handleNavClick"
                     >

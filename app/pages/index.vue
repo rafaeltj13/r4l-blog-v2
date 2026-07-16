@@ -7,7 +7,7 @@ useHead({
 });
 
 const relevantProjects = experienceData.slice(0, 3);
-const relevantPosts = [...posts].reverse().slice(0, 3);
+const relevantPosts = [...posts].reverse().slice(0, 5);
 
 const activeSection = ref("about");
 
@@ -65,13 +65,15 @@ onUnmounted(() => {
             >
                 <div>
                     <NuxtImg
-                        class="rounded-xl mb-4 w-full max-w-sm lg:max-w-[300px] xl:max-w-[340px] 2xl:max-w-[360px] max-h-[36vh] 2xl:max-h-[42vh] object-cover"
+                        class="rounded-xl mb-4 h-[300px] w-auto mx-auto sm:mx-0 sm:h-auto sm:w-full sm:max-w-[300px] lg:max-w-[300px] xl:max-w-[340px] 2xl:max-w-[360px] aspect-[3/4] object-cover"
                         alt="Avatar"
                         src="images/IMG_5076.jpg"
-                        width="360"
-                        height="480"
-                        sizes="(max-width: 1023px) 90vw, (max-width: 1279px) 300px, (max-width: 1535px) 340px, 360px"
+                        width="3024"
+                        height="4032"
+                        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 384px, (max-width: 1279px) 300px, (max-width: 1535px) 340px, 360px"
                         fetchpriority="high"
+                        format="webp"
+                        quality="90"
                     />
                     <h1 class="text-4xl font-bold mb-2">
                         Rafael de Araújo Maciel
@@ -90,7 +92,8 @@ onUnmounted(() => {
 
                 <nav class="hidden lg:block space-y-4 mb-8 lg:mb-0">
                     <button
-                        class="block text-lg font-medium transition-colors text-left w-full"
+                        style="font-family: 'Bungee', sans-serif;"
+                        class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'about'
                                 ? 'text-primary'
@@ -101,7 +104,8 @@ onUnmounted(() => {
                         About me
                     </button>
                     <button
-                        class="block text-lg font-medium transition-colors text-left w-full"
+                        style="font-family: 'Bungee', sans-serif;"
+                        class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'projects'
                                 ? 'text-primary'
@@ -112,7 +116,8 @@ onUnmounted(() => {
                         Relevant projects
                     </button>
                     <button
-                        class="block text-lg font-medium transition-colors text-left w-full"
+                        style="font-family: 'Bungee', sans-serif;"
+                        class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
                         :class="
                             activeSection === 'posts'
                                 ? 'text-primary'
