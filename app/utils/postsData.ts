@@ -279,6 +279,6 @@ export const posts: Post[] = [
     title: "How AI is helping me build D2Brain",
     date: "2026-07-15",
     content: "I want to dive a bit deeper into how I use AI to build my project, also the decisions I made on how to integrate AI into the platform.",
-    htmlContent: "",
+    htmlContent: "<div>Test</div>",
   }
 ];
