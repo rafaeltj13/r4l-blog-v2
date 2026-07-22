@@ -14,10 +14,25 @@ const { dialogRef, open, close } = useDialog();
 
 const cvType = ref<"front" | "full" | "all">("all");
 
+// Tailored CV state
+const jobDescription = ref("");
+const isGenerating = ref(false);
+const optimizeError = ref<string | null>(null);
+
+interface TailoredPayload {
+    position: string;
+    summary: string;
+    selectedExperienceIds: number[];
+    selectedSkills: Record<string, string[]>;
+}
+
+const tailoredPayload = ref<TailoredPayload | null>(null);
+
 // Easily editable header info
 const fullName = "Rafael de Araújo Maciel";
 
 const position = computed(() => {
+    if (tailoredPayload.value) return tailoredPayload.value.position;
     if (cvType.value === "front") return "Senior Frontend Engineer";
     return "Senior Software Engineer";
 });
@@ -37,6 +52,7 @@ const contactInfo = {
 };
 
 const summary = computed(() => {
+    if (tailoredPayload.value) return tailoredPayload.value.summary;
     if (cvType.value === "front") {
         return "Senior Software Engineer with 8+ years of expertise specializing in frontend development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and React Native. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
     }
@@ -57,7 +73,12 @@ const groupedExperience = computed(() => {
     const groups: Record<string, any> = {};
 
     let recentExperiences = experienceData;
-    if (cvType.value === "front") {
+    if (tailoredPayload.value) {
+        const ids = [...new Set(tailoredPayload.value.selectedExperienceIds)];
+        recentExperiences = ids
+            .map((id) => experienceData[id])
+            .filter(Boolean);
+    } else if (cvType.value === "front") {
         let pathSeen = false;
         recentExperiences = experienceData
             .filter((e) => {
@@ -231,6 +252,19 @@ const categorizedSkills = computed(() => {
         };
     }
 
+    if (tailoredPayload.value) {
+        const result: Record<string, string[]> = {};
+        Object.entries(tailoredPayload.value.selectedSkills).forEach(
+            ([cat, skills]) => {
+                const matched = skills.filter((tech) => allTechs.has(tech));
+                if (matched.length > 0) {
+                    result[cat] = matched.sort();
+                }
+            },
+        );
+        return result;
+    }
+
     const result: Record<string, string[]> = {};
     const used = new Set<string>();
 
@@ -268,13 +302,59 @@ function splitDescription(description: string): string[] {
         .filter(Boolean);
 }
 
-const downloadCV = async (type: "front" | "full" = "front") => {
-    cvType.value = type;
+const A4_WIDTH_PX = 794;
+const A4_HEIGHT_PX = 1123; // ~794px × 297/210
 
-    // Wait for Vue reactivity and DOM updates
-    await nextTick();
-    await new Promise((resolve) => setTimeout(resolve, 100));
+const measureResumeHeight = (): number => {
+    const element = document.querySelector(
+        ".resume-wrapper",
+    ) as HTMLElement | null;
+    if (!element) return 0;
 
+    // Create a hidden clone styled exactly like the PDF clone
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.style.position = "absolute";
+    clone.style.visibility = "hidden";
+    clone.style.top = "-9999px";
+    clone.style.left = "-9999px";
+    clone.style.width = A4_WIDTH_PX + "px";
+    clone.style.maxWidth = "none";
+    clone.style.padding = "40px 48px";
+    clone.style.boxShadow = "none";
+    clone.style.margin = "0";
+    clone.style.letterSpacing = "0.01px";
+
+    clone.querySelectorAll<HTMLElement>("*").forEach((el) => {
+        el.style.letterSpacing = "0.01px";
+    });
+
+    document.body.appendChild(clone);
+    const height = clone.getBoundingClientRect().height;
+    document.body.removeChild(clone);
+
+    return height;
+};
+
+const fitResumeToOnePage = async (minExperiences = 2): Promise<void> => {
+    const safetyMargin = 10;
+    const maxHeight = A4_HEIGHT_PX - safetyMargin;
+
+    while (tailoredPayload.value && tailoredPayload.value.selectedExperienceIds.length > minExperiences) {
+        await nextTick();
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const height = measureResumeHeight();
+        if (height <= maxHeight) break;
+
+        // Drop the least relevant (last) experience and re-check
+        tailoredPayload.value = {
+            ...tailoredPayload.value,
+            selectedExperienceIds: tailoredPayload.value.selectedExperienceIds.slice(0, -1),
+        };
+    }
+};
+
+const generateResumePDF = async (filename: string) => {
     const element = document.querySelector(
         ".resume-wrapper",
     ) as HTMLElement | null;
@@ -282,9 +362,6 @@ const downloadCV = async (type: "front" | "full" = "front") => {
 
     const { default: jsPDF } = await import("jspdf");
     const { default: html2canvas } = await import("html2canvas-pro");
-
-    // A4 at 2x scale: 210mm × 297mm → ~794px width at 96dpi
-    const A4_WIDTH_PX = 794;
 
     const canvas = await html2canvas(element, {
         scale: 2,
@@ -373,15 +450,79 @@ const downloadCV = async (type: "front" | "full" = "front") => {
         }
     }
 
+    pdf.save(filename);
+};
+
+const resetResumeState = () => {
+    cvType.value = "all";
+    tailoredPayload.value = null;
+};
+
+const downloadCV = async (type: "front" | "full" = "front") => {
+    cvType.value = type;
+
+    // Wait for Vue reactivity and DOM updates
+    await nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     const filename =
         type === "front"
             ? "Rafael_Maciel_Frontend_CV.pdf"
             : "Rafael_Maciel_Fullstack_CV.pdf";
-    pdf.save(filename);
+    await generateResumePDF(filename);
     close();
 
     // Reset to showing everything on the page
-    cvType.value = "all";
+    resetResumeState();
+};
+
+const downloadTailoredCV = async () => {
+    const description = jobDescription.value.trim();
+    if (!description) return;
+
+    isGenerating.value = true;
+    optimizeError.value = null;
+
+    try {
+        const response = await $fetch<TailoredPayload>("/api/cv/optimize", {
+            method: "POST",
+            body: {
+                jobDescription: description,
+            },
+        });
+
+        if (!response.selectedExperienceIds?.length) {
+            throw new Error(
+                "AI returned an empty experience list. Please try again.",
+            );
+        }
+
+        cvType.value = "all";
+        tailoredPayload.value = response;
+
+        // Wait for Vue reactivity and DOM updates
+        await nextTick();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Ensure the tailored content fits on a single A4 page
+        await fitResumeToOnePage();
+
+        await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf");
+        close();
+
+        // Reset state
+        resetResumeState();
+        jobDescription.value = "";
+    } catch (err: unknown) {
+        console.error("Tailored CV error:", err);
+        const message =
+            err instanceof Error
+                ? err.message
+                : "Failed to generate tailored CV. Please try again.";
+        optimizeError.value = message;
+    } finally {
+        isGenerating.value = false;
+    }
 };
 </script>
 
@@ -632,7 +773,7 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                 </div>
             </Transition>
             <dialog ref="dialogRef" class="modal">
-                <div class="modal-box max-w-sm">
+                <div class="modal-box max-w-md">
                     <div class="flex items-start justify-between gap-3 mb-4">
                         <div class="flex items-center gap-2 min-w-0">
                             <Icon
@@ -656,17 +797,58 @@ const downloadCV = async (type: "front" | "full" = "front") => {
                         class="w-full gap-2 flex flex-col justify-center items-center"
                     >
                         <button
-                            className="btn btn-outline btn-block btn-primary"
+                            class="btn btn-outline btn-block btn-primary"
                             @click="downloadCV('front')"
                         >
                             Frontend CV
                         </button>
                         <button
-                            className="btn btn-outline btn-block btn-primary"
+                            class="btn btn-outline btn-block btn-primary"
                             @click="downloadCV('full')"
                         >
                             Full-stack CV
                         </button>
+                    </div>
+
+                    <div class="divider text-xs text-slate-400">OR</div>
+
+                    <div class="w-full space-y-3">
+                        <div class="text-sm font-medium text-slate-700">
+                            Generate a tailored CV
+                        </div>
+
+                        <textarea
+                            v-model="jobDescription"
+                            class="textarea textarea-bordered w-full text-sm"
+                            rows="4"
+                            placeholder="Paste the job description here and we'll optimize the CV for it..."
+                        ></textarea>
+
+                        <button
+                            class="btn btn-primary btn-block"
+                            :disabled="
+                                !jobDescription.trim() || isGenerating
+                            "
+                            @click="downloadTailoredCV()"
+                        >
+                            <span
+                                v-if="isGenerating"
+                                class="loading loading-spinner loading-xs"
+                            ></span>
+                            <Icon
+                                v-else
+                                name="uil:magic"
+                                class="mr-1"
+                            />
+                            {{ isGenerating ? "Generating..." : "Generate Tailored CV" }}
+                        </button>
+
+                        <p
+                            v-if="optimizeError"
+                            class="text-error text-xs text-center"
+                        >
+                            {{ optimizeError }}
+                        </p>
                     </div>
                 </div>
             </dialog>
