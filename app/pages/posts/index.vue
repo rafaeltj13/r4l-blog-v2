@@ -24,9 +24,6 @@ const formatDate = (date: string) =>
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <!-- Header -->
         <header v-motion-slide-left suppressHydrationWarning class="mb-16">
-            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-primary mb-2">
-                Writing
-            </p>
             <h1 class="text-4xl md:text-5xl font-bold text-base-content">
                 Blog
             </h1>
