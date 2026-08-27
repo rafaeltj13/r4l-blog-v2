@@ -1,140 +1,141 @@
 <script setup lang="ts">
+import type { Post } from "~/utils/postsData";
 import { posts as postsData } from "~/utils/postsData";
 
-useHead({
+useSeoMeta({
     title: "R4L - Blog",
+    description: "My thoughts and experiences in one place.",
 });
 
-const { data: posts } = await useAsyncData("posts", async () => {
-    return [...postsData].reverse();
-});
+const posts = [...postsData].reverse();
+const featuredPost = computed(() => posts[0] ?? null);
+const remainingPosts = computed(() => posts.slice(1));
 
-const featuredPost = computed(() => posts.value?.[0] ?? null);
-const remainingPosts = computed(() => posts.value?.slice(1) ?? []);
+const parseDate = (date: string) => new Date(`${date}T12:00:00`);
 
-const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString("en-US", {
-        month: "short",
+const formatDate = (date: string, long = false) =>
+    parseDate(date).toLocaleDateString("en-US", {
+        month: long ? "long" : "short",
         day: "numeric",
         year: "numeric",
     });
+
+const getReadingTime = (post: Post) => {
+    const text = post.htmlContent.replace(/<[^>]*>/g, " ");
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(words / 200));
+};
 </script>
 
 <template>
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <!-- Header -->
-        <header v-motion-slide-left suppressHydrationWarning class="mb-16">
-            <h1 class="text-4xl md:text-5xl font-bold text-base-content">
-                Blog
-            </h1>
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <header
+            v-motion-slide-left
+            suppressHydrationWarning
+            class="mb-10 border-b border-base-content/10 pb-8 sm:mb-12 sm:flex sm:items-end sm:justify-between"
+        >
+            <div>
+                <h1 class="max-w-3xl text-4xl font-bold leading-tight text-base-content sm:text-5xl">
+                    Blog
+                </h1>
+                <p class="mt-4 max-w-2xl text-base leading-relaxed text-base-content/60 sm:text-lg">
+                    My thoughts and experiences in one place.
+                </p>
+            </div>
+            <p class="mt-6 text-sm text-base-content/45 sm:mt-0 sm:pb-1">
+                {{ posts.length }} {{ posts.length === 1 ? "article" : "articles" }}
+            </p>
         </header>
 
-        <!-- Featured Post -->
         <NuxtLink
             v-if="featuredPost"
             v-motion-slide-bottom
             :to="`/posts/${featuredPost.id}`"
-            class="group relative block overflow-hidden rounded-3xl mb-20"
+            class="group grid overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 transition duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-base-content/5 lg:grid-cols-[1.05fr_0.95fr]"
         >
-            <div class="relative h-[420px] md:h-[480px] overflow-hidden bg-base-200">
+            <div class="flex flex-col justify-center p-6 sm:p-9 lg:p-12">
+                <div class="mb-5 flex flex-wrap items-center gap-3 text-xs text-base-content/50">
+                    <span class="badge badge-primary badge-sm font-semibold uppercase tracking-wider">
+                        Latest
+                    </span>
+                    <time :datetime="featuredPost.date">
+                        {{ formatDate(featuredPost.date, true) }}
+                    </time>
+                    <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
+                    <span>{{ getReadingTime(featuredPost) }} min read</span>
+                </div>
+
+                <h2 class="text-2xl font-bold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-3xl lg:text-4xl">
+                    {{ featuredPost.title }}
+                </h2>
+                <p class="mt-4 max-w-xl text-base leading-relaxed text-base-content/65 sm:text-lg">
+                    {{ featuredPost.content }}
+                </p>
+                <span class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-base-content transition-colors group-hover:text-primary">
+                    Read the article
+                    <Icon
+                        name="uil:arrow-right"
+                        class="size-5 transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                </span>
+            </div>
+
+            <div class="relative min-h-64 overflow-hidden bg-base-200 sm:min-h-80 lg:min-h-[430px]">
                 <PostsPostImage
                     variant="hero"
                     :post="featuredPost"
-                    class="transform group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                    class="transition-transform duration-700 ease-out group-hover:scale-[1.025]"
                 />
-                <!-- Gradient overlay -->
-                <div
-                    class="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent"
-                />
-                <!-- Content overlay -->
-                <div class="absolute inset-x-0 bottom-0 p-8 md:p-12">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span
-                            class="inline-flex items-center px-3 py-1 rounded-full bg-primary/90 text-primary-content text-xs font-semibold uppercase tracking-wide backdrop-blur-sm"
-                        >
-                            Latest
-                        </span>
-                        <time
-                            :datetime="featuredPost.date"
-                            class="text-white/70 text-sm font-medium"
-                        >
-                            {{ formatDate(featuredPost.date) }}
-                        </time>
-                    </div>
-                    <h2
-                        class="text-3xl md:text-4xl font-bold text-white leading-tight mb-3 group-hover:text-primary/90 transition-colors duration-300"
-                    >
-                        {{ featuredPost.title }}
-                    </h2>
-                    <p class="text-white/70 text-base md:text-lg leading-relaxed max-w-2xl line-clamp-2">
-                        {{ featuredPost.content }}
-                    </p>
-                    <span
-                        class="inline-flex items-center gap-2 mt-5 text-sm font-semibold text-white/90 group-hover:gap-3 transition-all duration-300"
-                    >
-                        Read article
-                        <Icon name="heroicons:arrow-right" class="w-4 h-4" />
-                    </span>
-                </div>
+                <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-base-content/15 to-transparent lg:bg-linear-to-r" />
             </div>
         </NuxtLink>
 
-        <!-- Remaining Posts -->
-        <div v-if="remainingPosts.length" class="space-y-0">
-            <NuxtLink
-                v-for="(post, index) in remainingPosts"
-                :key="post.id"
-                :to="`/posts/${post.id}`"
-                class="group relative flex flex-col sm:flex-row gap-6 sm:gap-8 py-8 border-b border-base-content/10 first:border-t first:border-base-content/10"
-            >
-                <!-- Index number -->
-                <span
-                    class="hidden sm:block text-5xl font-bold text-base-content/[0.06] group-hover:text-primary/15 transition-colors duration-300 leading-none select-none w-16 shrink-0"
-                >
-                    {{ String(index + 2).padStart(2, "0") }}
+        <section v-if="remainingPosts.length" class="mt-16 sm:mt-20" aria-labelledby="all-posts-heading">
+            <div class="mb-5 flex items-center justify-between">
+                <h2 id="all-posts-heading" class="text-lg font-bold text-base-content sm:text-xl">
+                    More from the blog
+                </h2>
+                <span class="text-xs uppercase tracking-[0.16em] text-base-content/35">
+                    Newest first
                 </span>
+            </div>
 
-                <!-- Thumbnail -->
-                <div
-                    class="w-full sm:w-44 md:w-52 h-40 sm:h-28 md:h-32 shrink-0 rounded-xl overflow-hidden bg-base-200"
+            <div class="divide-y divide-base-content/10 border-y border-base-content/10">
+                <NuxtLink
+                    v-for="post in remainingPosts"
+                    :key="post.id"
+                    :to="`/posts/${post.id}`"
+                    class="group grid gap-5 py-7 transition-colors sm:grid-cols-[8rem_1fr_10rem] sm:items-center sm:gap-8 sm:py-8"
                 >
-                    <PostsPostImage
-                        variant="thumbnail"
-                        :post="post"
-                        class="transform group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                </div>
+                    <div class="flex items-center gap-3 text-xs text-base-content/45 sm:block">
+                        <time :datetime="post.date" class="font-medium">
+                            {{ formatDate(post.date) }}
+                        </time>
+                        <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25 sm:hidden" />
+                        <span class="sm:mt-1 sm:block">{{ getReadingTime(post) }} min read</span>
+                    </div>
 
-                <!-- Content -->
-                <div class="flex flex-col justify-center min-w-0">
-                    <time
-                        :datetime="post.date"
-                        class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-2"
-                    >
-                        {{ formatDate(post.date) }}
-                    </time>
-                    <h3
-                        class="text-xl md:text-2xl font-bold text-base-content leading-snug mb-2 group-hover:text-primary transition-colors duration-200"
-                    >
-                        {{ post.title }}
-                    </h3>
-                    <p
-                        class="text-base-content/60 text-sm md:text-base leading-relaxed line-clamp-2"
-                    >
-                        {{ post.content }}
-                    </p>
-                </div>
+                    <div class="min-w-0">
+                        <h3 class="text-xl font-bold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-2xl">
+                            {{ post.title }}
+                        </h3>
+                        <p class="mt-2 line-clamp-2 max-w-2xl text-sm leading-relaxed text-base-content/60 sm:text-base">
+                            {{ post.content }}
+                        </p>
+                    </div>
 
-                <!-- Arrow indicator -->
-                <div
-                    class="hidden sm:flex items-center ml-auto shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-                >
-                    <Icon
-                        name="heroicons:arrow-right"
-                        class="w-5 h-5 text-primary"
-                    />
-                </div>
-            </NuxtLink>
-        </div>
+                    <div class="relative order-first aspect-[16/10] overflow-hidden rounded-xl bg-base-200 sm:order-none sm:aspect-[4/3]">
+                        <PostsPostImage
+                            variant="thumbnail"
+                            :post="post"
+                            class="transition-transform duration-500 ease-out group-hover:scale-105"
+                        />
+                        <span class="absolute bottom-2 right-2 grid size-8 place-items-center rounded-full bg-base-100/90 text-base-content opacity-0 shadow-sm backdrop-blur transition-all duration-300 group-hover:opacity-100">
+                            <Icon name="uil:arrow-up-right" class="size-4" />
+                        </span>
+                    </div>
+                </NuxtLink>
+            </div>
+        </section>
     </div>
 </template>

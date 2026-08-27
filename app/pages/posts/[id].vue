@@ -2,12 +2,8 @@
 import { posts } from "~/utils/postsData";
 
 const route = useRoute();
+const post = computed(() => posts.find((item) => item.id === route.params.id));
 
-const post = computed(() => {
-    return posts.find((p) => p.id === route.params.id);
-});
-
-// Redirect if post not found
 if (!post.value) {
     throw createError({
         statusCode: 404,
@@ -16,175 +12,225 @@ if (!post.value) {
     });
 }
 
-// Update title meta
-useHead({
-    title: post.value?.title ? `R4L - ${post.value.title}` : "R4L - Blog Post",
+useSeoMeta({
+    title: () => `R4L - ${post.value?.title ?? "Blog Post"}`,
+    description: () => post.value?.content,
+    ogTitle: () => post.value?.title,
+    ogDescription: () => post.value?.content,
 });
 
-// Reading time estimate (avg 200 wpm)
 const readingTime = computed(() => {
-    const text = post.value?.htmlContent?.replace(/<[^>]*>/g, "") ?? "";
-    const words = text.trim().split(/\s+/).length;
+    const text = post.value?.htmlContent.replace(/<[^>]*>/g, " ") ?? "";
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
     return Math.max(1, Math.ceil(words / 200));
 });
 
-// Adjacent posts for navigation
 const currentIndex = computed(() =>
-    posts.findIndex((p) => p.id === route.params.id),
+    posts.findIndex((item) => item.id === route.params.id),
 );
-const prevPost = computed(() =>
+const olderPost = computed(() =>
     currentIndex.value > 0 ? posts[currentIndex.value - 1] : null,
 );
-const nextPost = computed(() =>
-    currentIndex.value < posts.length - 1
-        ? posts[currentIndex.value + 1]
-        : null,
+const newerPost = computed(() =>
+    currentIndex.value < posts.length - 1 ? posts[currentIndex.value + 1] : null,
 );
 
-// Reading progress
-const readingProgress = ref(0);
-
-onMounted(() => {
-    const updateProgress = () => {
-        const scrollTop = window.scrollY;
-        const docHeight =
-            document.documentElement.scrollHeight - window.innerHeight;
-        readingProgress.value =
-            docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
-    };
-    window.addEventListener("scroll", updateProgress, { passive: true });
-    onUnmounted(() => window.removeEventListener("scroll", updateProgress));
-});
-
 const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString("en-US", {
+    new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric",
     });
+
+// Older entries are already structured HTML. This gives plain-text entries the
+// same readable paragraph rhythm without rewriting the source post data.
+const articleHtml = computed(() => {
+    const source = post.value?.htmlContent.trim() ?? "";
+
+    if (/<(?:article|p|h[1-6]|section|ul|ol|blockquote)\b/i.test(source)) {
+        return source;
+    }
+
+    const text = source
+        .replace(/^<div[^>]*>/i, "")
+        .replace(/<\/div>$/i, "")
+        .trim();
+
+    return text
+        .split(/\n\s*\n/)
+        .map((block) => block.trim())
+        .filter(Boolean)
+        .map((block) => {
+            const lines = block.split(/\n/).map((line) => line.trim()).filter(Boolean);
+            const isNumberedList = lines.length > 0 && lines.every((line) => /^\d+\.\s/.test(line));
+
+            const withLinks = (value: string) =>
+                value.replace(
+                    /\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,
+                    '<a href="$2" target="_blank" rel="noreferrer">$1</a>',
+                );
+
+            if (isNumberedList) {
+                const items = lines
+                    .map((line) => line.replace(/^\d+\.\s*/, ""))
+                    .map((line) => `<li>${withLinks(line)}</li>`)
+                    .join("");
+                return `<ol>${items}</ol>`;
+            }
+
+            return `<p>${withLinks(lines.join(" "))}</p>`;
+        })
+        .join("");
+});
+
+const readingProgress = ref(0);
+const shareLabel = ref("Share");
+
+const sharePost = async () => {
+    if (!import.meta.client || !post.value) return;
+
+    const shareData = {
+        title: post.value.title,
+        text: post.value.content,
+        url: window.location.href,
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+            return;
+        }
+
+        await navigator.clipboard.writeText(shareData.url);
+        shareLabel.value = "Link copied";
+        window.setTimeout(() => (shareLabel.value = "Share"), 1800);
+    } catch (error) {
+        if ((error as DOMException).name !== "AbortError") {
+            shareLabel.value = "Try again";
+            window.setTimeout(() => (shareLabel.value = "Share"), 1800);
+        }
+    }
+};
+
+onMounted(() => {
+    const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const pageHeight = document.documentElement.scrollHeight - window.innerHeight;
+        readingProgress.value = pageHeight > 0
+            ? Math.min(100, Math.round((scrollTop / pageHeight) * 100))
+            : 0;
+    };
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+    onUnmounted(() => window.removeEventListener("scroll", updateProgress));
+});
 </script>
 
 <template>
     <div>
-        <!-- Reading progress bar -->
-        <div class="fixed top-14 left-0 right-0 z-40 h-[3px] bg-transparent">
+        <div class="fixed left-0 right-0 top-14 z-40 h-0.5 bg-base-200" aria-hidden="true">
             <div
-                class="h-full bg-primary/80 transition-all duration-150 ease-out rounded-r-full"
+                class="h-full bg-primary transition-[width] duration-150 ease-out"
                 :style="{ width: `${readingProgress}%` }"
             />
         </div>
 
-        <!-- Article Body -->
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-            <!-- Back link -->
-            <div v-motion-slide-left class="mb-8">
-                <NuxtLink
-                    to="/posts"
-                    class="inline-flex items-center gap-2 text-sm text-base-content/50 hover:text-primary transition-colors duration-200 group"
-                >
-                    <Icon
-                        name="heroicons:arrow-left"
-                        class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1"
-                    />
-                    Back to posts
-                </NuxtLink>
-            </div>
-
-            <!-- Title block -->
-            <header v-motion-slide-bottom class="mb-10">
-                <h1
-                    class="text-4xl md:text-5xl font-bold text-base-content leading-[1.1] mb-6"
-                >
-                    {{ post!.title }}
-                </h1>
-
-                <div
-                    class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-base-content/50"
-                >
-                    <time :datetime="post!.date" class="font-medium">
-                        {{ formatDate(post!.date) }}
-                    </time>
-                    <span class="w-1 h-1 rounded-full bg-base-content/30" />
-                    <span class="flex items-center gap-1.5 font-medium">
-                        <Icon
-                            name="heroicons:clock"
-                            class="w-4 h-4 text-base-content/40"
-                        />
-                        {{ readingTime }} min read
-                    </span>
-                </div>
-            </header>
-
-            <!-- Hero Image -->
-            <figure
-                v-motion-slide-bottom
-                class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl mb-12 ring-1 ring-base-content/10 bg-base-200"
+        <main class="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
+            <NuxtLink
+                to="/posts"
+                class="group inline-flex items-center gap-2 text-sm font-medium text-base-content/50 transition-colors hover:text-primary"
             >
-                <PostsPostImage variant="hero" :post="post!" />
-            </figure>
+                <Icon name="uil:arrow-left" class="size-4 transition-transform group-hover:-translate-x-0.5" />
+                All writing
+            </NuxtLink>
 
-            <!-- Divider -->
-            <div class="h-px bg-linear-to-r from-primary/40 via-base-content/10 to-transparent mb-12" />
+            <article class="mt-10 sm:mt-14">
+                <header v-motion-slide-bottom suppressHydrationWarning class="mx-auto max-w-4xl">
+                    <div class="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+                        <span>Article {{ currentIndex + 1 }} of {{ posts.length }}</span>
+                        <span aria-hidden="true" class="h-px w-10 bg-primary/50" />
+                    </div>
+                    <h1 class="text-4xl font-bold leading-[1.12] text-base-content sm:text-5xl lg:text-6xl">
+                        {{ post!.title }}
+                    </h1>
+                    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-base-content/65 sm:text-xl">
+                        {{ post!.content }}
+                    </p>
 
-            <!-- Content -->
-            <div v-motion-slide-bottom :delay="150">
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div v-html="post!.htmlContent" />
-            </div>
+                    <div class="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-base-content/10 pt-5">
+                        <div class="flex flex-wrap items-center gap-3 text-sm text-base-content/50">
+                            <time :datetime="post!.date" class="font-medium text-base-content/70">
+                                {{ formatDate(post!.date) }}
+                            </time>
+                            <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
+                            <span class="inline-flex items-center gap-1.5">
+                                <Icon name="uil:clock" class="size-4" />
+                                {{ readingTime }} min read
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            class="btn btn-ghost btn-sm gap-2 text-base-content/60 hover:text-primary"
+                            :aria-label="`${shareLabel} this article`"
+                            @click="sharePost"
+                        >
+                            <Icon name="uil:share-alt" class="size-4" />
+                            {{ shareLabel }}
+                        </button>
+                    </div>
+                </header>
 
-            <!-- Post Navigation -->
-            <nav class="mt-20 pt-8 border-t border-base-content/10">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <figure
+                    v-motion-slide-bottom
+                    suppressHydrationWarning
+                    class="relative mt-10 aspect-[16/10] w-full overflow-hidden rounded-2xl bg-base-200 ring-1 ring-base-content/10 sm:mt-12"
+                >
+                    <PostsPostImage variant="hero" :post="post!" />
+                </figure>
+
+                <div class="post-content mx-auto mt-12 max-w-3xl sm:mt-16">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="articleHtml" />
+                </div>
+            </article>
+
+            <nav class="mx-auto mt-16 max-w-4xl border-t border-base-content/10 pt-8 sm:mt-24" aria-label="Post navigation">
+                <div class="mb-5 flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-base-content">Keep reading</h2>
+                    <NuxtLink to="/posts" class="text-sm text-base-content/45 transition-colors hover:text-primary">
+                        Browse all
+                    </NuxtLink>
+                </div>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <NuxtLink
-                        v-if="prevPost"
-                        :to="`/posts/${prevPost.id}`"
-                        class="group flex flex-col gap-1 p-5 rounded-2xl border border-base-content/10 hover:border-primary/30 hover:bg-primary/[0.03] transition-all duration-200"
+                        v-if="olderPost"
+                        :to="`/posts/${olderPost.id}`"
+                        class="group rounded-xl border border-base-content/10 p-5 transition hover:border-primary/30 hover:bg-base-200/40"
                     >
-                        <span class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">
-                            &larr; Previous
+                        <span class="mb-2 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
+                            <Icon name="uil:arrow-left" class="size-4" /> Older
                         </span>
-                        <span class="text-sm font-semibold text-base-content group-hover:text-primary transition-colors line-clamp-1">
-                            {{ prevPost.title }}
+                        <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
+                            {{ olderPost.title }}
                         </span>
                     </NuxtLink>
-                    <div v-else />
+                    <div v-else class="hidden sm:block" />
+
                     <NuxtLink
-                        v-if="nextPost"
-                        :to="`/posts/${nextPost.id}`"
-                        class="group flex flex-col gap-1 p-5 rounded-2xl border border-base-content/10 hover:border-primary/30 hover:bg-primary/[0.03] transition-all duration-200 text-right"
+                        v-if="newerPost"
+                        :to="`/posts/${newerPost.id}`"
+                        class="group rounded-xl border border-base-content/10 p-5 text-right transition hover:border-primary/30 hover:bg-base-200/40"
                     >
-                        <span class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">
-                            Next &rarr;
+                        <span class="mb-2 flex items-center justify-end gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
+                            Newer <Icon name="uil:arrow-right" class="size-4" />
                         </span>
-                        <span class="text-sm font-semibold text-base-content group-hover:text-primary transition-colors line-clamp-1">
-                            {{ nextPost.title }}
+                        <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
+                            {{ newerPost.title }}
                         </span>
                     </NuxtLink>
                 </div>
             </nav>
-
-            <!-- Bottom bar -->
-            <div class="mt-12 pb-12 flex items-center justify-between">
-                <NuxtLink
-                    to="/posts"
-                    class="inline-flex items-center gap-2 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-200 group"
-                >
-                    <Icon
-                        name="heroicons:arrow-left"
-                        class="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-1"
-                    />
-                    All posts
-                </NuxtLink>
-            </div>
-        </div>
+        </main>
     </div>
 </template>
-
-<style>
-.prose {
-    max-width: none;
-}
-.prose img {
-    border-radius: 0.75rem;
-}
-</style>

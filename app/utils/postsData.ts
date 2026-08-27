@@ -277,8 +277,28 @@ export const posts: Post[] = [
     id: "4",
     image: "{653DB11E-B417-4A81-B915-169327A11AB9}",
     title: "How AI is helping me build D2Brain",
-    date: "2026-07-15",
+    date: "2026-08-25",
     content: "I want to dive a bit deeper into how I use AI to build my project, also the decisions I made on how to integrate AI into the platform.",
-    htmlContent: "<div>Testing123</div>",
+    htmlContent: `<div>
+      It's been a while and I'm very proud to the work I did on this project in the past few months. I'm not always able to work a ton on this project but progress is always made. After the "lauch" of the platform a few months ago,
+      which was not actually a lauch I kept improving and doing experiments on this project, and a lot of those was made with the help of AI. I think I can separate this discussion into two categories:
+      1. How I use AI for the core functionality of the D2Brain platform;
+      2. How AI helped me build D2Brain.
+
+      These looks similar but they are actually very different, we can utilize AI nowadays in many different ways. I'll start telling about how do I use AI in the core functionality of the D2Brain platform.
+
+      I've shifted my focus into building a product that relies on AI to provide the core functionality now, and that integrates with the current existing features that is already available, in the D2Brain case is the idea creation. I've initially created a
+      page that the user can focus on creating his own idea, the next logic feature was to use AI to generate a brand new idea and now I pivoted to having a chat for the user to interact with my own AI assistant to help him understand the game and maybe create
+      a new idea based on the AI's suggestions. The great thing is that the multiple ways of creating data complement each other, this gives more freedom to the user to play around the way he wants to create ideas.
+
+      Now the main goal is to give more power to the chat, and have a platform similar to a ChatGPT, but for dota players. We can chat, understand concepts of the game, create build and share that with the community if we want, talking to a chat
+      usually feels very natural if is replyies the way the user expects.
+
+      Talking a bit more about what powers the chat, I've decided to use cheap models mostly because it is a personal small project, so we can use a cheap and fast option that can read the data from our source api and respond to the user. I've decided to use
+      [DeepSeek v4 Pro](https://artificialanalysis.ai/models/deepseek-v4-pro-0424) initially, it gave me a good balance between speed and accuracy for the chat, so I was getting good result in a relatively fast response time. What mainly made me switch was the lauch of
+      the new v4 models(they used the same name for new releases) so both the [v4 flash](https://artificialanalysis.ai/models/deepseek-v4-flash) model and the [pro model](https://artificialanalysis.ai/models/deepseek-v4-pro) got significant upgrades, and they got a bit
+      expensive in the process. I had to play around and test the changes and this got me to search even more for the perfect model for this product. I've landed on OpenAI [Luna 5.6](https://artificialanalysis.ai/models/gpt-5-6-luna), a extremly fast and capable small model,
+      very cheap too, so it fits perfectly for this product.
+    </div>`,
   }
 ];
