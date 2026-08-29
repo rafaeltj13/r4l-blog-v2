@@ -279,26 +279,85 @@ export const posts: Post[] = [
     title: "How AI is helping me build D2Brain",
     date: "2026-08-25",
     content: "I want to dive a bit deeper into how I use AI to build my project, also the decisions I made on how to integrate AI into the platform.",
-    htmlContent: `<div>
-      It's been a while and I'm very proud to the work I did on this project in the past few months. I'm not always able to work a ton on this project but progress is always made. After the "lauch" of the platform a few months ago,
-      which was not actually a lauch I kept improving and doing experiments on this project, and a lot of those was made with the help of AI. I think I can separate this discussion into two categories:
-      1. How I use AI for the core functionality of the D2Brain platform;
-      2. How AI helped me build D2Brain.
+    htmlContent: `<article>
+      <p>
+        It's been a while and I'm very proud to the work I did on this project in the past few months. I'm not always able to work a ton on this project but progress is always made. After the "lauch" of the platform a few months ago,
+        which was not actually a lauch I kept improving and doing experiments on this project, and a lot of those was made with the help of AI. I think I can separate this discussion into two categories:
+      </p>
 
-      These looks similar but they are actually very different, we can utilize AI nowadays in many different ways. I'll start telling about how do I use AI in the core functionality of the D2Brain platform.
+      <ol>
+        <li>How I use AI for the core functionality of the D2Brain platform;</li>
+        <li>How AI helped me build D2Brain.</li>
+      </ol>
 
-      I've shifted my focus into building a product that relies on AI to provide the core functionality now, and that integrates with the current existing features that is already available, in the D2Brain case is the idea creation. I've initially created a
-      page that the user can focus on creating his own idea, the next logic feature was to use AI to generate a brand new idea and now I pivoted to having a chat for the user to interact with my own AI assistant to help him understand the game and maybe create
-      a new idea based on the AI's suggestions. The great thing is that the multiple ways of creating data complement each other, this gives more freedom to the user to play around the way he wants to create ideas.
+      <p>
+        These looks similar but they are actually very different, we can utilize AI nowadays in many different ways. I'll start telling about how do I use AI in the core functionality of the D2Brain platform.
+      </p>
 
-      Now the main goal is to give more power to the chat, and have a platform similar to a ChatGPT, but for dota players. We can chat, understand concepts of the game, create build and share that with the community if we want, talking to a chat
-      usually feels very natural if is replyies the way the user expects.
+      <h2>How do I use AI in the core functionality of D2Brain</h2>
+      <p>
+        I've shifted my focus into building a product that relies on AI to provide the core functionality now, and that integrates with the current existing features that is already available, in the D2Brain case is the idea creation. I've initially created a
+        page that the user can focus on creating his own idea, the next logic feature was to use AI to generate a brand new idea and now I pivoted to having a chat for the user to interact with my own AI assistant to help him understand the game and maybe create
+        a new idea based on the AI's suggestions. The great thing is that the multiple ways of creating data complement each other, this gives more freedom to the user to play around the way he wants to create ideas.
+      </p>
 
-      Talking a bit more about what powers the chat, I've decided to use cheap models mostly because it is a personal small project, so we can use a cheap and fast option that can read the data from our source api and respond to the user. I've decided to use
-      [DeepSeek v4 Pro](https://artificialanalysis.ai/models/deepseek-v4-pro-0424) initially, it gave me a good balance between speed and accuracy for the chat, so I was getting good result in a relatively fast response time. What mainly made me switch was the lauch of
-      the new v4 models(they used the same name for new releases) so both the [v4 flash](https://artificialanalysis.ai/models/deepseek-v4-flash) model and the [pro model](https://artificialanalysis.ai/models/deepseek-v4-pro) got significant upgrades, and they got a bit
-      expensive in the process. I had to play around and test the changes and this got me to search even more for the perfect model for this product. I've landed on OpenAI [Luna 5.6](https://artificialanalysis.ai/models/gpt-5-6-luna), a extremly fast and capable small model,
-      very cheap too, so it fits perfectly for this product.
-    </div>`,
+      <p>
+        Now the main goal is to give more power to the chat, and have a platform similar to a ChatGPT, but for dota players. We can chat, understand concepts of the game, create build and share that with the community if we want, talking to a chat
+        usually feels very natural if is replyies the way the user expects.
+      </p>
+
+      <p>
+        Talking a bit more about what powers the chat, I've decided to use cheap models mostly because it is a personal small project, so we can use a cheap and fast option that can read the data from our source api and respond to the user. I've decided to use
+        <a href="https://artificialanalysis.ai/models/deepseek-v4-pro-0424" target="_blank" rel="noreferrer">DeepSeek v4 Pro</a> initially, it gave me a good balance between speed and accuracy for the chat, so I was getting good result in a relatively fast response time. What mainly made me switch was the lauch of
+        the new v4 models(they used the same name for new releases) so both the <a href="https://artificialanalysis.ai/models/deepseek-v4-flash" target="_blank" rel="noreferrer">v4 flash</a> model and the <a href="https://artificialanalysis.ai/models/deepseek-v4-pro" target="_blank" rel="noreferrer">pro model</a> got significant upgrades, and they got a bit
+        expensive in the process. I had to play around and test the changes and this got me to search even more for the perfect model for this product. I've landed on OpenAI <a href="https://artificialanalysis.ai/models/gpt-5-6-luna" target="_blank" rel="noreferrer">Luna 5.6</a>, a extremly fast and capable small model,
+        very cheap too, so it fits perfectly for this product.
+      </p>
+
+      <p>
+        I created a structure that is really simple to plug and play new models, so this gives me the power to test new models and see how they perform in the context of the product.
+        I've already tested a lot of models, and with all of the awesome models that are being released lately, this idea is getting even more interesting. For this context, I still believe
+        that small and fast models are the way to go.
+      </p>
+
+      <h2>How AI helped me build D2Brain</h2>
+      <p>
+        This is the most interesting part IMO, I've adopted AI tools since the beggining and I do have another <a href="https://r4l-blog-v2.vercel.app/posts/2">blog post</a> about that. It's funny
+        to see how much things changed in this period, now the setup is completely different and the models are as powerful as ever. I try to change my setup every month so I can keep up
+        with the changes, test different things and make sure what works for my workflow.
+      </p>
+
+      <p>
+        Last month I subscribed to <a href="https://opencode.ai/go" target="_blank" rel="noreferrer">Opencode Go</a>, the most accesible option that gives access to smaller models, mostly from China. I had a blast using this tools,
+        they are very capable to what they are meant for and the price is very accesible. Since the usage limit for this more creap subscription can hit kinda quickly, I've decided to
+        go on a mission and test pretty much all the free options available, I've testes all the free tiers from Codex, Cursor, Kimi, ZCode, Qoder and even Antigravity. Honorable mention
+        ZCode and Qoder with the best free tiers that helped me a lot to build this project.
+      </p>
+
+      <p>
+        In this period, one of the greatest examples I did with the help of AI was to migrate our database from PostgreSQL to SQLite, that is better supported on cloudflare. I've used
+        <a href="https://www.better-t-stack.dev/" target="_blank" rel="noreferrer">better t stack</a> to scaffold my fullstack project and I initially picked PostgreSQL as the database, because it worked great with Neon and I wanted
+        to try it out so it was a easy choice for me. When I did this migration I was on my opencode go subscription testing the cheao models and <a href="https://artificialanalysis.ai/models/kimi-k2-7-code" target="_blank" rel="noreferrer">Kimi 2.7 code</a>
+        did the entire thing really fast and with a good result.
+      </p>
+
+      <p>
+        Looking back is kinda funny because when scaffolding the project I picked a lot of stuff thinking that it was the best option and everything looks different now. Doing
+        these tests and trying different frameworks and databases, I've realized that is one of the best use cases for AI, and a lot of times we don't need the most powerful ones
+        to get the job done. I've started with a Nuxt fullstack app that now is a Nuxt + Hono app, from PostgreSQL to SQLite, from Vercel to Cloudflare. These AI tools were the only thing
+        that made this transition seamless and without any hassle. I do have the expertise to do that myself, but the time and effort it would take to do that manually is not worth it.
+      </p>
+
+      <p>
+        This month I'm testing it out the OpenAI Plus subscription, that made me realize how good the 5.6 luna model is for my use case in this project, I'm constantly using the state
+        of the art 5.6 Sol now and trying out new perspectives and how I'll apply these concepts in my day to day use. I've moved a bit more to the desktop app instead of relying a lot
+        on the CLI to get some work done. The migration to cloudflare was key because now I don't even need to run my project locally, I can have a environemnt just for development,
+        with that in mind I can easily work everywhere that I want, test on the device I'm on and have a more consistent workflow.
+      </p>
+
+      <p>
+        The weird part is that this will probably change in the next month, so I'm definately looking forward to see how it goes.
+      </p>
+    </article>`,
   }
 ];
