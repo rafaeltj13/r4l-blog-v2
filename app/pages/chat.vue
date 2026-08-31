@@ -109,10 +109,10 @@ const sendMessage = async () => {
 
 <template>
     <div
-        class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100vh-64px)] flex flex-col"
+        class="py-3 sm:py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100dvh-3.5rem-1px)] max-h-[calc(100dvh-3.5rem-1px)] flex flex-col overflow-hidden"
     >
-        <div v-motion-slide-left suppressHydrationWarning class="mb-8">
-            <h1 class="text-4xl font-bold text-base-content">
+        <div v-motion-slide-left suppressHydrationWarning class="shrink-0 mb-3 sm:mb-4 md:mb-6">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">
                 Chat with Digital Me
             </h1>
         </div>
@@ -120,7 +120,7 @@ const sendMessage = async () => {
         <!-- Chat Messages Area -->
         <div
             ref="messagesContainer"
-            class="flex-1 overflow-y-auto overflow-x-hidden mb-8 pr-2 space-y-4 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-100"
+            class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden mb-3 sm:mb-4 md:mb-6 pr-1 sm:pr-2 space-y-4 scrollbar-thin scrollbar-thumb-base-content/20 scrollbar-track-base-100"
         >
             <template v-for="msg in messages" :key="msg.id">
                 <!-- Bot Message -->
@@ -131,7 +131,7 @@ const sendMessage = async () => {
                 >
                     <div class="chat-image avatar">
                         <div
-                            class="w-10 rounded-full border border-base-content/10"
+                            class="w-8 sm:w-10 rounded-full border border-base-content/10"
                         >
                             <NuxtImg
                                 alt="Digital Me Avatar"
@@ -145,7 +145,7 @@ const sendMessage = async () => {
                             msg.timestamp
                         }}</time>
                     </div>
-                    <div class="chat-bubble chat-bubble-primary">
+                    <div class="chat-bubble chat-bubble-primary max-w-[90%] sm:max-w-[80%] break-words">
                         {{ msg.text }}
                     </div>
                 </div>
@@ -162,7 +162,7 @@ const sendMessage = async () => {
                             msg.timestamp
                         }}</time>
                     </div>
-                    <div class="chat-bubble chat-bubble-secondary">
+                    <div class="chat-bubble chat-bubble-secondary max-w-[90%] sm:max-w-[80%] break-words">
                         {{ msg.text }}
                     </div>
                 </div>
@@ -171,7 +171,7 @@ const sendMessage = async () => {
             <!-- Typing Indicator -->
             <div v-if="isLoading" class="flex items-center gap-3 pl-1">
                 <div
-                    class="w-10 h-10 rounded-full border border-base-content/10 overflow-hidden"
+                    class="w-8 sm:w-10 h-8 sm:h-10 rounded-full border border-base-content/10 overflow-hidden"
                 >
                     <NuxtImg
                         alt="Digital Me Avatar"
@@ -200,7 +200,7 @@ const sendMessage = async () => {
         </div>
 
         <!-- Input Area -->
-        <div v-motion-slide-visible-once-bottom class="mt-auto">
+        <div v-motion-slide-visible-once-bottom class="shrink-0 mt-auto">
             <form
                 class="relative group rounded-xl p-0.5 overflow-hidden"
                 @submit.prevent="sendMessage"
@@ -217,13 +217,13 @@ const sendMessage = async () => {
                     <textarea
                         v-model="userInput"
                         placeholder="I heard that you are a great developer, please tell me more about yourself..."
-                        class="textarea textarea-ghost w-full resize-none focus:bg-transparent focus:outline-none text-base h-20 leading-normal"
+                        class="textarea textarea-ghost w-full resize-none focus:bg-transparent focus:outline-none text-sm sm:text-base h-16 sm:h-20 leading-normal"
                         @keydown.enter.exact.prevent="sendMessage"
                     ></textarea>
 
                     <button
                         type="submit"
-                        class="btn btn-primary btn-sm mb-2 mr-2"
+                        class="btn btn-primary btn-sm mb-1.5 sm:mb-2 mr-1 sm:mr-2"
                         :disabled="!userInput.trim()"
                     >
                         Submit
