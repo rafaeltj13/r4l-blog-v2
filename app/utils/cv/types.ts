@@ -21,6 +21,12 @@ export interface Experience {
   technologies: string[];
   /** Raw multi-paragraph description. Paragraphs split on blank lines. */
   description: string;
+  /**
+   * Deprecated entries still render on the experience timeline page, but
+   * are excluded from everything download-related: presets, AI selection,
+   * skill taxonomy offered to the AI, and `buildCvDocument()`.
+   */
+  deprecated?: boolean;
 }
 
 export interface PersonalProject {

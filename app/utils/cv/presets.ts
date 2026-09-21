@@ -46,7 +46,7 @@ export const cvPresets: Record<
       "trio-studylog-2025",
       "trio-optel-2021",
       "xtra-social-2020",
-      "splab-web-2019",
+      "lella-booking-2020",
     ],
     projectIds: ["r4l-blog-v2", "dota2brain"],
     skills: {

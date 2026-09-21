@@ -54,14 +54,18 @@ const activeSelection = computed<CvSelection | null>(() => {
 const cvDocument = computed<CvDocument>(() => {
     const selection = activeSelection.value;
     if (selection) return buildCvDocument(selection);
-    // Page default: everything, no bullet overrides.
-    return buildCvDocument({
-        position: "Senior Software Engineer",
-        summary: FULL_SUMMARY,
-        experienceIds: experiences.map((e) => e.id),
-        projectIds: personalProjects.map((p) => p.id),
-        skills: skillTaxonomy,
-    });
+    // Page default: everything, including deprecated entries (page display,
+    // not a download — downloads always go through front/full/tailored).
+    return buildCvDocument(
+        {
+            position: "Senior Software Engineer",
+            summary: FULL_SUMMARY,
+            experienceIds: experiences.map((e) => e.id),
+            projectIds: personalProjects.map((p) => p.id),
+            skills: skillTaxonomy,
+        },
+        { includeDeprecated: true },
+    );
 });
 
 const groupedExperience = computed(() =>

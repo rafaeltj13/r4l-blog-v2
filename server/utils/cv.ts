@@ -7,15 +7,16 @@
  * automatically flows into both features.
  */
 import {
+  activeExperiences,
+  activeSkillTaxonomy,
   experiences,
   personalProjects,
-  skillTaxonomy,
 } from "~/utils/cv/data";
 import { CV_CONSTRAINTS } from "~/utils/cv/schema";
 
-/** Full work history with stable string ids for the model to reference. */
+/** Download-eligible work history with stable string ids for the model. */
 export function buildExperiencesBlock(): string {
-  return experiences
+  return activeExperiences
     .map((exp) => {
       const lines: string[] = [];
       lines.push(`[ID ${exp.id}] ${exp.title} @ ${exp.companyName}`);
@@ -45,7 +46,7 @@ export function buildPersonalProjectsBlock(): string {
 }
 
 export function buildSkillsBlock(): string {
-  return Object.entries(skillTaxonomy)
+  return Object.entries(activeSkillTaxonomy())
     .map(([category, skills]) => `${category}: ${skills.join(", ")}`)
     .join("\n");
 }

@@ -195,6 +195,7 @@ export const experiences: Experience[] = [
     dateEnd: "2019-12-01",
     description:
       "Worked on several projects: TCoM Desktop, a desktop application to test, load, clean and verify company's credit card machines; TCoM Loader, a new platform that extracted the load feature from TCoM Desktop; LiTT, a web application for data management and visualization for TCoM Desktop and TCoM Loader.",
+    deprecated: true,
   },
   {
     id: "splab-efinance-2017",
@@ -206,6 +207,7 @@ export const experiences: Experience[] = [
     dateEnd: "2018-11-01",
     description:
       "E-Finance: Web application to provide finance management to ensure companies.",
+    deprecated: true,
   },
   {
     id: "embedded-themes-2016",
@@ -216,6 +218,7 @@ export const experiences: Experience[] = [
     dateStart: "2016-05-01",
     dateEnd: "2017-03-01",
     description: "Created android themes for the client OS.",
+    deprecated: true,
   },
 ];
 
@@ -309,3 +312,41 @@ export const skillTaxonomy: SkillMap = {
 export const allowedSkills: Set<string> = new Set(
   Object.values(skillTaxonomy).flat(),
 );
+
+/** Experiences eligible for CV downloads (deprecated ones are page-only). */
+export const activeExperiences: Experience[] = experiences.filter(
+  (e) => !e.deprecated,
+);
+
+export const activeExperienceById: Map<string, Experience> = new Map(
+  activeExperiences.map((e) => [e.id, e]),
+);
+
+/**
+ * Technologies that appear ONLY in deprecated experiences. These are dropped
+ * from the skills offered to the AI and from downloaded documents, while
+ * every other taxonomy skill is kept as-is.
+ */
+export function deprecatedOnlyTechnologies(): Set<string> {
+  const activeTechs = new Set(activeExperiences.flatMap((e) => e.technologies));
+  const deprecatedTechs = new Set(
+    experiences.filter((e) => e.deprecated).flatMap((e) => e.technologies),
+  );
+  return new Set([...deprecatedTechs].filter((t) => !activeTechs.has(t)));
+}
+
+/** Skill taxonomy minus deprecated-only technologies (what the AI may pick). */
+export function activeSkillTaxonomy(): SkillMap {
+  const excluded = deprecatedOnlyTechnologies();
+  const result: SkillMap = {};
+  for (const [category, skills] of Object.entries(skillTaxonomy)) {
+    const kept = skills.filter((s) => !excluded.has(s));
+    if (kept.length > 0) result[category] = kept;
+  }
+  return result;
+}
+
+/** Flat allow-list for downloaded CVs (excludes deprecated-only tech). */
+export function activeAllowedSkills(): Set<string> {
+  return new Set(Object.values(activeSkillTaxonomy()).flat());
+}

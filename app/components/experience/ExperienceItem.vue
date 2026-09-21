@@ -90,6 +90,13 @@ const descriptionParagraphs = computed(() => {
                         >/ {{ experience.partner }}</span
                     >
                 </span>
+                <span
+                    v-if="experience.deprecated"
+                    class="badge badge-ghost badge-sm ml-2 align-middle font-normal"
+                    title="Shown for history — excluded from CV downloads"
+                >
+                    Legacy
+                </span>
             </div>
             <div class="mt-2 mb-4 space-y-3">
                 <p
@@ -134,6 +141,13 @@ const descriptionParagraphs = computed(() => {
                     <span v-if="experience.partner"
                         >/ {{ experience.partner }}</span
                     >
+                </span>
+                <span
+                    v-if="experience.deprecated"
+                    class="badge badge-ghost badge-sm ml-2 align-middle font-normal"
+                    title="Shown for history — excluded from CV downloads"
+                >
+                    Legacy
                 </span>
             </h3>
             <div class="mb-4 space-y-3">

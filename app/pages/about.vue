@@ -47,11 +47,11 @@ const technologies = [
         why: "Type safety makes refactoring confident and reduces runtime bugs. The developer experience with autocomplete and inline documentation is invaluable for maintaining code long-term.",
     },
     {
-        name: "Gemini",
+        name: "DeepSeek",
         icon: "uil:robot",
         description:
-            "Powers the Chat feature, allowing visitors to have AI-powered conversations about my experience and projects.",
-        why: "Adds an interactive element to the portfolio. The API is easy to integrate and provides a unique way for visitors to learn about my background.",
+            "Powers the Chat feature and the tailored-CV generator, allowing visitors to have AI-powered conversations about my experience and projects.",
+        why: "Adds an interactive element to the portfolio. The API is easy to integrate via the AI SDK with structured output, and provides a unique way for visitors to learn about my background.",
     },
     {
         name: "Vercel",

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { allowedSkills, experienceById, personalProjectById, skillTaxonomy } from "./data";
+import { activeAllowedSkills, activeExperienceById, personalProjectById, skillTaxonomy } from "./data";
 
 /**
  * THE contract between the AI and the PDF.
@@ -47,7 +47,9 @@ const KNOWN_CATEGORIES = new Set(Object.keys(skillTaxonomy));
 /**
  * Clamp AI output to the contract the PDF expects. `generateObject` already
  * enforces the shape; this additionally drops unknown ids / skills so a
- * hallucinating model can never break the render.
+ * hallucinating model can never break the render. Deprecated experiences
+ * (and their exclusive skills) are rejected here so the AI can never pull
+ * page-only history into a download.
  */
 export function sanitizeTailoredPayload(payload: TailoredCvPayload): {
   position: string;
@@ -58,22 +60,23 @@ export function sanitizeTailoredPayload(payload: TailoredCvPayload): {
   bulletOverrides: Record<string, string[]>;
 } {
   const validExperienceIds = payload.experienceIds.filter((id) =>
-    experienceById.has(id),
+    activeExperienceById.has(id),
   );
   const validProjectIds = (payload.projectIds ?? []).filter((id) =>
     personalProjectById.has(id),
   );
 
   const skills: Record<string, string[]> = {};
+  const downloadableSkills = activeAllowedSkills();
   for (const [category, list] of Object.entries(payload.selectedSkills ?? {})) {
     if (!KNOWN_CATEGORIES.has(category) || !Array.isArray(list)) continue;
-    const valid = [...new Set(list)].filter((s) => allowedSkills.has(s));
+    const valid = [...new Set(list)].filter((s) => downloadableSkills.has(s));
     if (valid.length > 0) skills[category] = valid;
   }
 
   const bulletOverrides: Record<string, string[]> = {};
   for (const [id, bullets] of Object.entries(payload.bulletOverrides ?? {})) {
-    if (!experienceById.has(id) || !Array.isArray(bullets)) continue;
+    if (!activeExperienceById.has(id) || !Array.isArray(bullets)) continue;
     const clean = bullets
       .filter((b) => typeof b === "string" && b.trim().length > 0)
       .map((b) => b.replace(/\s+/g, " ").trim().slice(0, 220))

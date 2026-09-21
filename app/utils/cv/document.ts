@@ -1,5 +1,6 @@
 import {
   contactInfo,
+  deprecatedOnlyTechnologies,
   education,
   experienceById,
   experiences,
@@ -33,11 +34,23 @@ export function formatPeriod(dateStart: string, dateEnd?: string | null): string
 /**
  * Resolve a `CvSelection` (preset or AI payload) into the exact `CvDocument`
  * the PDF renders. Unknown ids are dropped; order is preserved.
+ * Deprecated experiences (and their exclusive skills) never reach the
+ * document, even if a stale preset or AI payload references them.
  */
-export function buildCvDocument(selection: CvSelection): CvDocument {
+export function buildCvDocument(
+  selection: CvSelection,
+  opts: { includeDeprecated?: boolean } = {},
+): CvDocument {
+  const excludedSkills = opts.includeDeprecated
+    ? new Set<string>()
+    : deprecatedOnlyTechnologies();
+
   const resolvedExperiences: Experience[] = selection.experienceIds
     .map((id) => experienceById.get(id))
-    .filter((e): e is Experience => Boolean(e));
+    .filter(
+      (e): e is Experience =>
+        Boolean(e) && (opts.includeDeprecated || !e.deprecated),
+    );
 
   const resolvedProjects: PersonalProject[] = selection.projectIds
     .map((id) => personalProjectById.get(id))
@@ -57,11 +70,25 @@ export function buildCvDocument(selection: CvSelection): CvDocument {
     summary: selection.summary,
     experiences: resolvedExperiences,
     projects: resolvedProjects,
-    skills: selection.skills,
+    skills: filterDeprecatedSkills(selection.skills, excludedSkills),
     bullets,
     contact: contactInfo,
     education,
   };
+}
+
+/** Strip deprecated-only technologies from a skill map (keeps categories). */
+function filterDeprecatedSkills(
+  skills: CvSelection["skills"],
+  excluded: Set<string>,
+): CvSelection["skills"] {
+  if (excluded.size === 0) return skills;
+  const result: CvSelection["skills"] = {};
+  for (const [category, list] of Object.entries(skills)) {
+    const kept = list.filter((s) => !excluded.has(s));
+    if (kept.length > 0) result[category] = kept;
+  }
+  return result;
 }
 
 /** Group experiences by company for the PDF company-header layout. */
