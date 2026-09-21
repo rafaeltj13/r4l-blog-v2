@@ -21,7 +21,7 @@ export const cvPresets: Record<
       "trio-tally-2023",
       "lella-booking-2020",
     ],
-    projectIds: ["r4l-blog-v2", "hooperz"],
+    projectIds: ["d2brain"],
     skills: {
       "Frameworks & Libraries": [
         "React",
@@ -48,7 +48,7 @@ export const cvPresets: Record<
       "xtra-social-2020",
       "lella-booking-2020",
     ],
-    projectIds: ["r4l-blog-v2", "dota2brain"],
+    projectIds: ["d2brain"],
     skills: {
       "Frameworks & Libraries": [
         "React",

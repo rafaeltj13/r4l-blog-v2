@@ -54,7 +54,10 @@ export function buildCvDocument(
 
   const resolvedProjects: PersonalProject[] = selection.projectIds
     .map((id) => personalProjectById.get(id))
-    .filter((p): p is PersonalProject => Boolean(p));
+    .filter(
+      (p): p is PersonalProject =>
+        Boolean(p) && (opts.includeDeprecated || !p.deprecated),
+    );
 
   const bullets: Record<string, string[]> = {};
   for (const exp of resolvedExperiences) {

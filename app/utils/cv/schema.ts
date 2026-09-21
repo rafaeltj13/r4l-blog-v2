@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { activeAllowedSkills, activeExperienceById, personalProjectById, skillTaxonomy } from "./data";
+import { activeAllowedSkills, activeExperienceById, activePersonalProjectById, skillTaxonomy } from "./data";
 
 /**
  * THE contract between the AI and the PDF.
@@ -63,7 +63,7 @@ export function sanitizeTailoredPayload(payload: TailoredCvPayload): {
     activeExperienceById.has(id),
   );
   const validProjectIds = (payload.projectIds ?? []).filter((id) =>
-    personalProjectById.has(id),
+    activePersonalProjectById.has(id),
   );
 
   const skills: Record<string, string[]> = {};

@@ -8,6 +8,7 @@
  */
 import {
   activeExperiences,
+  activePersonalProjects,
   activeSkillTaxonomy,
   experiences,
   personalProjects,
@@ -31,9 +32,9 @@ export function buildExperiencesBlock(): string {
     .join("\n\n");
 }
 
-/** Curated personal projects available for the CV + chat. */
+/** Curated personal projects available for the CV (deprecated excluded). */
 export function buildPersonalProjectsBlock(): string {
-  return personalProjects
+  return activePersonalProjects
     .map((project) => {
       const lines: string[] = [];
       lines.push(`[ID ${project.id}] ${project.name}: ${project.tagline}`);

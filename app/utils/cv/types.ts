@@ -38,6 +38,11 @@ export interface PersonalProject {
   description: string;
   technologies: string[];
   url?: string;
+  /**
+   * Deprecated projects are excluded from everything download-related:
+   * presets, AI selection, and `buildCvDocument()`.
+   */
+  deprecated?: boolean;
 }
 
 export interface CvContact {

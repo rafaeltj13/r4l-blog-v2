@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FULL_NAME, experiences, personalProjects, skillTaxonomy } from "~/utils/cv/data";
+import { FULL_NAME, experiences, skillTaxonomy } from "~/utils/cv/data";
 import { buildCvDocument, groupByCompany } from "~/utils/cv/document";
 import { A4_HEIGHT_PX, generateResumePDF, measureResumeHeight } from "~/utils/cv/pdf";
 import { cvPresets } from "~/utils/cv/presets";
@@ -56,12 +56,13 @@ const cvDocument = computed<CvDocument>(() => {
     if (selection) return buildCvDocument(selection);
     // Page default: everything, including deprecated entries (page display,
     // not a download — downloads always go through front/full/tailored).
+    // Only D2Brain is showcased as personal project here.
     return buildCvDocument(
         {
             position: "Senior Software Engineer",
             summary: FULL_SUMMARY,
             experienceIds: experiences.map((e) => e.id),
-            projectIds: personalProjects.map((p) => p.id),
+            projectIds: ["d2brain"],
             skills: skillTaxonomy,
         },
         { includeDeprecated: true },

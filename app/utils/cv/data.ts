@@ -232,6 +232,25 @@ export const experienceById: Map<string, Experience> = new Map(
  */
 export const personalProjects: PersonalProject[] = [
   {
+    id: "d2brain",
+    name: "D2Brain",
+    tagline: "Full-stack Dota 2 ideas platform with AI assistant",
+    description:
+      "Monorepo platform for creating, sharing and discussing Dota 2 ideas with BrainBot AI chat: Nuxt frontend, Hono API on Cloudflare Workers, end-to-end type-safe oRPC procedures, D1 database with Drizzle, Better Auth, Stripe payments and Playwright smoke tests.",
+    technologies: [
+      "Vue.js",
+      "Nuxt.js",
+      "TypeScript",
+      "Hono",
+      "Cloudflare Workers",
+      "Drizzle",
+      "oRPC",
+      "AI SDK",
+      "Stripe",
+    ],
+    url: "https://github.com/rafaeltj13/d2b",
+  },
+  {
     id: "r4l-blog-v2",
     name: "R4L Blog v2",
     tagline: "AI-powered personal blog platform",
@@ -239,6 +258,7 @@ export const personalProjects: PersonalProject[] = [
       "Nuxt blog with an AI digital twin answering questions about my work, plus tailored-CV generation from job descriptions.",
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "Tailwind CSS", "AI SDK"],
     url: "https://github.com/rafaeltj13/r4l-blog-v2",
+    deprecated: true,
   },
   {
     id: "hooperz",
@@ -248,6 +268,7 @@ export const personalProjects: PersonalProject[] = [
       "Team-based scoring game with live state, communities and game history backed by Supabase realtime.",
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "Supabase"],
     url: "https://github.com/rafaeltj13/hooperz",
+    deprecated: true,
   },
   {
     id: "dota2brain",
@@ -257,6 +278,7 @@ export const personalProjects: PersonalProject[] = [
       "Distills video-heavy Dota 2 knowledge into skimmable text guides for in-game reference.",
     technologies: ["Vue.js", "Nuxt.js", "Supabase"],
     url: "https://github.com/rafaeltj13/dota2brain",
+    deprecated: true,
   },
   {
     id: "tjgoal",
@@ -266,11 +288,21 @@ export const personalProjects: PersonalProject[] = [
       "Score-to-win community game inspired by BRGol, with seasons, teams and live standings.",
     technologies: ["Vue.js", "Nuxt.js", "Supabase", "Tailwind CSS"],
     url: "https://github.com/rafaeltj13/TJGoal",
+    deprecated: true,
   },
 ];
 
 export const personalProjectById: Map<string, PersonalProject> = new Map(
   personalProjects.map((p) => [p.id, p]),
+);
+
+/** Personal projects eligible for CV downloads (only D2Brain for now). */
+export const activePersonalProjects: PersonalProject[] = personalProjects.filter(
+  (p) => !p.deprecated,
+);
+
+export const activePersonalProjectById: Map<string, PersonalProject> = new Map(
+  activePersonalProjects.map((p) => [p.id, p]),
 );
 
 /** Every skill the AI may select, grouped by CV display category. */
