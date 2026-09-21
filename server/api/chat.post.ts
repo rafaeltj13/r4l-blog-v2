@@ -1,95 +1,13 @@
 import { generateText } from "ai";
 import { createDeepSeek } from "@ai-sdk/deepseek";
 
-import { experienceData } from "~/utils/experienceData";
-import { projectsData, type Project } from "~/utils/projectsData";
-
-interface ExperienceItem {
-  title: string;
-  companyName: string;
-  technologies: string[];
-  dateStart: string;
-  dateEnd: string;
-  description: string;
-  partner?: string;
-}
-
-// Simple in-memory rate limiting (resets on server restart)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT = 10; // Max requests per window
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
-
-const checkRateLimit = (ip: string): boolean => {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-
-  if (!record || now > record.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-
-  if (record.count >= RATE_LIMIT) {
-    return false;
-  }
-
-  record.count++;
-  return true;
-};
-
-const generateExperienceDetails = (): string => {
-  return experienceData
-    .map((exp: ExperienceItem) => {
-      let line = `• ${exp.title} at ${exp.companyName}`;
-      if (exp.partner) line += ` (${exp.partner})`;
-      line += `: ${exp.description} [${exp.technologies.join(", ")}]`;
-      return line;
-    })
-    .join("\n");
-};
-
-const generateProjectDetails = (): string => {
-  return projectsData
-    .map((project: Project) => {
-      let line = `• ${project.name}: ${project.description}`;
-      if (project.homepage) line += ` [Live: ${project.homepage}]`;
-      line += ` [${project.technologies.join(", ")}]`;
-      return line;
-    })
-    .join("\n");
-};
-
-const getUniqueTechnologies = (): string[] => {
-  const techSet = new Set<string>();
-  experienceData.forEach((exp: ExperienceItem) => {
-    exp.technologies.forEach((tech) => techSet.add(tech));
-  });
-  projectsData.forEach((project: Project) => {
-    project.technologies.forEach((tech) => techSet.add(tech));
-  });
-  return Array.from(techSet).sort();
-};
-
-const buildSystemPrompt = (): string => {
-  const experienceDetails = generateExperienceDetails();
-  const projectDetails = generateProjectDetails();
-  const uniqueTech = getUniqueTechnologies();
-
-  return `You are Rafael Maciel, a Senior Software Engineer with 8+ years in full-stack development. Based in Brazil, currently at Trio.
-
-EXPERIENCE:
-${experienceDetails}
-
-PERSONAL PROJECTS:
-${projectDetails}
-
-TECH: ${uniqueTech.join(", ")}
-
-Keep responses concise (2-3 sentences). Be friendly and professional.`;
-};
+// Note: buildChatSystemPrompt / checkRateLimit come from server/utils
+// (auto-imported) — no explicit import, Nitro can't resolve relative
+// directory imports at bundle time.
 
 export default defineEventHandler(async (event) => {
   try {
-    // Rate limiting by IP
+    // Rate limiting by IP (shared with the CV endpoint)
     const ip = getRequestIP(event, { xForwardedFor: true }) || "unknown";
     if (!checkRateLimit(ip)) {
       throw createError({
@@ -118,8 +36,7 @@ export default defineEventHandler(async (event) => {
 
     const config = useRuntimeConfig();
     const apiKey =
-      config.deepseekApiKey ||
-      process.env.NUXT_DEEPSEEK_API_KEY
+      config.deepseekApiKey || process.env.NUXT_DEEPSEEK_API_KEY;
 
     if (!apiKey) {
       throw createError({
@@ -134,9 +51,9 @@ export default defineEventHandler(async (event) => {
 
     const { text } = await generateText({
       model: deepseek("deepseek-v4-flash"),
-      system: buildSystemPrompt(),
+      system: buildChatSystemPrompt(),
       prompt: message,
-      maxTokens: 200,
+      maxOutputTokens: 200,
       temperature: 0.7,
     });
 

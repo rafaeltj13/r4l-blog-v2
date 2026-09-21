@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import AppChip from "~/components/ui/AppChip.vue";
-
-export interface Experience {
-    title: string;
-    companyName: string;
-    technologies: string[];
-    dateStart: string;
-    dateEnd?: string | null;
-    description: string;
-    partner?: string;
-}
+import type { Experience } from "~/utils/cv/types";
 
 const props = withDefaults(
     defineProps<{

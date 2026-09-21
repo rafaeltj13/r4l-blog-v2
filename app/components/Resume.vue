@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { experienceData } from "~/utils/experienceData";
+import { FULL_NAME, experiences, personalProjects, skillTaxonomy } from "~/utils/cv/data";
+import { buildCvDocument, groupByCompany } from "~/utils/cv/document";
+import { A4_HEIGHT_PX, generateResumePDF, measureResumeHeight } from "~/utils/cv/pdf";
+import { cvPresets } from "~/utils/cv/presets";
+import type { CvDocument, CvPresetId, CvSelection } from "~/utils/cv/types";
+import { useTailoredCv } from "~/composables/useTailoredCv";
 
 const props = withDefaults(
     defineProps<{
@@ -12,464 +17,95 @@ const props = withDefaults(
 
 const { dialogRef, open, close } = useDialog();
 
-const cvType = ref<"front" | "full" | "all">("all");
+/**
+ * What the PDF preview is currently rendering:
+ * - "all":      full history (page default)
+ * - "front":    frontend preset behind the Frontend CV button
+ * - "full":     full-stack preset behind the Full-stack CV button
+ * - "tailored": AI selection from the job-description dialog
+ *
+ * Every mode resolves through `buildCvDocument()`, so the rendered
+ * `CvDocument` always has the exact shape the AI was asked to return.
+ */
+type ViewMode = CvPresetId | "all" | "tailored";
+const activeMode = ref<ViewMode>("all");
 
-// Tailored CV state
-const jobDescription = ref("");
-const isGenerating = ref(false);
-const optimizeError = ref<string | null>(null);
+const {
+    jobDescription,
+    isGenerating,
+    optimizeError,
+    tailoredSelection,
+    generateTailoredSelection,
+    resetTailored,
+} = useTailoredCv();
 
-interface TailoredPayload {
-    position: string;
-    summary: string;
-    selectedExperienceIds: number[];
-    selectedSkills: Record<string, string[]>;
-}
+const FULL_SUMMARY =
+    "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
 
-const tailoredPayload = ref<TailoredPayload | null>(null);
-
-// Easily editable header info
-const fullName = "Rafael de Araújo Maciel";
-
-const position = computed(() => {
-    if (tailoredPayload.value) return tailoredPayload.value.position;
-    if (cvType.value === "front") return "Senior Frontend Engineer";
-    return "Senior Software Engineer";
+const activeSelection = computed<CvSelection | null>(() => {
+    if (activeMode.value === "tailored") return tailoredSelection.value;
+    if (activeMode.value === "front" || activeMode.value === "full") {
+        return cvPresets[activeMode.value];
+    }
+    return null;
 });
 
-const contactInfo = {
-    location: "João Pessoa/PB, Brazil (GMT -3)",
-    phone: "+55 83 98152-4508",
-    email: "rafael.damaciel@proton.me",
-    linkedin: {
-        label: "linkedin.com/in/rafaeldamaciel",
-        url: "https://www.linkedin.com/in/rafaeldamaciel/",
-    },
-    github: {
-        label: "github.com/rafaeltj13",
-        url: "https://github.com/rafaeltj13",
-    },
-};
-
-const summary = computed(() => {
-    if (tailoredPayload.value) return tailoredPayload.value.summary;
-    if (cvType.value === "front") {
-        return "Senior Software Engineer with 8+ years of expertise specializing in frontend development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and React Native. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
-    }
-    return "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
-});
-
-const education = {
-    institution: "Federal University of Campina Grande - UFCG",
-    degree: "Bachelor of Computer Science",
-    period: "2015 - 2019",
-    details: [
-        "Participation in Monitoring Projects: Programming Laboratory II",
-    ],
-};
-
-// Helper to group experience by company
-const groupedExperience = computed(() => {
-    const groups: Record<string, any> = {};
-
-    let recentExperiences = experienceData;
-    if (tailoredPayload.value) {
-        const ids = [...new Set(tailoredPayload.value.selectedExperienceIds)];
-        recentExperiences = ids
-            .map((id) => experienceData[id])
-            .filter(Boolean);
-    } else if (cvType.value === "front") {
-        let pathSeen = false;
-        recentExperiences = experienceData
-            .filter((e) => {
-                const name = e.partner || e.companyName || "";
-                if (["Studylog", "Path", "Tally", "Lella.co"].includes(name)) {
-                    if (name === "Path") {
-                        if (pathSeen) return false;
-                        pathSeen = true;
-                    }
-                    return true;
-                }
-                return false;
-            })
-            .slice(0, 4);
-    } else if (cvType.value === "full") {
-        recentExperiences = experienceData
-            .filter((e) =>
-                [
-                    "Stamp.tv",
-                    "Studylog",
-                    "Optel Group",
-                    "Xtra Holdings LLC",
-                    "Software Practices Laboratory",
-                ].includes(e.partner || e.companyName || ""),
-            )
-            .slice(0, 5);
-    }
-
-    recentExperiences.forEach((item) => {
-        if (!groups[item.companyName]) {
-            groups[item.companyName] = {
-                name: item.companyName,
-                title: item.title,
-                location: getCompanyLocation(item.companyName),
-                period: "",
-                items: [],
-                dateStart: item.dateStart,
-                dateEnd: item.dateEnd,
-            };
-        }
-        groups[item.companyName].items.push(item);
-    });
-
-    return Object.values(groups).map((group) => {
-        const latestItem = group.items[0];
-        const earliestItem = group.items[group.items.length - 1];
-
-        const formatDate = (d: string) => {
-            const date = new Date(d);
-            return date.toLocaleDateString("en-US", {
-                month: "short",
-                year: "numeric",
-            });
-        };
-
-        let period = `${formatDate(earliestItem.dateStart)} - ${formatDate(latestItem.dateEnd)}`;
-        if (group.name === "Trio") {
-            const hasFuture = new Date(latestItem.dateEnd) > new Date();
-            if (hasFuture || latestItem.dateEnd.startsWith("2026"))
-                period = "Jul 2021 - Present";
-        }
-
-        return {
-            ...group,
-            period,
-        };
+/** The single document the template renders — presets and AI go through here. */
+const cvDocument = computed<CvDocument>(() => {
+    const selection = activeSelection.value;
+    if (selection) return buildCvDocument(selection);
+    // Page default: everything, no bullet overrides.
+    return buildCvDocument({
+        position: "Senior Software Engineer",
+        summary: FULL_SUMMARY,
+        experienceIds: experiences.map((e) => e.id),
+        projectIds: personalProjects.map((p) => p.id),
+        skills: skillTaxonomy,
     });
 });
 
-function getCompanyLocation(name: string) {
-    if (name === "Trio") return "Boston, US | Remote";
-    if (name === "Xtra Holdings LLC") return "Sarasota, US | Remote";
-    if (name === "Lella.co") return "Poland | Remote";
-    if (
-        name === "Software Practices Laboratory" ||
-        name === "Software Practices Laboratory - SPLab"
-    )
-        return "Brazil";
-    return "";
-}
-
-// Categorized Skills
-const categorizedSkills = computed(() => {
-    const allTechs = new Set<string>();
-    experienceData.forEach((item) => {
-        item.technologies?.forEach((t) => allTechs.add(t));
-    });
-
-    let categories: Record<string, string[]> = {};
-
-    if (cvType.value === "front") {
-        categories = {
-            "Frameworks & Libraries": [
-                "React.js",
-                "React",
-                "Vue.js",
-                "Next.js",
-                "Nuxt.js",
-                "React Native",
-                "Pinia",
-                "Storybook",
-                "Apollo GraphQL",
-                "GraphQL",
-            ],
-            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
-        };
-    } else if (cvType.value === "full") {
-        categories = {
-            "Frameworks & Libraries": [
-                "React.js",
-                "React",
-                "Vue.js",
-                "Next.js",
-                "Nuxt.js",
-                "Node.js",
-                "Express",
-                "FastAPI",
-                "NestJS",
-                "Angular.js",
-                "ASP.NET",
-                "Apollo GraphQL",
-                "GraphQL",
-            ],
-            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
-            "Data & Cloud": [
-                "MySQL",
-                "MongoDB",
-                "PostgreSQL",
-                "SQL Server",
-                "Google BigQuery",
-                "Google ADK",
-                "AWS",
-                "Kubernetes",
-                "Sequelize",
-                "Stripe (Software)",
-            ],
-        };
-    } else {
-        categories = {
-            "Frameworks & Libraries": [
-                "React.js",
-                "React",
-                "Vue.js",
-                "Next.js",
-                "Nuxt.js",
-                "React Native",
-                "Node.js",
-                "Express",
-                "FastAPI",
-                "NestJS",
-                "Angular.js",
-                "ASP.NET",
-                "Pinia",
-                "Storybook",
-                "Apollo GraphQL",
-                "GraphQL",
-            ],
-            Testing: ["Jest", "Vitest", "Playwright", "Maestro"],
-            "Data & Cloud": [
-                "MySQL",
-                "MongoDB",
-                "PostgreSQL",
-                "SQL Server",
-                "Google BigQuery",
-                "Google ADK",
-                "AWS",
-                "Kubernetes",
-                "Sequelize",
-                "Stripe (Software)",
-            ],
-        };
-    }
-
-    if (tailoredPayload.value) {
-        const result: Record<string, string[]> = {};
-        Object.entries(tailoredPayload.value.selectedSkills).forEach(
-            ([cat, skills]) => {
-                const matched = skills.filter((tech) => allTechs.has(tech));
-                if (matched.length > 0) {
-                    result[cat] = matched.sort();
-                }
-            },
-        );
-        return result;
-    }
-
-    const result: Record<string, string[]> = {};
-    const used = new Set<string>();
-
-    Object.entries(categories).forEach(([cat, keywords]) => {
-        const matched = Array.from(allTechs).filter((tech) => {
-            if (used.has(tech)) return false;
-
-            const isMatch = keywords.some(
-                (k) =>
-                    tech.toLowerCase() === k.toLowerCase() ||
-                    (k === "React" && tech === "React.js") ||
-                    (k === "React.js" && tech === "React"),
-            );
-
-            if (isMatch) used.add(tech);
-            return isMatch;
-        });
-
-        if (matched.length > 0) {
-            result[cat] = matched.sort();
-        }
-    });
-
-    return result;
-});
+const groupedExperience = computed(() =>
+    groupByCompany(cvDocument.value.experiences),
+);
 
 /**
- * Split a description into individual bullet points.
- * Multi-line descriptions (template literals) are split on double-newlines.
+ * Ensure tailored content fits a single A4 page by dropping the least
+ * relevant (last) experience until it measures within the page height.
  */
-function splitDescription(description: string): string[] {
-    return description
-        .split(/\n\s*\n/)
-        .map((p) => p.replace(/\s+/g, " ").trim())
-        .filter(Boolean);
-}
-
-const A4_WIDTH_PX = 794;
-const A4_HEIGHT_PX = 1123; // ~794px × 297/210
-
-const measureResumeHeight = (): number => {
-    const element = document.querySelector(
-        ".resume-wrapper",
-    ) as HTMLElement | null;
-    if (!element) return 0;
-
-    // Create a hidden clone styled exactly like the PDF clone
-    const clone = element.cloneNode(true) as HTMLElement;
-    clone.style.position = "absolute";
-    clone.style.visibility = "hidden";
-    clone.style.top = "-9999px";
-    clone.style.left = "-9999px";
-    clone.style.width = A4_WIDTH_PX + "px";
-    clone.style.maxWidth = "none";
-    clone.style.padding = "40px 48px";
-    clone.style.boxShadow = "none";
-    clone.style.margin = "0";
-    clone.style.letterSpacing = "0.01px";
-
-    clone.querySelectorAll<HTMLElement>("*").forEach((el) => {
-        el.style.letterSpacing = "0.01px";
-    });
-
-    document.body.appendChild(clone);
-    const height = clone.getBoundingClientRect().height;
-    document.body.removeChild(clone);
-
-    return height;
-};
-
-const fitResumeToOnePage = async (minExperiences = 2): Promise<void> => {
+const fitTailoredToOnePage = async (minExperiences = 2): Promise<void> => {
     const safetyMargin = 10;
     const maxHeight = A4_HEIGHT_PX - safetyMargin;
 
-    while (tailoredPayload.value && tailoredPayload.value.selectedExperienceIds.length > minExperiences) {
+    while (
+        tailoredSelection.value &&
+        tailoredSelection.value.experienceIds.length > minExperiences
+    ) {
         await nextTick();
         await new Promise((resolve) => setTimeout(resolve, 50));
 
         const height = measureResumeHeight();
         if (height <= maxHeight) break;
 
-        // Drop the least relevant (last) experience and re-check
-        tailoredPayload.value = {
-            ...tailoredPayload.value,
-            selectedExperienceIds: tailoredPayload.value.selectedExperienceIds.slice(0, -1),
+        tailoredSelection.value = {
+            ...tailoredSelection.value,
+            experienceIds: tailoredSelection.value.experienceIds.slice(0, -1),
         };
     }
 };
 
-const generateResumePDF = async (filename: string) => {
-    const element = document.querySelector(
-        ".resume-wrapper",
-    ) as HTMLElement | null;
-    if (!element) return;
-
-    const { default: jsPDF } = await import("jspdf");
-    const { default: html2canvas } = await import("html2canvas-pro");
-
-    const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-        width: A4_WIDTH_PX,
-        windowWidth: A4_WIDTH_PX,
-        onclone: (_doc: Document, clonedEl: HTMLElement) => {
-            // Remove interactive elements
-            clonedEl.querySelectorAll("button").forEach((btn) => btn.remove());
-
-            // Force the clone to A4-friendly sizing
-            clonedEl.style.width = A4_WIDTH_PX + "px";
-            clonedEl.style.maxWidth = "none";
-            clonedEl.style.padding = "40px 48px";
-            clonedEl.style.boxShadow = "none";
-            clonedEl.style.margin = "0";
-
-            /*
-             * Workaround for html2canvas-pro word-spacing bug:
-             * html2canvas's fast text path uses ctx.measureText() which
-             * returns different widths than CSS layout, causing word
-             * collisions. Setting an explicit non-default letter-spacing
-             * on every text-containing element forces the per-character
-             * rendering path that respects real glyph widths.
-             */
-            const allEls = clonedEl.querySelectorAll<HTMLElement>("*");
-            allEls.forEach((el) => {
-                el.style.letterSpacing = "0.01px";
-            });
-            clonedEl.style.letterSpacing = "0.01px";
-        },
-    });
-
-    const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-    });
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.98);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = canvas.width;
-    const imgHeight = canvas.height;
-
-    // Scale to fit width, then paginate if needed
-    const scaledWidth = pdfWidth;
-    const scaledHeight = (imgHeight * pdfWidth) / imgWidth;
-
-    if (scaledHeight <= pdfHeight) {
-        // Fits on one page
-        pdf.addImage(imgData, "JPEG", 0, 0, scaledWidth, scaledHeight);
-    } else {
-        // Multi-page: slice the canvas into page-sized chunks
-        const pageCanvasHeight = (pdfHeight / pdfWidth) * imgWidth;
-        const totalPages = Math.ceil(imgHeight / pageCanvasHeight);
-
-        for (let i = 0; i < totalPages; i++) {
-            if (i > 0) pdf.addPage();
-
-            const srcY = i * pageCanvasHeight;
-            const srcH = Math.min(pageCanvasHeight, imgHeight - srcY);
-            const destH = (srcH * pdfWidth) / imgWidth;
-
-            // Create a temporary canvas for this page slice
-            const pageCanvas = document.createElement("canvas");
-            pageCanvas.width = imgWidth;
-            pageCanvas.height = srcH;
-            const ctx = pageCanvas.getContext("2d")!;
-            ctx.drawImage(
-                canvas,
-                0,
-                srcY,
-                imgWidth,
-                srcH,
-                0,
-                0,
-                imgWidth,
-                srcH,
-            );
-
-            const pageData = pageCanvas.toDataURL("image/jpeg", 0.98);
-            pdf.addImage(pageData, "JPEG", 0, 0, pdfWidth, destH);
-        }
-    }
-
-    pdf.save(filename);
-};
-
 const resetResumeState = () => {
-    cvType.value = "all";
-    tailoredPayload.value = null;
+    activeMode.value = "all";
+    resetTailored();
 };
 
-const downloadCV = async (type: "front" | "full" = "front") => {
-    cvType.value = type;
+const downloadCV = async (type: CvPresetId = "front") => {
+    activeMode.value = type;
 
     // Wait for Vue reactivity and DOM updates
     await nextTick();
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const filename =
-        type === "front"
-            ? "Rafael_Maciel_Frontend_CV.pdf"
-            : "Rafael_Maciel_Fullstack_CV.pdf";
-    await generateResumePDF(filename);
+    await generateResumePDF(cvPresets[type].filename);
     close();
 
     // Reset to showing everything on the page
@@ -477,52 +113,23 @@ const downloadCV = async (type: "front" | "full" = "front") => {
 };
 
 const downloadTailoredCV = async () => {
-    const description = jobDescription.value.trim();
-    if (!description) return;
+    const selection = await generateTailoredSelection();
+    if (!selection) return;
 
-    isGenerating.value = true;
-    optimizeError.value = null;
+    activeMode.value = "tailored";
 
-    try {
-        const response = await $fetch<TailoredPayload>("/api/cv/optimize", {
-            method: "POST",
-            body: {
-                jobDescription: description,
-            },
-        });
+    // Wait for Vue reactivity and DOM updates
+    await nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-        if (!response.selectedExperienceIds?.length) {
-            throw new Error(
-                "AI returned an empty experience list. Please try again.",
-            );
-        }
+    // Ensure the tailored content fits on a single A4 page
+    await fitTailoredToOnePage();
 
-        cvType.value = "all";
-        tailoredPayload.value = response;
+    await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf");
+    close();
 
-        // Wait for Vue reactivity and DOM updates
-        await nextTick();
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        // Ensure the tailored content fits on a single A4 page
-        await fitResumeToOnePage();
-
-        await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf");
-        close();
-
-        // Reset state
-        resetResumeState();
-        jobDescription.value = "";
-    } catch (err: unknown) {
-        console.error("Tailored CV error:", err);
-        const message =
-            err instanceof Error
-                ? err.message
-                : "Failed to generate tailored CV. Please try again.";
-        optimizeError.value = message;
-    } finally {
-        isGenerating.value = false;
-    }
+    // Reset state
+    resetResumeState();
 };
 </script>
 
@@ -535,28 +142,28 @@ const downloadTailoredCV = async () => {
             <h1
                 class="text-xl font-bold text-primary tracking-tight leading-tight"
             >
-                {{ fullName }}
+                {{ FULL_NAME }}
             </h1>
             <p class="text-[11px] text-slate-700 font-medium mt-0.5">
-                {{ position }}
+                {{ cvDocument.position }}
             </p>
 
             <!-- Contact: row 1 (location, phone, email) -->
             <div
                 class="mt-1.5 flex flex-nowrap items-center justify-center gap-x-2 text-[10px] text-slate-600 whitespace-nowrap"
             >
-                <span>{{ contactInfo.location }}</span>
+                <span>{{ cvDocument.contact.location }}</span>
                 <span class="text-slate-300">|</span>
                 <a
-                    :href="'tel:' + contactInfo.phone"
+                    :href="'tel:' + cvDocument.contact.phone"
                     class="hover:text-primary transition-colors"
-                    >{{ contactInfo.phone }}</a
+                    >{{ cvDocument.contact.phone }}</a
                 >
                 <span class="text-slate-300">|</span>
                 <a
-                    :href="'mailto:' + contactInfo.email"
+                    :href="'mailto:' + cvDocument.contact.email"
                     class="hover:text-primary transition-colors"
-                    >{{ contactInfo.email }}</a
+                    >{{ cvDocument.contact.email }}</a
                 >
             </div>
 
@@ -565,19 +172,19 @@ const downloadTailoredCV = async () => {
                 class="mt-0.5 flex flex-nowrap items-center justify-center gap-x-2 text-[10px] whitespace-nowrap"
             >
                 <a
-                    :href="contactInfo.linkedin.url"
+                    :href="cvDocument.contact.linkedin.url"
                     target="_blank"
                     rel="noopener"
                     class="text-primary hover:underline"
-                    >{{ contactInfo.linkedin.label }}</a
+                    >{{ cvDocument.contact.linkedin.label }}</a
                 >
                 <span class="text-slate-300">|</span>
                 <a
-                    :href="contactInfo.github.url"
+                    :href="cvDocument.contact.github.url"
                     target="_blank"
                     rel="noopener"
                     class="text-primary hover:underline"
-                    >{{ contactInfo.github.label }}</a
+                    >{{ cvDocument.contact.github.label }}</a
                 >
             </div>
         </header>
@@ -590,7 +197,7 @@ const downloadTailoredCV = async () => {
                 Summary
             </h2>
             <p class="text-[11px] text-slate-700 leading-relaxed">
-                {{ summary }}
+                {{ cvDocument.summary }}
             </p>
         </section>
 
@@ -605,7 +212,7 @@ const downloadTailoredCV = async () => {
                 class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-x-3 gap-y-1"
             >
                 <template
-                    v-for="(items, category) in categorizedSkills"
+                    v-for="(items, category) in cvDocument.skills"
                     :key="category"
                 >
                     <dt class="text-[11px] font-semibold text-slate-900">
@@ -661,7 +268,7 @@ const downloadTailoredCV = async () => {
                     <!-- Projects List -->
                     <div
                         v-for="(project, idx) in group.items"
-                        :key="idx"
+                        :key="project.id ?? idx"
                         class="mb-2 last:mb-0"
                     >
                         <p
@@ -673,9 +280,9 @@ const downloadTailoredCV = async () => {
 
                         <ul class="space-y-0.5 ml-1">
                             <li
-                                v-for="(point, pIdx) in splitDescription(
-                                    project.description,
-                                )"
+                                v-for="(point, pIdx) in cvDocument.bullets[
+                                    project.id
+                                ]"
                                 :key="pIdx"
                                 class="flex items-start gap-2 text-[10.5px] leading-snug text-slate-700"
                             >
@@ -706,6 +313,37 @@ const downloadTailoredCV = async () => {
             </div>
         </section>
 
+        <!-- ===== Personal Projects ===== -->
+        <section v-if="cvDocument.projects.length" class="mb-4">
+            <h2
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
+            >
+                Personal Projects
+            </h2>
+            <div class="space-y-2">
+                <div v-for="project in cvDocument.projects" :key="project.id">
+                    <p class="text-[11px] font-semibold text-slate-800">
+                        {{ project.name }}
+                        <span class="font-normal text-slate-500">
+                            — {{ project.tagline }}
+                        </span>
+                    </p>
+                    <p class="text-[10.5px] text-slate-600 leading-snug ml-1">
+                        {{ project.description }}
+                    </p>
+                    <div class="flex flex-wrap gap-0.5 mt-0.5 ml-1">
+                        <span
+                            v-for="tech in project.technologies"
+                            :key="tech"
+                            class="inline-flex items-center px-1 py-0 rounded text-[9px] font-medium bg-slate-100 text-slate-600"
+                        >
+                            {{ tech }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ===== Education ===== -->
         <section>
             <h2
@@ -720,20 +358,20 @@ const downloadTailoredCV = async () => {
                     <h3
                         class="font-bold text-slate-900 text-[12px] leading-tight"
                     >
-                        {{ education.institution }}
+                        {{ cvDocument.education.institution }}
                     </h3>
                     <span
                         class="text-[10px] font-mono text-slate-500 whitespace-nowrap"
                     >
-                        {{ education.period }}
+                        {{ cvDocument.education.period }}
                     </span>
                 </div>
                 <div class="text-[11px] text-slate-700 mt-0.5 font-medium">
-                    {{ education.degree }}
+                    {{ cvDocument.education.degree }}
                 </div>
                 <ul class="mt-1 space-y-0.5 ml-1 text-[10.5px] text-slate-600">
                     <li
-                        v-for="(line, idx) in education.details"
+                        v-for="(line, idx) in cvDocument.education.details"
                         :key="idx"
                         class="flex items-start gap-2"
                     >
