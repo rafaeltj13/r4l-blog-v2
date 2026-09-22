@@ -326,17 +326,32 @@ const downloadTailoredCV = async () => {
                 Personal Projects
             </h2>
             <div class="space-y-2">
-                <div v-for="project in cvDocument.projects" :key="project.id">
-                    <p class="text-[11px] font-semibold text-slate-800">
+                <div
+                    v-for="project in cvDocument.projects"
+                    :key="project.id"
+                    class="mb-2 last:mb-0"
+                >
+                    <p
+                        class="text-[11px] font-semibold text-slate-800 mb-0.5"
+                    >
                         {{ project.name }}
                         <span class="font-normal text-slate-500">
                             — {{ project.tagline }}
                         </span>
                     </p>
-                    <p class="text-[10.5px] text-slate-600 leading-snug ml-1">
-                        {{ project.description }}
-                    </p>
-                    <div class="flex flex-wrap gap-0.5 mt-0.5 ml-1">
+
+                    <ul class="space-y-0.5 ml-1">
+                        <li
+                            class="flex items-start gap-2 text-[10.5px] leading-snug text-slate-700"
+                        >
+                            <span
+                                class="mt-1.25 w-1 h-1 shrink-0 bg-slate-400 rounded-full"
+                            ></span>
+                            <span>{{ project.description }}</span>
+                        </li>
+                    </ul>
+
+                    <div class="flex flex-wrap gap-0.5 mt-1 ml-4">
                         <span
                             v-for="tech in project.technologies"
                             :key="tech"
