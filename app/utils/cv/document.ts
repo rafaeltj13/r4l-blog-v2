@@ -22,11 +22,16 @@ export function splitDescription(description: string): string[] {
 }
 
 export function formatPeriod(dateStart: string, dateEnd?: string | null): string {
-  const fmt = (d: string) =>
-    new Date(d).toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
+  // UTC getters: plain "YYYY-MM-DD" strings parse as UTC midnight, and
+  // toLocaleDateString would shift them into the previous month west of GMT.
+  const MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const fmt = (d: string) => {
+    const dt = new Date(d);
+    return `${MONTHS[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`;
+  };
   if (!dateEnd || new Date(dateEnd) > new Date()) return `${fmt(dateStart)} - Present`;
   return `${fmt(dateStart)} - ${fmt(dateEnd)}`;
 }
@@ -122,15 +127,31 @@ export function groupByCompany(items: Experience[]): GroupedExperience[] {
   }
 
   return [...groups.values()].map((group) => {
-    const latest = group.items[0];
-    const earliest = group.items[group.items.length - 1];
+    // Tenure spans the ENTIRE history at the company (full dataset,
+    // including non-selected and deprecated entries) — not just the
+    // experiences picked for this download.
+    const fullHistory = experiences.filter(
+      (e) => e.companyName === group.name,
+    );
+    const earliest = fullHistory.reduce((a, b) =>
+      b.dateStart < a.dateStart ? b : a,
+    );
+    // A missing end date (ongoing) always wins over dated entries.
+    const latest = fullHistory.reduce((a, b) => {
+      if (!b.dateEnd) return b;
+      if (!a.dateEnd) return a;
+      return b.dateEnd > a.dateEnd ? b : a;
+    });
+
     let period = formatPeriod(earliest.dateStart, latest.dateEnd);
     // Trio is ongoing employment shown as a range on the CV.
-    if (group.name === "Trio") {
-      const latestEnd = latest.dateEnd ? new Date(latest.dateEnd) : new Date();
-      if (latestEnd > new Date() || latest.dateEnd?.startsWith("2026")) {
-        period = "Jul 2021 - Present";
-      }
+    if (
+      group.name === "Trio" &&
+      (!latest.dateEnd ||
+        new Date(latest.dateEnd) > new Date() ||
+        latest.dateEnd.startsWith("2026"))
+    ) {
+      period = formatPeriod(earliest.dateStart, null);
     }
     return { ...group, period };
   });
