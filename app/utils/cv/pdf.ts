@@ -13,7 +13,7 @@ function styleCloneForExport(clone: HTMLElement): void {
   clone.style.left = "-9999px";
   clone.style.width = `${A4_WIDTH_PX}px`;
   clone.style.maxWidth = "none";
-  clone.style.padding = "40px 48px";
+  clone.style.padding = "32px 48px";
   clone.style.boxShadow = "none";
   clone.style.margin = "0";
   clone.style.letterSpacing = "0.01px";
@@ -38,10 +38,16 @@ export function measureResumeHeight(
 }
 
 /**
- * Render the `.resume-wrapper` element to `filename`, slicing into multiple
- * A4 pages when the content overflows.
+ * Render the `.resume-wrapper` element to `filename`.
+ * By default content that overflows is sliced into multiple A4 pages.
+ * Pass `fitSinglePage: true` (used by all CV downloads, which must stay on
+ * one page) to shrink slightly overflowing content onto a single page
+ * instead of spilling onto a second page.
  */
-export async function generateResumePDF(filename: string): Promise<void> {
+export async function generateResumePDF(
+  filename: string,
+  opts: { fitSinglePage?: boolean } = {},
+): Promise<void> {
   const element = document.querySelector(
     ".resume-wrapper",
   ) as HTMLElement | null;
@@ -61,7 +67,7 @@ export async function generateResumePDF(filename: string): Promise<void> {
       clonedEl.querySelectorAll("button").forEach((btn) => btn.remove());
       clonedEl.style.width = `${A4_WIDTH_PX}px`;
       clonedEl.style.maxWidth = "none";
-      clonedEl.style.padding = "40px 48px";
+      clonedEl.style.padding = "32px 48px";
       clonedEl.style.boxShadow = "none";
       clonedEl.style.margin = "0";
 
@@ -95,6 +101,14 @@ export async function generateResumePDF(filename: string): Promise<void> {
 
   if (scaledHeight <= pdfHeight) {
     pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, scaledHeight);
+  } else if (opts.fitSinglePage) {
+    // Shrink-to-fit: preserve aspect ratio so text never looks squished.
+    // With the compacted CV layout the overflow is only a few percent, so
+    // the shrink is imperceptible — but it hard-guarantees a single page.
+    const scale = pdfHeight / scaledHeight;
+    const fittedWidth = pdfWidth * scale;
+    const xOffset = (pdfWidth - fittedWidth) / 2;
+    pdf.addImage(imgData, "JPEG", xOffset, 0, fittedWidth, pdfHeight);
   } else {
     // Multi-page: slice the canvas into page-sized chunks
     const pageCanvasHeight = (pdfHeight / pdfWidth) * imgWidth;

@@ -110,7 +110,7 @@ const downloadCV = async (type: CvPresetId = "front") => {
     await nextTick();
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    await generateResumePDF(cvPresets[type].filename);
+    await generateResumePDF(cvPresets[type].filename, { fitSinglePage: true });
     close();
 
     // Reset to showing everything on the page
@@ -130,7 +130,9 @@ const downloadTailoredCV = async () => {
     // Ensure the tailored content fits on a single A4 page
     await fitTailoredToOnePage();
 
-    await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf");
+    await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf", {
+        fitSinglePage: true,
+    });
     close();
 
     // Reset state
@@ -143,7 +145,7 @@ const downloadTailoredCV = async () => {
         class="resume-wrapper w-full max-w-3xl mx-auto bg-white shadow-xl p-6 md:p-8 print:p-0 print:shadow-none print:max-w-none text-slate-800"
     >
         <!-- ===== Header ===== -->
-        <header class="mb-4 pb-3 text-center">
+        <header class="mb-3 pb-2 text-center">
             <h1
                 class="text-xl font-bold text-primary tracking-tight leading-tight"
             >
@@ -195,7 +197,7 @@ const downloadTailoredCV = async () => {
         </header>
 
         <!-- ===== Summary ===== -->
-        <section class="mb-4">
+        <section class="mb-3">
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-1.5 pb-1 border-b border-primary/20"
             >
@@ -207,7 +209,7 @@ const downloadTailoredCV = async () => {
         </section>
 
         <!-- ===== Skills ===== -->
-        <section class="mb-4">
+        <section class="mb-3">
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
@@ -231,21 +233,21 @@ const downloadTailoredCV = async () => {
         </section>
 
         <!-- ===== Professional Experience ===== -->
-        <section class="mb-4">
+        <section class="mb-3">
             <h2
-                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2.5 pb-1 border-b border-primary/20"
+                class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
                 Professional Experience
             </h2>
 
-            <div class="space-y-3">
+            <div class="space-y-2">
                 <div
                     v-for="group in groupedExperience"
                     :key="group.name"
                     class="group"
                 >
                     <!-- Job Header -->
-                    <div class="mb-2">
+                    <div class="mb-1">
                         <div
                             class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1"
                         >
@@ -274,7 +276,7 @@ const downloadTailoredCV = async () => {
                     <div
                         v-for="(project, idx) in group.items"
                         :key="project.id ?? idx"
-                        class="mb-2 last:mb-0"
+                        class="mb-1.5 last:mb-0"
                     >
                         <p
                             v-if="project.partner"
@@ -303,7 +305,7 @@ const downloadTailoredCV = async () => {
                                 project.technologies &&
                                 project.technologies.length
                             "
-                            class="flex flex-wrap gap-0.5 mt-1 ml-4"
+                            class="flex flex-wrap gap-0.5 mt-0.5 ml-4"
                         >
                             <span
                                 v-for="tech in project.technologies"
@@ -319,17 +321,17 @@ const downloadTailoredCV = async () => {
         </section>
 
         <!-- ===== Personal Projects ===== -->
-        <section v-if="cvDocument.projects.length" class="mb-4">
+        <section v-if="cvDocument.projects.length" class="mb-3">
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
                 Personal Projects
             </h2>
-            <div class="space-y-2">
+            <div class="space-y-1.5">
                 <div
                     v-for="project in cvDocument.projects"
                     :key="project.id"
-                    class="mb-2 last:mb-0"
+                    class="mb-1.5 last:mb-0"
                 >
                     <p
                         class="text-[11px] font-semibold text-slate-800 mb-0.5"
@@ -351,7 +353,7 @@ const downloadTailoredCV = async () => {
                         </li>
                     </ul>
 
-                    <div class="flex flex-wrap gap-0.5 mt-1 ml-4">
+                    <div class="flex flex-wrap gap-0.5 mt-0.5 ml-4">
                         <span
                             v-for="tech in project.technologies"
                             :key="tech"
@@ -389,7 +391,7 @@ const downloadTailoredCV = async () => {
                 <div class="text-[11px] text-slate-700 mt-0.5 font-medium">
                     {{ cvDocument.education.degree }}
                 </div>
-                <ul class="mt-1 space-y-0.5 ml-1 text-[10.5px] text-slate-600">
+                <ul class="mt-0.5 space-y-0.5 ml-1 text-[10.5px] text-slate-600">
                     <li
                         v-for="(line, idx) in cvDocument.education.details"
                         :key="idx"

@@ -236,7 +236,7 @@ export const personalProjects: PersonalProject[] = [
     name: "D2Brain",
     tagline: "Full-stack Dota 2 ideas platform with AI assistant",
     description:
-      "Monorepo platform for creating, sharing and discussing Dota 2 ideas with BrainBot AI chat: Nuxt frontend, Hono API on Cloudflare Workers, end-to-end type-safe oRPC procedures, D1 database with Drizzle, Better Auth, Stripe payments and Playwright smoke tests.",
+      "Full-stack platform for creating, sharing and discussing Dota 2 ideas with BrainBot AI chat, payments and automated smoke tests.",
     technologies: [
       "Vue.js",
       "Nuxt.js",
