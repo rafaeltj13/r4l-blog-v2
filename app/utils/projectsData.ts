@@ -44,7 +44,7 @@ export const projectsData: Project[] = [
     forks_count: 0,
     open_issues_count: 0,
     updated_at: "2026-09-20T12:00:00Z",
-    visibility: "Public"
+    visibility: "Private"
   },
   {
     id: "r4l-blog-v2",

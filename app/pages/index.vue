@@ -194,20 +194,13 @@ onUnmounted(() => {
                         Personal projects I build in my spare time — including
                         this platform.
                     </p>
-                    <div class="space-y-2">
-                        <div
+                    <div class="space-y-8">
+                        <PersonalProjectItem
                             v-for="project in sideProjects"
                             :key="project.id"
-                            class="relative"
-                        >
-                            <span
-                                v-if="project.id === 'r4l-blog-v2'"
-                                class="badge badge-primary badge-sm absolute -top-1 right-6 z-10"
-                            >
-                                You're here · this platform
-                            </span>
-                            <ProjectItem :project="project" />
-                        </div>
+                            :project="project"
+                            :current-platform="project.id === 'r4l-blog-v2'"
+                        />
                     </div>
                     <NuxtLink
                         to="/projects"
