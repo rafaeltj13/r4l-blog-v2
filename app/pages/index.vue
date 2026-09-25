@@ -9,7 +9,7 @@ useHead({
 });
 
 const relevantProjects = experienceData.slice(0, 3);
-const sideProjects = projectsData.slice(0, 3);
+const personalProjects = projectsData.slice(0, 3);
 const relevantPosts = [...posts].reverse().slice(0, 5);
 
 const activeSection = ref("about");
@@ -42,7 +42,7 @@ onMounted(() => {
         );
 
         // Observe sections
-        const sections = ["about", "projects", "side-projects", "posts"];
+        const sections = ["about", "projects", "personal-projects", "posts"];
         sections.forEach((id) => {
             const element = document.getElementById(id);
             if (element) observer?.observe(element);
@@ -122,13 +122,13 @@ onUnmounted(() => {
                         style="font-family: 'Bungee', sans-serif;"
                         class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
                         :class="
-                            activeSection === 'side-projects'
+                            activeSection === 'personal-projects'
                                 ? 'text-primary'
                                 : 'hover:text-primary'
                         "
-                        @click="scrollToSection('side-projects')"
+                        @click="scrollToSection('personal-projects')"
                     >
-                        Side projects
+                        Personal projects
                     </button>
                     <button
                         style="font-family: 'Bungee', sans-serif;"
@@ -189,15 +189,15 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <div id="side-projects" class="mb-16">
-                    <h3 class="text-2xl font-bold mb-2">Side projects</h3>
+                <div id="personal-projects" class="mb-16">
+                    <h3 class="text-2xl font-bold mb-2">Personal projects</h3>
                     <p class="text-base-content/60 mb-6">
                         Personal projects I build in my spare time — including
                         this platform.
                     </p>
                     <div class="space-y-8">
                         <PersonalProjectItem
-                            v-for="project in sideProjects"
+                            v-for="project in personalProjects"
                             :key="project.id"
                             :project="project"
                             :current-platform="project.id === 'r4l-blog-v2'"

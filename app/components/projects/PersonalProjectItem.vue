@@ -32,6 +32,11 @@ const createdLabel = computed(() => {
     const date = new Date(props.project.createdAt);
     return `${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 });
+
+/** Prefer the live site for the banner link, fall back to the repo. */
+const showcaseUrl = computed(
+    () => props.project.homepage ?? props.project.githubUrl ?? null,
+);
 </script>
 
 <template>
@@ -44,6 +49,24 @@ const createdLabel = computed(() => {
             {{ createdLabel }}
         </div>
         <div>
+            <component
+                :is="showcaseUrl ? 'a' : 'div'"
+                v-if="project.image"
+                :href="showcaseUrl ?? undefined"
+                :target="showcaseUrl ? '_blank' : undefined"
+                :rel="showcaseUrl ? 'noopener noreferrer' : undefined"
+                class="block overflow-hidden rounded-xl bg-base-200 mb-4"
+            >
+                <NuxtImg
+                    :src="project.image"
+                    :alt="`${project.name} screenshot`"
+                    class="w-full aspect-video object-cover object-top transition-transform duration-500 group-hover/item:scale-[1.02]"
+                    format="webp"
+                    quality="80"
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 600px"
+                />
+            </component>
             <h3
                 class="text-xl font-semibold text-base-content mb-2 group-hover/item:text-primary transition-colors"
             >

@@ -6,6 +6,11 @@ export interface Project {
   /** Optional: side projects without a public remote (e.g. dodoro) omit this. */
   githubUrl?: string;
   homepage?: string;
+  /**
+   * Optional screenshot path served from `public/` (e.g. "images/projects/dodoro.png").
+   * Displayed as a banner on the homepage personal projects section.
+   */
+  image?: string;
   createdAt: string;
   language: string;
   stargazers_count: number;
