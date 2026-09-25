@@ -2,6 +2,7 @@
 import { experienceData } from "~/utils/experienceData";
 import { posts } from "~/utils/postsData";
 import { projectsData } from "~/utils/projectsData";
+import PersonalProjectItem from "~/components/projects/PersonalProjectItem.vue";
 
 useHead({
     title: "R4L - Rafael Maciel",
