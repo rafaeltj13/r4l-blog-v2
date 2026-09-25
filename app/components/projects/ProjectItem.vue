@@ -39,6 +39,7 @@ const formatLastUpdated = (dateString: string) => {
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
           </svg>
           <a 
+            v-if="project.githubUrl"
             :href="project.githubUrl" 
             target="_blank" 
             rel="noopener noreferrer"
@@ -46,6 +47,12 @@ const formatLastUpdated = (dateString: string) => {
           >
             {{ project.name }}
           </a>
+          <span
+            v-else
+            class="text-xl font-bold text-base-content"
+          >
+            {{ project.name }}
+          </span>
           <span 
             class="badge badge-sm text-xs"
             :class="project.visibility === 'Private' ? 'badge-secondary badge-outline' : 'badge-primary badge-outline'"

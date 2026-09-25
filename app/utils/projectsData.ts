@@ -3,7 +3,8 @@ export interface Project {
   name: string;
   description: string;
   technologies: string[];
-  githubUrl: string;
+  /** Optional: side projects without a public remote (e.g. dodoro) omit this. */
+  githubUrl?: string;
   homepage?: string;
   createdAt: string;
   language: string;
@@ -15,6 +16,36 @@ export interface Project {
 }
 
 export const projectsData: Project[] = [
+  {
+    id: "dodoro",
+    name: "dodoro",
+    description: `dodoro is a study platform for Brazilian public exams (concursos) built around a question-mining methodology.
+    It organizes the daily routine into solving questions, creating flashcards from mistakes and reviewing them with consistency across Sprint phases.`,
+    technologies: ["Vue.js", "Nuxt.js", "TypeScript", "oRPC", "Drizzle", "Cloudflare D1", "Better-Auth", "Tailwind CSS", "DaisyUI"],
+    createdAt: "2026-09-24",
+    language: "Nuxt",
+    stargazers_count: 0,
+    forks_count: 0,
+    open_issues_count: 0,
+    updated_at: "2026-09-25T12:00:00Z",
+    visibility: "Private"
+  },
+  {
+    id: "d2brain",
+    name: "D2Brain",
+    description: `D2Brain is a platform where Dota 2 players can share ideas and thoughts about the game. With the help
+    of AI (BrainBot assistant), it offers features like summarization and idea generation, plus payments and automated smoke tests.`,
+    technologies: ["Vue.js", "Nuxt.js", "TypeScript", "Hono", "Cloudflare Workers", "Drizzle", "oRPC", "AI SDK", "Stripe"],
+    githubUrl: "https://github.com/rafaeltj13/d2b",
+    homepage: "https://d2b.vercel.app",
+    createdAt: "2026-05-01",
+    language: "Nuxt",
+    stargazers_count: 0,
+    forks_count: 0,
+    open_issues_count: 0,
+    updated_at: "2026-09-20T12:00:00Z",
+    visibility: "Public"
+  },
   {
     id: "r4l-blog-v2",
     name: "R4L Blog v2",

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { experienceData } from "~/utils/experienceData";
 import { posts } from "~/utils/postsData";
+import { projectsData } from "~/utils/projectsData";
 
 useHead({
     title: "R4L - Rafael Maciel",
 });
 
 const relevantProjects = experienceData.slice(0, 3);
+const sideProjects = projectsData.slice(0, 3);
 const relevantPosts = [...posts].reverse().slice(0, 5);
 
 const activeSection = ref("about");
@@ -39,7 +41,7 @@ onMounted(() => {
         );
 
         // Observe sections
-        const sections = ["about", "projects", "posts"];
+        const sections = ["about", "projects", "side-projects", "posts"];
         sections.forEach((id) => {
             const element = document.getElementById(id);
             if (element) observer?.observe(element);
@@ -119,6 +121,18 @@ onUnmounted(() => {
                         style="font-family: 'Bungee', sans-serif;"
                         class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
                         :class="
+                            activeSection === 'side-projects'
+                                ? 'text-primary'
+                                : 'hover:text-primary'
+                        "
+                        @click="scrollToSection('side-projects')"
+                    >
+                        Side projects
+                    </button>
+                    <button
+                        style="font-family: 'Bungee', sans-serif;"
+                        class="cursor-pointer block text-lg font-medium transition-colors text-left w-full"
+                        :class="
                             activeSection === 'posts'
                                 ? 'text-primary'
                                 : 'hover:text-primary'
@@ -172,6 +186,35 @@ onUnmounted(() => {
                             :experience="item"
                         />
                     </div>
+                </div>
+
+                <div id="side-projects" class="mb-16">
+                    <h3 class="text-2xl font-bold mb-2">Side projects</h3>
+                    <p class="text-base-content/60 mb-6">
+                        Personal projects I build in my spare time — including
+                        this platform.
+                    </p>
+                    <div class="space-y-2">
+                        <div
+                            v-for="project in sideProjects"
+                            :key="project.id"
+                            class="relative"
+                        >
+                            <span
+                                v-if="project.id === 'r4l-blog-v2'"
+                                class="badge badge-primary badge-sm absolute -top-1 right-6 z-10"
+                            >
+                                You're here · this platform
+                            </span>
+                            <ProjectItem :project="project" />
+                        </div>
+                    </div>
+                    <NuxtLink
+                        to="/projects"
+                        class="btn btn-outline btn-sm mt-2"
+                    >
+                        View all projects
+                    </NuxtLink>
                 </div>
 
                 <div id="posts" class="mb-16">
