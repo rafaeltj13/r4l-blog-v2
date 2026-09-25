@@ -202,12 +202,6 @@ onUnmounted(() => {
                             :project="project"
                         />
                     </div>
-                    <NuxtLink
-                        to="/projects"
-                        class="btn btn-outline btn-sm mt-2"
-                    >
-                        View all projects
-                    </NuxtLink>
                 </div>
 
                 <div id="posts" class="mb-16">

@@ -2,14 +2,22 @@
 import AppChip from "~/components/ui/AppChip.vue";
 import type { Project } from "~/utils/projectsData";
 
-defineProps<{
+const props = defineProps<{
     project: Project;
 }>();
-</script>
+/** Prefer the live site, fall back to the repo. Null means non-clickable. */
+const showcaseUrl = computed(
+    () => props.project.homepage ?? props.project.githubUrl ?? null,
+);</script>
 
 <template>
-    <div
-        class="group/item mb-12 hover:bg-base-content/5 p-4 rounded-box transition-colors duration-300"
+    <component
+        :is="showcaseUrl ? 'a' : 'div'"
+        :href="showcaseUrl ?? undefined"
+        :target="showcaseUrl ? '_blank' : undefined"
+        :rel="showcaseUrl ? 'noopener noreferrer' : undefined"
+        class="group/item block mb-12 hover:bg-base-content/5 p-4 rounded-box transition-colors duration-300"
+        :class="showcaseUrl ? 'cursor-pointer' : 'cursor-default'"
     >
         <div
             v-if="project.image"
@@ -40,5 +48,5 @@ defineProps<{
                 :label="tech"
             />
         </div>
-    </div>
+    </component>
 </template>
