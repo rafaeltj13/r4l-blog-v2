@@ -200,7 +200,6 @@ onUnmounted(() => {
                             v-for="project in personalProjects"
                             :key="project.id"
                             :project="project"
-                            :current-platform="project.id === 'r4l-blog-v2'"
                         />
                     </div>
                     <NuxtLink
