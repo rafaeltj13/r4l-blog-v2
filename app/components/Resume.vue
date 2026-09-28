@@ -225,7 +225,7 @@ const downloadTailoredCV = async () => {
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-1.5 pb-1 border-b border-primary/20"
             >
-                Summary
+                {{ $t("resume.summary") }}
             </h2>
             <p class="text-[11px] text-slate-700 leading-relaxed">
                 {{ cvDocument.summary }}
@@ -237,7 +237,7 @@ const downloadTailoredCV = async () => {
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
-                Skills
+                {{ $t("resume.skills") }}
             </h2>
             <dl
                 class="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-x-3 gap-y-1"
@@ -261,7 +261,7 @@ const downloadTailoredCV = async () => {
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
-                Professional Experience
+                {{ $t("resume.professionalExperience") }}
             </h2>
 
             <div class="space-y-2">
@@ -349,7 +349,7 @@ const downloadTailoredCV = async () => {
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
-                Personal Projects
+                {{ $t("resume.personalProjects") }}
             </h2>
             <div class="space-y-1.5">
                 <div
@@ -395,7 +395,7 @@ const downloadTailoredCV = async () => {
             <h2
                 class="text-[10px] font-bold text-primary uppercase tracking-[0.18em] mb-2 pb-1 border-b border-primary/20"
             >
-                Education
+                {{ $t("resume.education") }}
             </h2>
             <div>
                 <div

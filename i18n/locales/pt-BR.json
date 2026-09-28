@@ -136,6 +136,11 @@
     "tailoredPlaceholder": "Cole a descrição da vaga aqui e otimizaremos o CV para ela...",
     "generateTailored": "Gerar CV Personalizado",
     "generating": "Gerando...",
-    "generateError": "Falha ao gerar o CV personalizado. Tente novamente."
+    "generateError": "Falha ao gerar o CV personalizado. Tente novamente.",
+    "summary": "Resumo",
+    "skills": "Habilidades",
+    "professionalExperience": "Experiência Profissional",
+    "personalProjects": "Projetos Pessoais",
+    "education": "Formação"
   }
 }

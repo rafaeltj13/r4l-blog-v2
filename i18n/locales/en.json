@@ -136,6 +136,11 @@
     "tailoredPlaceholder": "Paste the job description here and we'll optimize the CV for it...",
     "generateTailored": "Generate Tailored CV",
     "generating": "Generating...",
-    "generateError": "Failed to generate tailored CV. Please try again."
+    "generateError": "Failed to generate tailored CV. Please try again.",
+    "summary": "Summary",
+    "skills": "Skills",
+    "professionalExperience": "Professional Experience",
+    "personalProjects": "Personal Projects",
+    "education": "Education"
   }
 }
