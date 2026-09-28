@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { experienceData } from "~/utils/experienceData";
 import { posts } from "~/utils/postsData";
-import { projectsData } from "~/utils/projectsData";
 import PersonalProjectItem from "~/components/projects/PersonalProjectItem.vue";
 
 const { t } = useI18n();
@@ -10,8 +8,15 @@ useHead({
     title: () => t("seo.home"),
 });
 
-const relevantProjects = experienceData.slice(0, 3);
-const personalProjects = projectsData.slice(0, 3);
+const localizedExperiences = useLocalizedExperiences();
+const localizedProjects = useLocalizedProjects();
+
+const relevantProjects = computed(() =>
+    localizedExperiences.value.slice(0, 3),
+);
+const personalProjects = computed(() =>
+    localizedProjects.value.slice(0, 3),
+);
 const relevantPosts = [...posts].reverse().slice(0, 5);
 
 const activeSection = ref("about");

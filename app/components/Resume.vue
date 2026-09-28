@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FULL_NAME, experiences, skillTaxonomy } from "~/utils/cv/data";
+import { FULL_NAME } from "~/utils/cv/data";
 import { buildCvDocument, groupByCompany } from "~/utils/cv/document";
 import { A4_HEIGHT_PX, generateResumePDF, measureResumeHeight } from "~/utils/cv/pdf";
 import { cvPresets } from "~/utils/cv/presets";
@@ -42,35 +42,59 @@ const {
 const FULL_SUMMARY =
     "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
 
+/** Localized content source (English source of truth + pt-BR overrides). */
+const contentLocale = useContentLocale();
+const localizedCv = useLocalizedCv();
+const localizedSkills = useLocalizedSkillTaxonomy();
+
 const activeSelection = computed<CvSelection | null>(() => {
     if (activeMode.value === "tailored") return tailoredSelection.value;
     if (activeMode.value === "front" || activeMode.value === "full") {
-        return cvPresets[activeMode.value];
+        const preset = cvPresets[activeMode.value];
+        return {
+            ...preset,
+            position:
+                localizedCv.value.position(activeMode.value) ??
+                preset.position,
+            summary:
+                localizedCv.value.summary(activeMode.value) ?? preset.summary,
+        };
     }
     return null;
 });
 
 /** The single document the template renders — presets and AI go through here. */
 const cvDocument = computed<CvDocument>(() => {
+    const data = localizedCv.value.data;
+    const documentOpts = {
+        data,
+        skillCategories: localizedCv.value.skillCategories,
+        locale: contentLocale.value,
+    };
     const selection = activeSelection.value;
-    if (selection) return buildCvDocument(selection);
+    if (selection) return buildCvDocument(selection, documentOpts);
     // Page default: everything, including deprecated entries (page display,
     // not a download — downloads always go through front/full/tailored).
     // Only D2Brain is showcased as personal project here.
     return buildCvDocument(
         {
-            position: "Senior Software Engineer",
-            summary: FULL_SUMMARY,
-            experienceIds: experiences.map((e) => e.id),
+            position:
+                localizedCv.value.position("all") ??
+                "Senior Software Engineer",
+            summary: localizedCv.value.summary("all") ?? FULL_SUMMARY,
+            experienceIds: data.experiences.map((e) => e.id),
             projectIds: ["d2brain"],
-            skills: skillTaxonomy,
+            skills: localizedSkills.value,
         },
-        { includeDeprecated: true },
+        { ...documentOpts, includeDeprecated: true },
     );
 });
 
 const groupedExperience = computed(() =>
-    groupByCompany(cvDocument.value.experiences),
+    groupByCompany(cvDocument.value.experiences, {
+        history: localizedCv.value.data.experiences,
+        locale: contentLocale.value,
+    }),
 );
 
 /**

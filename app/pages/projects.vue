@@ -1,11 +1,13 @@
 <script setup lang="ts">
 const { t } = useI18n();
 
+const localizedProjects = useLocalizedProjects();
+const projectsData = localizedProjects;
+
 useHead({
   title: () => t('seo.projects')
 })
 
-import { projectsData } from '~/utils/projectsData'
 import ProjectItem from '~/components/projects/ProjectItem.vue'
 </script>
 

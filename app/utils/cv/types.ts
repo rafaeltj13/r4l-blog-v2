@@ -95,3 +95,20 @@ export interface CvDocument {
 }
 
 export type CvPresetId = "front" | "full";
+
+/** Locales with content translations. English is the source of truth. */
+export type CvLocale = "en" | "pt-BR";
+
+/**
+ * Injectable content source for `buildCvDocument()` / `groupByCompany()`.
+ * Defaults to the English globals in `./data` (source of truth); localized
+ * views pass the merged result of the `pt-BR` overrides.
+ */
+export interface CvDataSource {
+  experiences: Experience[];
+  experienceById: Map<string, Experience>;
+  personalProjects: PersonalProject[];
+  personalProjectById: Map<string, PersonalProject>;
+  contact: CvContact;
+  education: CvEducation;
+}

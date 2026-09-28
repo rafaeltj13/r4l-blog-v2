@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { experienceData } from "~/utils/experienceData";
-
 const { t } = useI18n();
+
+const localizedExperiences = useLocalizedExperiences();
+const experienceData = localizedExperiences;
 
 useHead({
     title: () => t("seo.experience"),

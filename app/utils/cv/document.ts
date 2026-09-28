@@ -5,13 +5,26 @@ import {
   experienceById,
   experiences,
   personalProjectById,
+  personalProjects,
 } from "./data";
 import type {
+  CvDataSource,
   CvDocument,
+  CvLocale,
   CvSelection,
   Experience,
   PersonalProject,
 } from "./types";
+
+/** English content source (source of truth) for document builders. */
+export const englishDataSource: CvDataSource = {
+  experiences,
+  experienceById,
+  personalProjects,
+  personalProjectById,
+  contact: contactInfo,
+  education,
+};
 
 /** Split a multi-paragraph description into trimmed bullet strings. */
 export function splitDescription(description: string): string[] {
@@ -21,18 +34,30 @@ export function splitDescription(description: string): string[] {
     .filter(Boolean);
 }
 
-export function formatPeriod(dateStart: string, dateEnd?: string | null): string {
+export function formatPeriod(
+  dateStart: string,
+  dateEnd?: string | null,
+  locale: CvLocale = "en",
+): string {
   // UTC getters: plain "YYYY-MM-DD" strings parse as UTC midnight, and
   // toLocaleDateString would shift them into the previous month west of GMT.
-  const MONTHS = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-  ];
+  const MONTHS =
+    locale === "pt-BR"
+      ? [
+          "jan", "fev", "mar", "abr", "mai", "jun",
+          "jul", "ago", "set", "out", "nov", "dez",
+        ]
+      : [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        ];
+  const present = locale === "pt-BR" ? "Atual" : "Present";
   const fmt = (d: string) => {
     const dt = new Date(d);
     return `${MONTHS[dt.getUTCMonth()]} ${dt.getUTCFullYear()}`;
   };
-  if (!dateEnd || new Date(dateEnd) > new Date()) return `${fmt(dateStart)} - Present`;
+  if (!dateEnd || new Date(dateEnd) > new Date())
+    return `${fmt(dateStart)} - ${present}`;
   return `${fmt(dateStart)} - ${fmt(dateEnd)}`;
 }
 
@@ -44,21 +69,29 @@ export function formatPeriod(dateStart: string, dateEnd?: string | null): string
  */
 export function buildCvDocument(
   selection: CvSelection,
-  opts: { includeDeprecated?: boolean } = {},
+  opts: {
+    includeDeprecated?: boolean;
+    /** Content source. Defaults to the English source of truth. */
+    data?: CvDataSource;
+    /** Renames skill categories (e.g. English -> Portuguese) after filtering. */
+    skillCategories?: Record<string, string>;
+    locale?: CvLocale;
+  } = {},
 ): CvDocument {
+  const data = opts.data ?? englishDataSource;
   const excludedSkills = opts.includeDeprecated
     ? new Set<string>()
     : deprecatedOnlyTechnologies();
 
   const resolvedExperiences: Experience[] = selection.experienceIds
-    .map((id) => experienceById.get(id))
+    .map((id) => data.experienceById.get(id))
     .filter(
       (e): e is Experience =>
         Boolean(e) && (opts.includeDeprecated || !e.deprecated),
     );
 
   const resolvedProjects: PersonalProject[] = selection.projectIds
-    .map((id) => personalProjectById.get(id))
+    .map((id) => data.personalProjectById.get(id))
     .filter(
       (p): p is PersonalProject =>
         Boolean(p) && (opts.includeDeprecated || !p.deprecated),
@@ -78,13 +111,28 @@ export function buildCvDocument(
     summary: selection.summary,
     experiences: resolvedExperiences,
     projects: resolvedProjects,
-    skills: filterDeprecatedSkills(selection.skills, excludedSkills),
+    skills: renameSkillCategories(
+      filterDeprecatedSkills(selection.skills, excludedSkills),
+      opts.skillCategories,
+    ),
     bullets,
-    contact: contactInfo,
-    education,
+    contact: data.contact,
+    education: data.education,
   };
 }
 
+/** Rename skill-map categories (keys only); no-op without a rename map. */
+export function renameSkillCategories(
+  skills: CvSelection["skills"],
+  renames?: Record<string, string>,
+): CvSelection["skills"] {
+  if (!renames) return skills;
+  const result: CvSelection["skills"] = {};
+  for (const [category, list] of Object.entries(skills)) {
+    result[renames[category] ?? category] = list;
+  }
+  return result;
+}
 /** Strip deprecated-only technologies from a skill map (keeps categories). */
 function filterDeprecatedSkills(
   skills: CvSelection["skills"],
@@ -108,7 +156,12 @@ export interface GroupedExperience {
   items: Experience[];
 }
 
-export function groupByCompany(items: Experience[]): GroupedExperience[] {
+export function groupByCompany(
+  items: Experience[],
+  opts: { history?: Experience[]; locale?: CvLocale } = {},
+): GroupedExperience[] {
+  const history = opts.history ?? experiences;
+  const locale = opts.locale ?? "en";
   const groups = new Map<string, GroupedExperience & { items: Experience[] }>();
 
   for (const item of items) {
@@ -130,9 +183,7 @@ export function groupByCompany(items: Experience[]): GroupedExperience[] {
     // Tenure spans the ENTIRE history at the company (full dataset,
     // including non-selected and deprecated entries) — not just the
     // experiences picked for this download.
-    const fullHistory = experiences.filter(
-      (e) => e.companyName === group.name,
-    );
+    const fullHistory = history.filter((e) => e.companyName === group.name);
     const earliest = fullHistory.reduce((a, b) =>
       b.dateStart < a.dateStart ? b : a,
     );
@@ -143,7 +194,7 @@ export function groupByCompany(items: Experience[]): GroupedExperience[] {
       return b.dateEnd > a.dateEnd ? b : a;
     });
 
-    let period = formatPeriod(earliest.dateStart, latest.dateEnd);
+    let period = formatPeriod(earliest.dateStart, latest.dateEnd, locale);
     // Trio is ongoing employment shown as a range on the CV.
     if (
       group.name === "Trio" &&
@@ -151,7 +202,7 @@ export function groupByCompany(items: Experience[]): GroupedExperience[] {
         new Date(latest.dateEnd) > new Date() ||
         latest.dateEnd.startsWith("2026"))
     ) {
-      period = formatPeriod(earliest.dateStart, null);
+      period = formatPeriod(earliest.dateStart, null, locale);
     }
     return { ...group, period };
   });
