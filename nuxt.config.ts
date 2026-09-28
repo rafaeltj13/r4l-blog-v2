@@ -36,8 +36,23 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/scripts',
+    '@nuxtjs/i18n',
     '@vueuse/motion/nuxt'
   ],
+  i18n: {
+    defaultLocale: 'en',
+    strategy: 'no_prefix',
+    locales: [
+      { code: 'en', language: 'en-US', file: 'en.json', name: 'English' },
+      { code: 'pt-BR', language: 'pt-BR', file: 'pt-BR.json', name: 'Português (BR)' },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root',
+      fallbackLocale: 'en',
+    },
+  },
   fonts: {
     families: [
       { name: 'Bungee', provider: 'google' },

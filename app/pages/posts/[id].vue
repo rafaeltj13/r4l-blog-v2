@@ -2,6 +2,8 @@
 import { posts } from "~/utils/postsData";
 
 const route = useRoute();
+const { t, locale } = useI18n();
+const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 const post = computed(() => posts.find((item) => item.id === route.params.id));
 
 if (!post.value) {
@@ -36,7 +38,7 @@ const newerPost = computed(() =>
 );
 
 const formatDate = (date: string) =>
-    new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
+    new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale.value, {
         month: "long",
         day: "numeric",
         year: "numeric",
@@ -84,7 +86,19 @@ const articleHtml = computed(() => {
 });
 
 const readingProgress = ref(0);
-const shareLabel = ref("Share");
+const shareStatus = ref<"idle" | "copied" | "error">("idle");
+const shareLabel = computed(() =>
+    shareStatus.value === "copied"
+        ? t("post.linkCopied")
+        : shareStatus.value === "error"
+            ? t("post.tryAgain")
+            : t("post.share"),
+);
+
+let shareResetTimer: ReturnType<typeof setTimeout> | undefined;
+const resetShareStatus = () => {
+    shareResetTimer = setTimeout(() => (shareStatus.value = "idle"), 1800);
+};
 
 const sharePost = async () => {
     if (!import.meta.client || !post.value) return;
@@ -102,12 +116,14 @@ const sharePost = async () => {
         }
 
         await navigator.clipboard.writeText(shareData.url);
-        shareLabel.value = "Link copied";
-        window.setTimeout(() => (shareLabel.value = "Share"), 1800);
+        shareStatus.value = "copied";
+        clearTimeout(shareResetTimer);
+        resetShareStatus();
     } catch (error) {
         if ((error as DOMException).name !== "AbortError") {
-            shareLabel.value = "Try again";
-            window.setTimeout(() => (shareLabel.value = "Share"), 1800);
+            shareStatus.value = "error";
+            clearTimeout(shareResetTimer);
+            resetShareStatus();
         }
     }
 };
@@ -142,13 +158,13 @@ onMounted(() => {
                 class="group inline-flex items-center gap-2 text-sm font-medium text-base-content/50 transition-colors hover:text-primary"
             >
                 <Icon name="uil:arrow-left" class="size-4 transition-transform group-hover:-translate-x-0.5" />
-                All writing
+                {{ $t("post.allWriting") }}
             </NuxtLink>
 
             <article class="mt-10 sm:mt-14">
                 <header v-motion-slide-bottom suppressHydrationWarning class="mx-auto max-w-4xl">
                     <div class="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                        <span>Article {{ currentIndex + 1 }} of {{ posts.length }}</span>
+                        <span>{{ $t("post.articleOf", { current: currentIndex + 1, total: posts.length }) }}</span>
                         <span aria-hidden="true" class="h-px w-10 bg-primary/50" />
                     </div>
                     <h1 class="text-4xl font-bold leading-[1.12] text-base-content sm:text-5xl lg:text-6xl">
@@ -166,7 +182,7 @@ onMounted(() => {
                             <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
                             <span class="inline-flex items-center gap-1.5">
                                 <Icon name="uil:clock" class="size-4" />
-                                {{ readingTime }} min read
+                                {{ $t("post.minRead", { count: readingTime }) }}
                             </span>
                         </div>
                         <button
@@ -197,9 +213,9 @@ onMounted(() => {
 
             <nav class="mx-auto mt-16 max-w-4xl border-t border-base-content/10 pt-8 sm:mt-24" aria-label="Post navigation">
                 <div class="mb-5 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-base-content">Keep reading</h2>
+                    <h2 class="text-lg font-bold text-base-content">{{ $t("post.keepReading") }}</h2>
                     <NuxtLink to="/posts" class="text-sm text-base-content/45 transition-colors hover:text-primary">
-                        Browse all
+                        {{ $t("post.browseAll") }}
                     </NuxtLink>
                 </div>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -209,7 +225,7 @@ onMounted(() => {
                         class="group rounded-xl border border-base-content/10 p-5 transition hover:border-primary/30 hover:bg-base-200/40"
                     >
                         <span class="mb-2 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
-                            <Icon name="uil:arrow-left" class="size-4" /> Older
+                            <Icon name="uil:arrow-left" class="size-4" /> {{ $t("post.older") }}
                         </span>
                         <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
                             {{ olderPost.title }}
@@ -223,7 +239,7 @@ onMounted(() => {
                         class="group rounded-xl border border-base-content/10 p-5 text-right transition hover:border-primary/30 hover:bg-base-200/40"
                     >
                         <span class="mb-2 flex items-center justify-end gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
-                            Newer <Icon name="uil:arrow-right" class="size-4" />
+                            {{ $t("post.newer") }} <Icon name="uil:arrow-right" class="size-4" />
                         </span>
                         <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
                             {{ newerPost.title }}

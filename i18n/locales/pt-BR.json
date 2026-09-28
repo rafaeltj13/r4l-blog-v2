@@ -1,0 +1,141 @@
+{
+  "nav": {
+    "posts": "Posts",
+    "experience": "Experiência",
+    "projects": "Projetos",
+    "chat": "Chat",
+    "about": "Sobre"
+  },
+  "header": {
+    "openMenu": "Abrir menu de navegação",
+    "close": "fechar",
+    "language": "Idioma"
+  },
+  "seo": {
+    "home": "R4L - Rafael Maciel",
+    "about": "R4L - Sobre Este Site",
+    "experience": "R4L - Experiência",
+    "projects": "R4L - Projetos",
+    "chat": "R4L - Chat",
+    "blog": "R4L - Blog"
+  },
+  "home": {
+    "role": "Engenheiro de Software Sênior",
+    "intro": "Sou desenvolvedor web apaixonado por criar experiências de usuário fluidas. Construo experiências digitais acessíveis e pixel-perfect para a web.",
+    "aboutMe": "Sobre mim",
+    "relevantProjects": "Projetos relevantes",
+    "personalProjects": "Projetos pessoais",
+    "personalProjectsSubtitle": "Projetos pessoais que construo no meu tempo livre — incluindo esta plataforma.",
+    "relevantPosts": "Posts relevantes",
+    "p1": "Bem-vindo ao meu canto da web! Sou desenvolvedor de Campina Grande, cidade na Paraíba, Brasil, onde minha jornada no desenvolvimento web começou. Aos 27 anos, já vivi uma boa evolução das tecnologias web.",
+    "p2": "Meu caminho começou com frameworks clássicos como AngularJS e ASP.NET nos anos de universidade, mas foi ao descobrir frameworks modernos como React e Vue que minha paixão por desenvolvimento web realmente se acendeu. Hoje, foco em criar experiências digitais significativas que combinam código limpo com design cuidadoso.",
+    "p3": "Tenho mais de 8 anos de experiência com desenvolvimento web full-stack. Proficiência avançada em frameworks TypeScript modernos, incluindo React, Vue.js, Next.js e Node.js. Colaborei com times globais na construção de soluções escaláveis, com comunicação intercultural eficaz.",
+    "p4": "No meu tempo livre, geralmente estou jogando DotA 2, NBA 2k26, treinando, com minha namorada e meus dois gatos, ou assistindo séries."
+  },
+  "about": {
+    "title": "Sobre Este Site",
+    "subtitle": "Um olhar sobre as tecnologias que movem este site.",
+    "whyGreat": "Por que é ótimo:",
+    "techs": {
+      "nuxt": {
+        "description": "O meta-framework Vue.js que move este blog. O Nuxt oferece roteamento baseado em arquivos, renderização no servidor e uma excelente experiência de desenvolvimento pronta para uso.",
+        "why": "Perfeito para sites focados em conteúdo como blogs. Os modos de renderização híbrida e a divisão automática de código garantem carregamentos rápidos, enquanto o roteamento por arquivos facilita a criação de novas páginas."
+      },
+      "vue": {
+        "description": "Um framework JavaScript progressivo para construir interfaces de usuário com Composition API e sistema de reatividade.",
+        "why": "A curva de aprendizado suave e a excelente documentação o tornam ideal para projetos pessoais. A Composition API permite lógica limpa e reutilizável sem a complexidade de frameworks maiores."
+      },
+      "bun": {
+        "description": "Um runtime JavaScript rápido e completo, com gerenciador de pacotes, que substitui Node.js e npm.",
+        "why": "Significativamente mais rápido que o npm para instalar dependências e rodar scripts. O bundler e o test runner embutidos reduzem a necessidade de ferramentas adicionais."
+      },
+      "tailwind": {
+        "description": "Um framework CSS utility-first que permite desenvolver interfaces rapidamente com classes prontas.",
+        "why": "Acelera muito o desenvolvimento em projetos solo. Sem trocar de arquivo ou inventar nomes de classe. A nova v4 usa variáveis CSS para temas, ficando ainda mais poderosa."
+      },
+      "daisyui": {
+        "description": "Uma biblioteca de componentes construída sobre o Tailwind CSS, com componentes de interface bonitos e semânticos.",
+        "why": "Adiciona componentes prontos como botões, cards e modais sem abrir mão da personalização. O sistema de temas facilita alternar entre modo claro e escuro."
+      },
+      "typescript": {
+        "description": "Uma linguagem de programação fortemente tipada baseada em JavaScript, com melhor ferramental e erros capturados em tempo de compilação.",
+        "why": "A segurança de tipos dá confiança nas refatorações e reduz bugs em produção. A experiência com autocomplete e documentação inline é valiosa para manter o código a longo prazo."
+      },
+      "deepseek": {
+        "description": "Move o recurso de Chat e o gerador de CV personalizado, permitindo conversas com IA sobre minha experiência e projetos.",
+        "why": "Adiciona um elemento interativo ao portfólio. A API é fácil de integrar via AI SDK com saída estruturada e oferece um jeito único de conhecer meu trabalho."
+      },
+      "vercel": {
+        "description": "Uma plataforma de nuvem para publicar aplicações web com CI/CD automático, edge functions e CDN global.",
+        "why": "Deploys sem configuração para apps Nuxt. Basta enviar para o GitHub e o site entra no ar. O generoso plano gratuito é perfeito para projetos pessoais."
+      }
+    }
+  },
+  "experience": {
+    "title": "Experiência Profissional",
+    "tabs": {
+      "resume": "Currículo",
+      "projects": "Projetos"
+    }
+  },
+  "projects": {
+    "title": "Projetos",
+    "subtitle": "Uma coleção de projetos pessoais nos quais trabalhei ao longo dos anos. Eles representam minha exploração de diferentes tecnologias e minha paixão por construir coisas.",
+    "screenshotAlt": "Captura de tela de {name}"
+  },
+  "blog": {
+    "subtitle": "Meus pensamentos e experiências em um só lugar.",
+    "latest": "Mais recente",
+    "minRead": "{count} min de leitura",
+    "minShort": "{count} min",
+    "readArticle": "Ler o artigo",
+    "moreFromBlog": "Mais do blog",
+    "newestFirst": "Mais recentes primeiro",
+    "article": "artigo",
+    "articles": "artigos"
+  },
+  "post": {
+    "allWriting": "Todos os textos",
+    "articleOf": "Artigo {current} de {total}",
+    "minRead": "{count} min de leitura",
+    "share": "Compartilhar",
+    "linkCopied": "Link copiado",
+    "tryAgain": "Tente de novo",
+    "keepReading": "Continue lendo",
+    "browseAll": "Ver todos",
+    "older": "Mais antigo",
+    "newer": "Mais recente"
+  },
+  "chat": {
+    "title": "Converse com o Eu Digital",
+    "greeting": "Olá! 👋 Este é meu gêmeo digital com IA, treinado para conversar sobre minha experiência profissional, projetos e interesses. Fique à vontade para perguntar sobre meu trabalho, stack de tecnologias ou qualquer coisa que queira saber sobre mim!",
+    "placeholder": "Ouvi dizer que você é um ótimo desenvolvedor, me conte mais sobre você...",
+    "submit": "Enviar",
+    "typing": "Eu Digital está digitando...",
+    "you": "Você",
+    "digitalMe": "Eu Digital",
+    "error": "Desculpe, não consegui processar sua mensagem. Tente novamente.",
+    "errorToast": "⚠️ Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente."
+  },
+  "common": {
+    "present": "Atual",
+    "legacy": "Legado",
+    "legacyTitle": "Exibido por histórico — excluído dos downloads do CV",
+    "updated": "Atualizado {date}",
+    "daysAgo": "há {count} dias",
+    "public": "Público",
+    "private": "Privado",
+    "close": "Fechar"
+  },
+  "resume": {
+    "downloadCv": "Baixar CV",
+    "frontendCv": "CV de Frontend",
+    "fullstackCv": "CV Full-stack",
+    "or": "OU",
+    "tailoredTitle": "Gerar um CV personalizado",
+    "tailoredPlaceholder": "Cole a descrição da vaga aqui e otimizaremos o CV para ela...",
+    "generateTailored": "Gerar CV Personalizado",
+    "generating": "Gerando...",
+    "generateError": "Falha ao gerar o CV personalizado. Tente novamente."
+  }
+}

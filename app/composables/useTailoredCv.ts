@@ -12,6 +12,7 @@ import type { CvSelection } from "~/utils/cv/types";
  * data drift (unknown ids / skills).
  */
 export function useTailoredCv() {
+  const { t } = useI18n();
   const jobDescription = ref("");
   const isGenerating = ref(false);
   const optimizeError = ref<string | null>(null);
@@ -33,9 +34,7 @@ export function useTailoredCv() {
       const sanitized = sanitizeTailoredPayload(payload);
 
       if (sanitized.experienceIds.length === 0) {
-        throw new Error(
-          "AI returned an empty experience list. Please try again.",
-        );
+        throw new Error(t("resume.generateError"));
       }
 
       const selection: CvSelection = {
@@ -51,9 +50,9 @@ export function useTailoredCv() {
     } catch (err: unknown) {
       console.error("Tailored CV error:", err);
       optimizeError.value =
-        err instanceof Error
+        err instanceof Error && err.message
           ? err.message
-          : "Failed to generate tailored CV. Please try again.";
+          : t("resume.generateError");
       return null;
     } finally {
       isGenerating.value = false;

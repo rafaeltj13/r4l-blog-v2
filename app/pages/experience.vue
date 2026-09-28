@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { experienceData } from "~/utils/experienceData";
+
+const { t } = useI18n();
+
 useHead({
-    title: "R4L - Experience",
+    title: () => t("seo.experience"),
 });
 
 const route = useRoute();
@@ -37,17 +40,17 @@ watch(
     },
 );
 
-const tabs = [
-    { label: "Resume", value: "resume" },
-    { label: "Projects", value: "projects" },
-];
+const tabs = computed(() => [
+    { label: t("experience.tabs.resume"), value: "resume" },
+    { label: t("experience.tabs.projects"), value: "projects" },
+]);
 </script>
 
 <template>
     <div class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div v-motion-slide-left suppressHydrationWarning class="mb-12">
             <h1 class="text-4xl font-bold text-base-content mb-8">
-                Professional Experience
+                {{ $t("experience.title") }}
             </h1>
 
             <div class="w-fit">

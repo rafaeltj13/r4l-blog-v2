@@ -16,24 +16,20 @@ const props = withDefaults(
     },
 );
 
-const MONTHS = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-];
+const { t, locale } = useI18n();
+const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
 const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return `${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+    const parts = new Intl.DateTimeFormat(dateLocale.value, {
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+    }).formatToParts(date);
+    const month = parts.find((part) => part.type === "month")?.value ?? "";
+    const year = parts.find((part) => part.type === "year")?.value ?? "";
+    // Keep the "Jan 2023" style; strip locale punctuation (e.g. "jan." in pt-BR).
+    return `${month.replace(/\./g, "")} ${year}`;
 };
 
 const isPresent = computed(() => {
@@ -44,7 +40,7 @@ const isPresent = computed(() => {
 const dateRange = computed(() => {
     const start = formatDate(props.experience.dateStart);
     const end = isPresent.value
-        ? "Present"
+        ? t("common.present")
         : formatDate(props.experience.dateEnd!);
     return `${start} – ${end}`;
 });
@@ -93,9 +89,9 @@ const descriptionParagraphs = computed(() => {
                 <span
                     v-if="experience.deprecated"
                     class="badge badge-ghost badge-sm ml-2 align-middle font-normal"
-                    title="Shown for history — excluded from CV downloads"
+                    :title="$t('common.legacyTitle')"
                 >
-                    Legacy
+                    {{ $t("common.legacy") }}
                 </span>
             </div>
             <div class="mt-2 mb-4 space-y-3">
@@ -145,9 +141,9 @@ const descriptionParagraphs = computed(() => {
                 <span
                     v-if="experience.deprecated"
                     class="badge badge-ghost badge-sm ml-2 align-middle font-normal"
-                    title="Shown for history — excluded from CV downloads"
+                    :title="$t('common.legacyTitle')"
                 >
-                    Legacy
+                    {{ $t("common.legacy") }}
                 </span>
             </h3>
             <div class="mb-4 space-y-3">

@@ -2,10 +2,14 @@
 import type { Post } from "~/utils/postsData";
 import { posts as postsData } from "~/utils/postsData";
 
+const { t, locale } = useI18n();
+
 useSeoMeta({
-    title: "R4L - Blog",
-    description: "My thoughts and experiences in one place.",
+    title: () => t("seo.blog"),
+    description: () => t("blog.subtitle"),
 });
+
+const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
 const posts = [...postsData].reverse();
 const featuredPost = computed(() => posts[0] ?? null);
@@ -14,7 +18,7 @@ const remainingPosts = computed(() => posts.slice(1));
 const parseDate = (date: string) => new Date(`${date}T12:00:00`);
 
 const formatDate = (date: string, long = false) =>
-    parseDate(date).toLocaleDateString("en-US", {
+    parseDate(date).toLocaleDateString(dateLocale.value, {
         month: long ? "long" : "short",
         day: "numeric",
         year: "numeric",
@@ -39,11 +43,11 @@ const getReadingTime = (post: Post) => {
                     Blog
                 </h1>
                 <p class="mt-4 max-w-2xl text-base leading-relaxed text-base-content/60 sm:text-lg">
-                    My thoughts and experiences in one place.
+                    {{ $t("blog.subtitle") }}
                 </p>
             </div>
             <p class="mt-6 text-sm text-base-content/45 sm:mt-0 sm:pb-1">
-                {{ posts.length }} {{ posts.length === 1 ? "article" : "articles" }}
+                {{ posts.length }} {{ posts.length === 1 ? $t("blog.article") : $t("blog.articles") }}
             </p>
         </header>
 
@@ -56,13 +60,13 @@ const getReadingTime = (post: Post) => {
             <div class="flex flex-col justify-center p-6 sm:p-9 lg:p-12">
                 <div class="mb-5 flex flex-wrap items-center gap-3 text-xs text-base-content/50">
                     <span class="badge badge-primary badge-sm font-semibold uppercase tracking-wider">
-                        Latest
+                        {{ $t("blog.latest") }}
                     </span>
                     <time :datetime="featuredPost.date">
                         {{ formatDate(featuredPost.date, true) }}
                     </time>
                     <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
-                    <span>{{ getReadingTime(featuredPost) }} min read</span>
+                    <span>{{ $t("blog.minRead", { count: getReadingTime(featuredPost) }) }}</span>
                 </div>
 
                 <h2 class="text-2xl font-bold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-3xl lg:text-4xl">
@@ -72,7 +76,7 @@ const getReadingTime = (post: Post) => {
                     {{ featuredPost.content }}
                 </p>
                 <span class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-base-content transition-colors group-hover:text-primary">
-                    Read the article
+                    {{ $t("blog.readArticle") }}
                     <Icon
                         name="uil:arrow-right"
                         class="size-5 transition-transform duration-300 group-hover:translate-x-1"
@@ -93,10 +97,10 @@ const getReadingTime = (post: Post) => {
         <section v-if="remainingPosts.length" class="mt-16 sm:mt-20" aria-labelledby="all-posts-heading">
             <div class="mb-5 flex items-center justify-between">
                 <h2 id="all-posts-heading" class="text-lg font-bold text-base-content sm:text-xl">
-                    More from the blog
+                    {{ $t("blog.moreFromBlog") }}
                 </h2>
                 <span class="text-xs uppercase tracking-[0.16em] text-base-content/35">
-                    Newest first
+                    {{ $t("blog.newestFirst") }}
                 </span>
             </div>
 
@@ -112,7 +116,7 @@ const getReadingTime = (post: Post) => {
                             {{ formatDate(post.date) }}
                         </time>
                         <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25 sm:hidden" />
-                        <span class="sm:mt-1 sm:block">{{ getReadingTime(post) }} min read</span>
+                        <span class="sm:mt-1 sm:block">{{ $t("blog.minRead", { count: getReadingTime(post) }) }}</span>
                     </div>
 
                     <div class="min-w-0">

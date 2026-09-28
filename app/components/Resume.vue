@@ -424,7 +424,7 @@ const downloadTailoredCV = async () => {
                     class="fixed bottom-8 right-8 print:hidden z-100"
                 >
                     <button
-                        data-tip="Download CV"
+                        :data-tip="$t('resume.downloadCv')"
                         class="btn btn-circle btn-lg bg-primary hover:bg-primary/90 text-white border-none shadow-xl tooltip tooltip-left"
                         @click="open()"
                     >
@@ -441,13 +441,13 @@ const downloadTailoredCV = async () => {
                                 class="text-2xl text-primary shrink-0"
                             />
                             <h3 class="font-bold text-lg truncate">
-                                Download CV
+                                {{ $t("resume.downloadCv") }}
                             </h3>
                         </div>
                         <form method="dialog">
                             <button
                                 class="btn btn-ghost btn-sm btn-circle"
-                                aria-label="Close"
+                                :aria-label="$t('common.close')"
                             >
                                 <Icon name="uil:x" class="text-2xl" />
                             </button>
@@ -460,28 +460,28 @@ const downloadTailoredCV = async () => {
                             class="btn btn-outline btn-block btn-primary"
                             @click="downloadCV('front')"
                         >
-                            Frontend CV
+                            {{ $t("resume.frontendCv") }}
                         </button>
                         <button
                             class="btn btn-outline btn-block btn-primary"
                             @click="downloadCV('full')"
                         >
-                            Full-stack CV
+                            {{ $t("resume.fullstackCv") }}
                         </button>
                     </div>
 
-                    <div class="divider text-xs text-slate-400">OR</div>
+                    <div class="divider text-xs text-slate-400">{{ $t("resume.or") }}</div>
 
                     <div class="w-full space-y-3">
                         <div class="text-sm font-medium text-slate-700">
-                            Generate a tailored CV
+                            {{ $t("resume.tailoredTitle") }}
                         </div>
 
                         <textarea
                             v-model="jobDescription"
                             class="textarea textarea-bordered w-full text-sm"
                             rows="4"
-                            placeholder="Paste the job description here and we'll optimize the CV for it..."
+                            :placeholder="$t('resume.tailoredPlaceholder')"
                         ></textarea>
 
                         <button
@@ -500,7 +500,7 @@ const downloadTailoredCV = async () => {
                                 name="uil:magic"
                                 class="mr-1"
                             />
-                            {{ isGenerating ? "Generating..." : "Generate Tailored CV" }}
+                            {{ isGenerating ? $t("resume.generating") : $t("resume.generateTailored") }}
                         </button>
 
                         <p

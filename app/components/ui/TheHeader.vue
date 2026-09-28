@@ -44,7 +44,7 @@ onMounted(() => {
                 <button
                     type="button"
                     class="btn btn-ghost btn-square md:hidden"
-                    aria-label="Open navigation menu"
+                    :aria-label="$t('header.openMenu')"
                     @click="open"
                 >
                     <Icon name="uil:bars" :size="20" />
@@ -82,9 +82,10 @@ onMounted(() => {
                 </nav>
             </div>
 
-            <!-- Right: Social Icons & Theme Toggle -->
+            <!-- Right: Social Icons, Language Switcher & Theme Toggle -->
             <div class="flex flex-1 items-center justify-end space-x-2">
                 <UiAppSocialIcons />
+                <UiLanguageSwitcher />
                 <UiThemeToggle />
             </div>
         </div>
@@ -108,7 +109,7 @@ onMounted(() => {
                 </nav>
             </div>
         <form method="dialog" class="modal-backdrop">
-            <button @click="close">close</button>
+            <button @click="close">{{ $t("header.close") }}</button>
         </form>
     </dialog>
 </template>

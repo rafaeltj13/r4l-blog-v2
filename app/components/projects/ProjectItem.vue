@@ -2,9 +2,12 @@
 import AppChip from '~/components/ui/AppChip.vue'
 import type { Project } from '~/utils/projectsData'
 
-defineProps<{
+const props = defineProps<{
   project: Project
 }>()
+
+const { t, locale } = useI18n()
+const dateLocale = computed(() => (locale.value === 'pt-BR' ? 'pt-BR' : 'en-US'))
 
 const getLanguageColor = (language: string) => {
   const colors: Record<string, string> = {
@@ -20,13 +23,17 @@ const formatLastUpdated = (dateString: string) => {
   const now = new Date()
   const diffTime = Math.abs(now.getTime() - date.getTime())
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays <= 30) {
-    return `${diffDays} days ago`
+    return t('common.daysAgo', { count: diffDays })
   }
-  
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+  return date.toLocaleDateString(dateLocale.value, { month: 'short', day: 'numeric', year: 'numeric' })
 }
+
+const visibilityLabel = computed(() =>
+  props.project.visibility === 'Private' ? t('common.private') : t('common.public'),
+)
 </script>
 
 <template>
@@ -57,7 +64,7 @@ const formatLastUpdated = (dateString: string) => {
             class="badge badge-sm text-xs"
             :class="project.visibility === 'Private' ? 'badge-secondary badge-outline' : 'badge-primary badge-outline'"
           >
-            {{ project.visibility || 'Public' }}
+            {{ visibilityLabel }}
           </span>
         </div>
         
@@ -108,7 +115,7 @@ const formatLastUpdated = (dateString: string) => {
         
         <!-- Updated At -->
         <div class="ml-auto text-xs">
-          Updated {{ formatLastUpdated(project.updated_at) }}
+          {{ $t('common.updated', { date: formatLastUpdated(project.updated_at) }) }}
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 useHead({
-  title: 'R4L - Projects'
+  title: () => t('seo.projects')
 })
 
 import { projectsData } from '~/utils/projectsData'
@@ -10,9 +12,9 @@ import ProjectItem from '~/components/projects/ProjectItem.vue'
 <template>
   <div class="py-12 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
     <div v-motion-slide-left suppressHydrationWarning class="mb-12">
-      <h1 class="text-4xl font-bold text-base-content mb-4">Projects</h1>
+      <h1 class="text-4xl font-bold text-base-content mb-4">{{ $t('projects.title') }}</h1>
       <p class="text-base-content/60 max-w-2xl">
-        A collection of personal projects I've worked on over the years. These represent my exploration of different technologies and my passion for building things.
+        {{ $t('projects.subtitle') }}
       </p>
     </div>
 

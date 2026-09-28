@@ -25,7 +25,7 @@ const showcaseUrl = computed(
         >
             <NuxtImg
                 :src="project.image"
-                :alt="`${project.name} screenshot`"
+                :alt="$t('projects.screenshotAlt', { name: project.name })"
                 class="w-full aspect-video object-cover object-top transition-transform duration-500 group-hover/item:scale-[1.02]"
                 format="webp"
                 quality="80"

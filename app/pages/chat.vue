@@ -1,6 +1,8 @@
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 useHead({
-    title: "R4L - Chat",
+    title: () => t("seo.chat"),
 });
 
 definePageMeta({
@@ -21,17 +23,28 @@ interface ChatResponse {
     };
 }
 
+const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
+
+const nowStamp = () =>
+    new Date().toLocaleTimeString(dateLocale.value, {
+        hour: "numeric",
+        minute: "2-digit",
+    });
+
 const messages = ref<Message[]>([
     {
         id: 1,
-        text: "Hey there! 👋 This is my AI-powered digital twin, trained to chat about my professional experience, projects, and interests. Feel free to ask about my work, tech stack, or anything you'd like to know about me!",
+        text: t("chat.greeting"),
         sender: "bot",
-        timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-        }),
+        timestamp: nowStamp(),
     },
 ]);
+
+// Keep the initial greeting in sync when the visitor switches language.
+watch(locale, () => {
+    const greeting = messages.value.find((msg) => msg.id === 1);
+    if (greeting) greeting.text = t("chat.greeting");
+});
 
 const userInput = ref("");
 const messagesContainer = ref<HTMLElement | null>(null);
@@ -56,10 +69,7 @@ const sendMessage = async () => {
         id: Date.now(),
         text: userInput.value,
         sender: "user",
-        timestamp: new Date().toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-        }),
+        timestamp: nowStamp(),
     };
     messages.value.push(userMsg);
 
@@ -79,25 +89,18 @@ const sendMessage = async () => {
             id: Date.now() + 1,
             text: response.message.content,
             sender: "bot",
-            timestamp: new Date().toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-            }),
+            timestamp: nowStamp(),
         };
         messages.value.push(botMsg);
     } catch (err: unknown) {
         console.error("Chat error:", err);
-        error.value =
-            "Sorry, I couldn't process your message. Please try again.";
+        error.value = t("chat.error");
 
         const errorMsg: Message = {
             id: Date.now() + 1,
-            text: "⚠️ Sorry, I encountered an error processing your message. Please try again.",
+            text: t("chat.errorToast"),
             sender: "bot",
-            timestamp: new Date().toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-            }),
+            timestamp: nowStamp(),
         };
         messages.value.push(errorMsg);
     } finally {
@@ -113,7 +116,7 @@ const sendMessage = async () => {
     >
         <div v-motion-slide-left suppressHydrationWarning class="shrink-0 mb-3 sm:mb-4 md:mb-6">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">
-                Chat with Digital Me
+                {{ $t("chat.title") }}
             </h1>
         </div>
 
@@ -140,7 +143,7 @@ const sendMessage = async () => {
                         </div>
                     </div>
                     <div class="chat-header opacity-50 text-xs mb-1">
-                        Digital Me
+                        {{ $t("chat.digitalMe") }}
                         <time class="text-xs opacity-50 ml-1">{{
                             msg.timestamp
                         }}</time>
@@ -157,7 +160,7 @@ const sendMessage = async () => {
                     class="chat chat-end"
                 >
                     <div class="chat-header opacity-50 text-xs mb-1">
-                        You
+                        {{ $t("chat.you") }}
                         <time class="text-xs opacity-50 ml-1">{{
                             msg.timestamp
                         }}</time>
@@ -194,7 +197,7 @@ const sendMessage = async () => {
                     ></span>
                 </div>
                 <span class="text-sm text-base-content/50"
-                    >Digital Me is typing...</span
+                    >{{ $t("chat.typing") }}</span
                 >
             </div>
         </div>
@@ -216,7 +219,7 @@ const sendMessage = async () => {
                 >
                     <textarea
                         v-model="userInput"
-                        placeholder="I heard that you are a great developer, please tell me more about yourself..."
+                        :placeholder="$t('chat.placeholder')"
                         class="textarea textarea-ghost w-full resize-none focus:bg-transparent focus:outline-none text-sm sm:text-base h-16 sm:h-20 leading-normal"
                         @keydown.enter.exact.prevent="sendMessage"
                     ></textarea>
@@ -226,7 +229,7 @@ const sendMessage = async () => {
                         class="btn btn-primary btn-sm mb-1.5 sm:mb-2 mr-1 sm:mr-2"
                         :disabled="!userInput.trim()"
                     >
-                        Submit
+                        {{ $t("chat.submit") }}
                     </button>
                 </div>
             </form>

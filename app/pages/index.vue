@@ -4,8 +4,10 @@ import { posts } from "~/utils/postsData";
 import { projectsData } from "~/utils/projectsData";
 import PersonalProjectItem from "~/components/projects/PersonalProjectItem.vue";
 
+const { t } = useI18n();
+
 useHead({
-    title: "R4L - Rafael Maciel",
+    title: () => t("seo.home"),
 });
 
 const relevantProjects = experienceData.slice(0, 3);
@@ -82,14 +84,12 @@ onUnmounted(() => {
                         Rafael de Araújo Maciel
                     </h1>
                     <h2 class="text-xl text-primary/80 mb-6">
-                        Senior Software Engineer
+                        {{ $t("home.role") }}
                     </h2>
                     <p
                         class="text-base-content/70 leading-relaxed mb-8 max-w-md"
                     >
-                        I'm a web developer with a passion for creating seamless
-                        user experiences. I build accessible, pixel-perfect
-                        digital experiences for the web.
+                        {{ $t("home.intro") }}
                     </p>
                 </div>
 
@@ -104,7 +104,7 @@ onUnmounted(() => {
                         "
                         @click="scrollToSection('about')"
                     >
-                        About me
+                        {{ $t("home.aboutMe") }}
                     </button>
                     <button
                         style="font-family: 'Bungee', sans-serif;"
@@ -116,7 +116,7 @@ onUnmounted(() => {
                         "
                         @click="scrollToSection('projects')"
                     >
-                        Relevant projects
+                        {{ $t("home.relevantProjects") }}
                     </button>
                     <button
                         style="font-family: 'Bungee', sans-serif;"
@@ -128,7 +128,7 @@ onUnmounted(() => {
                         "
                         @click="scrollToSection('personal-projects')"
                     >
-                        Personal projects
+                        {{ $t("home.personalProjects") }}
                     </button>
                     <button
                         style="font-family: 'Bungee', sans-serif;"
@@ -140,7 +140,7 @@ onUnmounted(() => {
                         "
                         @click="scrollToSection('posts')"
                     >
-                        Relevant posts
+                        {{ $t("home.relevantPosts") }}
                     </button>
                 </nav>
             </aside>
@@ -148,38 +148,23 @@ onUnmounted(() => {
             <!-- Right Column: Scrollable Content (scrolls with page) -->
             <main v-motion-slide-bottom suppressHydrationWarning class="w-full lg:w-[60%] pt-2 lg:py-12">
                 <div id="about" class="prose prose-lg max-w-none mb-16">
-                    <h3 class="text-2xl font-bold mb-6">About me</h3>
+                    <h3 class="text-2xl font-bold mb-6">{{ $t("home.aboutMe") }}</h3>
                     <p class="mb-6">
-                        Welcome to my corner of the web! I'm a developer from
-                        Campina Grande, a city in Paraíba, Brazil, where my
-                        journey in web development began. At 27, I've already
-                        experienced quite an evolution in web technologies.
+                        {{ $t("home.p1") }}
                     </p>
                     <p class="mb-6">
-                        My path started with classic frameworks like AngularJS
-                        and ASP.NET during my university years, but it was
-                        discovering mordern frameworks like React and Vue that
-                        truly ignited my passion for web development. Today, I
-                        focus on creating meaningful digital experiences that
-                        combine clean code with thoughtful design.
+                        {{ $t("home.p2") }}
                     </p>
                     <p class="mb-6">
-                        I have 8+ years of experience specializing in full-stack
-                        web development. Advanced proficiency in modern
-                        TypeScript frameworks including React, Vue.js, Next.js,
-                        and Node.js. Successfully collaborated with global teams
-                        to build scalable solutions, demonstrating effective
-                        cross-cultural communication.
+                        {{ $t("home.p3") }}
                     </p>
                     <p>
-                        In my spare time, I'm usually playing DotA 2, NBA 2k26,
-                        working out, hanging out with my girlfriend and two
-                        cats, or watching series.
+                        {{ $t("home.p4") }}
                     </p>
                 </div>
 
                 <div id="projects" class="mb-16">
-                    <h3 class="text-2xl font-bold mb-6">Relevant projects</h3>
+                    <h3 class="text-2xl font-bold mb-6">{{ $t("home.relevantProjects") }}</h3>
                     <div class="space-y-8">
                         <ExperienceItem
                             v-for="(item, index) in relevantProjects"
@@ -190,10 +175,9 @@ onUnmounted(() => {
                 </div>
 
                 <div id="personal-projects" class="mb-16">
-                    <h3 class="text-2xl font-bold mb-2">Personal projects</h3>
+                    <h3 class="text-2xl font-bold mb-2">{{ $t("home.personalProjects") }}</h3>
                     <p class="text-base-content/60 mb-6">
-                        Personal projects I build in my spare time — including
-                        this platform.
+                        {{ $t("home.personalProjectsSubtitle") }}
                     </p>
                     <div class="space-y-8">
                         <PersonalProjectItem
@@ -205,7 +189,7 @@ onUnmounted(() => {
                 </div>
 
                 <div id="posts" class="mb-16">
-                    <h3 class="text-2xl font-bold mb-6">Relevant posts</h3>
+                    <h3 class="text-2xl font-bold mb-6">{{ $t("home.relevantPosts") }}</h3>
                     <div class="space-y-8">
                         <PostsPostItem
                             v-for="post in relevantPosts"

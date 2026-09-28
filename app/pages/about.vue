@@ -1,65 +1,19 @@
 <script setup lang="ts">
+const { t } = useI18n();
+
 useHead({
-    title: "R4L - About This Site",
+    title: () => t("seo.about"),
 });
 
 const technologies = [
-    {
-        name: "Nuxt 4",
-        icon: "uil:layer-group",
-        description:
-            "The Vue.js meta-framework that powers this blog. Nuxt provides file-based routing, server-side rendering, and an excellent developer experience out of the box.",
-        why: "Perfect for content-focused sites like blogs. The hybrid rendering modes and automatic code-splitting ensure fast page loads, while the file-based routing makes adding new pages effortless.",
-    },
-    {
-        name: "Vue 3",
-        icon: "uil:window",
-        description:
-            "A progressive JavaScript framework for building user interfaces with the Composition API and reactivity system.",
-        why: "Vue's gentle learning curve and excellent documentation make it ideal for personal projects. The Composition API allows for clean, reusable logic without the complexity of larger frameworks.",
-    },
-    {
-        name: "Bun",
-        icon: "uil:bolt",
-        description:
-            "A fast all-in-one JavaScript runtime and package manager that replaces Node.js and npm.",
-        why: "Significantly faster than npm for installing dependencies and running scripts. The built-in bundler and test runner reduce the need for additional tooling.",
-    },
-    {
-        name: "Tailwind CSS 4",
-        icon: "uil:wind",
-        description:
-            "A utility-first CSS framework that enables rapid UI development with pre-built classes.",
-        why: "Speeds up development significantly for solo projects. No need to context-switch between files or come up with class names. The new v4 uses CSS variables for theming, making it even more powerful.",
-    },
-    {
-        name: "DaisyUI",
-        icon: "uil:palette",
-        description:
-            "A component library built on top of Tailwind CSS that provides beautiful, semantic UI components.",
-        why: "Adds ready-to-use components like buttons, cards, and modals without sacrificing customization. The theme system makes it easy to switch between light and dark modes.",
-    },
-    {
-        name: "TypeScript",
-        icon: "uil:brackets-curly",
-        description:
-            "A strongly typed programming language that builds on JavaScript, providing better tooling and catching errors at compile time.",
-        why: "Type safety makes refactoring confident and reduces runtime bugs. The developer experience with autocomplete and inline documentation is invaluable for maintaining code long-term.",
-    },
-    {
-        name: "DeepSeek",
-        icon: "uil:robot",
-        description:
-            "Powers the Chat feature and the tailored-CV generator, allowing visitors to have AI-powered conversations about my experience and projects.",
-        why: "Adds an interactive element to the portfolio. The API is easy to integrate via the AI SDK with structured output, and provides a unique way for visitors to learn about my background.",
-    },
-    {
-        name: "Vercel",
-        icon: "uil:cloud-upload",
-        description:
-            "A cloud platform for deploying and hosting web applications with automatic CI/CD, edge functions, and global CDN.",
-        why: "Zero-configuration deployments for Nuxt apps. Just push to GitHub and the site is live. The generous free tier is perfect for personal projects.",
-    },
+    { name: "Nuxt 4", icon: "uil:layer-group", key: "nuxt" },
+    { name: "Vue 3", icon: "uil:window", key: "vue" },
+    { name: "Bun", icon: "uil:bolt", key: "bun" },
+    { name: "Tailwind CSS 4", icon: "uil:wind", key: "tailwind" },
+    { name: "DaisyUI", icon: "uil:palette", key: "daisyui" },
+    { name: "TypeScript", icon: "uil:brackets-curly", key: "typescript" },
+    { name: "DeepSeek", icon: "uil:robot", key: "deepseek" },
+    { name: "Vercel", icon: "uil:cloud-upload", key: "vercel" },
 ];
 </script>
 
@@ -67,10 +21,10 @@ const technologies = [
     <div class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div v-motion-slide-left suppressHydrationWarning class="mb-12">
             <h1 class="text-4xl font-bold text-base-content mb-4">
-                About This Site
+                {{ $t("about.title") }}
             </h1>
             <p class="text-base-content/60 max-w-2xl">
-                A look at the technologies powering this website.
+                {{ $t("about.subtitle") }}
             </p>
         </div>
 
@@ -90,14 +44,14 @@ const technologies = [
                         <h3 class="card-title text-lg">{{ tech.name }}</h3>
                     </div>
                     <p class="text-base-content/70 text-sm mb-3">
-                        {{ tech.description }}
+                        {{ $t(`about.techs.${tech.key}.description`) }}
                     </p>
                     <div class="bg-primary/10 rounded-lg p-3">
                         <p class="text-sm">
                             <span class="font-semibold text-primary"
-                                >Why it's great:</span
+                                >{{ $t("about.whyGreat") }}</span
                             >
-                            {{ tech.why }}
+                            {{ $t(`about.techs.${tech.key}.why`) }}
                         </p>
                     </div>
                 </div>

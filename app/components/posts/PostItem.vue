@@ -5,8 +5,11 @@ const props = defineProps<{
     post: Post;
 }>();
 
+const { locale } = useI18n();
+const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
+
 const formatDate = (date: string) =>
-    new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
+    new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale.value, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -36,7 +39,7 @@ const readingTime = computed(() => {
             <div class="mb-2 flex items-center gap-2 text-xs text-base-content/45">
                 <time :datetime="post.date">{{ formatDate(post.date) }}</time>
                 <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
-                <span>{{ readingTime }} min</span>
+                <span>{{ $t("blog.minShort", { count: readingTime }) }}</span>
             </div>
             <h4 class="text-base font-bold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-lg">
                 {{ post.title }}
