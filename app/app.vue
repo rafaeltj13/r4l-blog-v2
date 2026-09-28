@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Exposes the current locale to the document (`<html lang="...">`)
- * for accessibility and SEO.
+ * for accessibility and SEO, plus canonical/og locale tags.
  */
 const head = useLocaleHead();
 useHead(() => ({

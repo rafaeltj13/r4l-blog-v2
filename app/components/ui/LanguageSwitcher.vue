@@ -24,14 +24,15 @@ const currentShortLabel = computed(() => shortLabel(locale.value));
         <div
             tabindex="0"
             role="button"
-            class="btn btn-ghost btn-square"
+            class="btn btn-ghost btn-square relative"
             :aria-label="t('header.language')"
             :title="t('header.language')"
         >
             <Icon name="uil:globe" :size="20" />
-            <span class="absolute mt-5 text-[9px] font-bold leading-none">{{
-                currentShortLabel
-            }}</span>
+            <span
+                class="absolute bottom-1 right-1 rounded bg-base-200 px-1 text-[9px] font-bold leading-tight"
+                >{{ currentShortLabel }}</span
+            >
         </div>
         <ul
             tabindex="0"

@@ -42,6 +42,7 @@ export default defineNuxtConfig({
   i18n: {
     defaultLocale: 'en',
     strategy: 'no_prefix',
+    baseUrl: 'https://r4l-blog-v2.vercel.app',
     locales: [
       { code: 'en', language: 'en-US', file: 'en.json', name: 'English' },
       { code: 'pt-BR', language: 'pt-BR', file: 'pt-BR.json', name: 'Português (BR)' },
