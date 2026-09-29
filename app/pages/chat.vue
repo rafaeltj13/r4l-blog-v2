@@ -112,12 +112,15 @@ const sendMessage = async () => {
 
 <template>
     <div
-        class="py-3 sm:py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100dvh-3.5rem-1px)] max-h-[calc(100dvh-3.5rem-1px)] flex flex-col overflow-hidden"
+        class="pt-12 pb-4 sm:pb-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[calc(100dvh-3.5rem-1px)] max-h-[calc(100dvh-3.5rem-1px)] flex flex-col overflow-x-clip"
     >
-        <div v-motion-slide-left suppressHydrationWarning class="shrink-0 mb-3 sm:mb-4 md:mb-6">
-            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-base-content">
+        <div v-motion-slide-left suppressHydrationWarning class="shrink-0 mb-8 sm:mb-12">
+            <h1 class="text-4xl font-bold text-base-content mb-4">
                 {{ $t("chat.title") }}
             </h1>
+            <p class="text-base-content/60 max-w-2xl">
+                {{ $t("chat.subtitle") }}
+            </p>
         </div>
 
         <!-- Chat Messages Area -->

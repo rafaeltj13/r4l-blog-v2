@@ -99,6 +99,7 @@
   },
   "chat": {
     "title": "Converse com o Eu Digital",
+    "subtitle": "Pergunte ao meu gêmeo de IA sobre minha experiência, projetos e stack.",
     "greeting": "Olá! 👋 Este é meu gêmeo digital com IA, treinado para conversar sobre minha experiência profissional, projetos e interesses. Fique à vontade para perguntar sobre meu trabalho, stack de tecnologias ou qualquer coisa que queira saber sobre mim!",
     "placeholder": "Ouvi dizer que você é um ótimo desenvolvedor, me conte mais sobre você...",
     "submit": "Enviar",

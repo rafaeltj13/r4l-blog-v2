@@ -99,6 +99,7 @@
   },
   "chat": {
     "title": "Chat with Digital Me",
+    "subtitle": "Ask my AI twin about my experience, projects, and stack.",
     "greeting": "Hey there! 👋 This is my AI-powered digital twin, trained to chat about my professional experience, projects, and interests. Feel free to ask about my work, tech stack, or anything you'd like to know about me!",
     "placeholder": "I heard that you are a great developer, please tell me more about yourself...",
     "submit": "Submit",
