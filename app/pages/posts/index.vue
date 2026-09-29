@@ -12,16 +12,23 @@ useSeoMeta({
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
 const posts = [...postsData].reverse();
-const featuredPost = computed(() => posts[0] ?? null);
-const remainingPosts = computed(() => posts.slice(1));
 
-const parseDate = (date: string) => new Date(`${date}T12:00:00`);
+// Newest year first; posts inside each year keep the newest-first order.
+const postsByYear = computed(() => {
+    const groups: { year: string; posts: Post[] }[] = [];
+    for (const post of posts) {
+        const year = post.date.slice(0, 4);
+        const group = groups.at(-1);
+        if (group?.year === year) group.posts.push(post);
+        else groups.push({ year, posts: [post] });
+    }
+    return groups;
+});
 
-const formatDate = (date: string, long = false) =>
-    parseDate(date).toLocaleDateString(dateLocale.value, {
-        month: long ? "long" : "short",
+const formatDate = (date: string) =>
+    new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale.value, {
+        month: "short",
         day: "numeric",
-        year: "numeric",
     });
 
 const getReadingTime = (post: Post) => {
@@ -32,114 +39,61 @@ const getReadingTime = (post: Post) => {
 </script>
 
 <template>
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <header
-            v-motion-slide-left
-            suppressHydrationWarning
-            class="mb-10 border-b border-base-content/10 pb-8 sm:mb-12 sm:flex sm:items-end sm:justify-between"
-        >
-            <div>
-                <h1 class="max-w-3xl text-4xl font-bold leading-tight text-base-content sm:text-5xl">
-                    Blog
-                </h1>
-                <p class="mt-4 max-w-2xl text-base leading-relaxed text-base-content/60 sm:text-lg">
-                    {{ $t("blog.subtitle") }}
-                </p>
-            </div>
-            <p class="mt-6 text-sm text-base-content/45 sm:mt-0 sm:pb-1">
-                {{ posts.length }} {{ posts.length === 1 ? $t("blog.article") : $t("blog.articles") }}
+    <div class="mx-auto max-w-3xl px-5 pb-24 pt-14 sm:px-6 sm:pt-20">
+        <header class="mb-14 sm:mb-20">
+            <h1 class="text-3xl text-base-content sm:text-4xl">Blog</h1>
+            <p class="mt-3 text-base text-base-content/60 sm:text-lg">
+                {{ $t("blog.subtitle") }}
             </p>
         </header>
 
-        <NuxtLink
-            v-if="featuredPost"
-            v-motion-slide-bottom
-            :to="`/posts/${featuredPost.id}`"
-            class="group grid overflow-hidden rounded-2xl border border-base-content/10 bg-base-100 transition duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-base-content/5 lg:grid-cols-[1.05fr_0.95fr]"
+        <section
+            v-for="group in postsByYear"
+            :key="group.year"
+            class="grid gap-x-10 border-t border-base-content/10 sm:grid-cols-[4rem_1fr]"
+            :aria-labelledby="`year-${group.year}`"
         >
-            <div class="flex flex-col justify-center p-6 sm:p-9 lg:p-12">
-                <div class="mb-5 flex flex-wrap items-center gap-3 text-xs text-base-content/50">
-                    <span class="badge badge-primary badge-sm font-semibold uppercase tracking-wider">
-                        {{ $t("blog.latest") }}
-                    </span>
-                    <time :datetime="featuredPost.date">
-                        {{ formatDate(featuredPost.date, true) }}
-                    </time>
-                    <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
-                    <span>{{ $t("blog.minRead", { count: getReadingTime(featuredPost) }) }}</span>
-                </div>
+            <h2
+                :id="`year-${group.year}`"
+                class="pt-6 font-body text-sm font-medium tabular-nums text-base-content/40 sm:pt-8"
+            >
+                {{ group.year }}
+            </h2>
 
-                <h2 class="text-2xl font-bold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-3xl lg:text-4xl">
-                    {{ featuredPost.title }}
-                </h2>
-                <p class="mt-4 max-w-xl text-base leading-relaxed text-base-content/65 sm:text-lg">
-                    {{ featuredPost.content }}
-                </p>
-                <span class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-base-content transition-colors group-hover:text-primary">
-                    {{ $t("blog.readArticle") }}
-                    <Icon
-                        name="uil:arrow-right"
-                        class="size-5 transition-transform duration-300 group-hover:translate-x-1"
-                    />
-                </span>
-            </div>
-
-            <div class="relative min-h-64 overflow-hidden bg-base-200 sm:min-h-80 lg:min-h-[430px]">
-                <PostsPostImage
-                    variant="hero"
-                    :post="featuredPost"
-                    class="transition-transform duration-700 ease-out group-hover:scale-[1.025]"
-                />
-                <div class="pointer-events-none absolute inset-0 bg-linear-to-t from-base-content/15 to-transparent lg:bg-linear-to-r" />
-            </div>
-        </NuxtLink>
-
-        <section v-if="remainingPosts.length" class="mt-16 sm:mt-20" aria-labelledby="all-posts-heading">
-            <div class="mb-5 flex items-center justify-between">
-                <h2 id="all-posts-heading" class="text-lg font-bold text-base-content sm:text-xl">
-                    {{ $t("blog.moreFromBlog") }}
-                </h2>
-                <span class="text-xs uppercase tracking-[0.16em] text-base-content/35">
-                    {{ $t("blog.newestFirst") }}
-                </span>
-            </div>
-
-            <div class="divide-y divide-base-content/10 border-y border-base-content/10">
-                <NuxtLink
-                    v-for="post in remainingPosts"
+            <ul>
+                <li
+                    v-for="post in group.posts"
                     :key="post.id"
-                    :to="`/posts/${post.id}`"
-                    class="group grid gap-5 py-7 transition-colors sm:grid-cols-[8rem_1fr_10rem] sm:items-center sm:gap-8 sm:py-8"
+                    class="border-base-content/10 not-last:border-b"
                 >
-                    <div class="flex items-center gap-3 text-xs text-base-content/45 sm:block">
-                        <time :datetime="post.date" class="font-medium">
-                            {{ formatDate(post.date) }}
-                        </time>
-                        <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25 sm:hidden" />
-                        <span class="sm:mt-1 sm:block">{{ $t("blog.minRead", { count: getReadingTime(post) }) }}</span>
-                    </div>
+                    <NuxtLink
+                        :to="`/posts/${post.id}`"
+                        class="group flex items-start gap-6 py-6 sm:py-8"
+                    >
+                        <div class="min-w-0 flex-1">
+                            <h3 class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-xl">
+                                {{ post.title }}
+                            </h3>
+                            <p class="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-base-content/60">
+                                {{ post.content }}
+                            </p>
+                            <p class="mt-3 text-sm text-base-content/40">
+                                <time :datetime="post.date">{{ formatDate(post.date) }}</time>
+                                <span aria-hidden="true"> · </span>
+                                {{ $t("blog.minRead", { count: getReadingTime(post) }) }}
+                            </p>
+                        </div>
 
-                    <div class="min-w-0">
-                        <h3 class="text-xl font-bold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-2xl">
-                            {{ post.title }}
-                        </h3>
-                        <p class="mt-2 line-clamp-2 max-w-2xl text-sm leading-relaxed text-base-content/60 sm:text-base">
-                            {{ post.content }}
-                        </p>
-                    </div>
-
-                    <div class="relative order-first aspect-[16/10] overflow-hidden rounded-xl bg-base-200 sm:order-none sm:aspect-[4/3]">
-                        <PostsPostImage
-                            variant="thumbnail"
-                            :post="post"
-                            class="transition-transform duration-500 ease-out group-hover:scale-105"
-                        />
-                        <span class="absolute bottom-2 right-2 grid size-8 place-items-center rounded-full bg-base-100/90 text-base-content opacity-0 shadow-sm backdrop-blur transition-all duration-300 group-hover:opacity-100">
-                            <Icon name="uil:arrow-up-right" class="size-4" />
-                        </span>
-                    </div>
-                </NuxtLink>
-            </div>
+                        <div class="hidden aspect-[4/3] w-32 shrink-0 overflow-hidden rounded-md bg-base-200 sm:block">
+                            <PostsPostImage
+                                variant="thumbnail"
+                                :post="post"
+                                class="opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+                            />
+                        </div>
+                    </NuxtLink>
+                </li>
+            </ul>
         </section>
     </div>
 </template>

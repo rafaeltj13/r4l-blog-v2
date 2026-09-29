@@ -145,108 +145,81 @@ onMounted(() => {
 
 <template>
     <div>
-        <div class="fixed left-0 right-0 top-14 z-40 h-0.5 bg-base-200" aria-hidden="true">
+        <div class="fixed inset-x-0 top-14 z-40 h-px" aria-hidden="true">
             <div
-                class="h-full bg-primary transition-[width] duration-150 ease-out"
+                class="h-full bg-primary/70 transition-[width] duration-150 ease-out"
                 :style="{ width: `${readingProgress}%` }"
             />
         </div>
 
-        <main class="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8">
+        <article class="mx-auto max-w-2xl px-5 pb-24 pt-10 sm:px-6 sm:pt-16">
             <NuxtLink
                 to="/posts"
-                class="group inline-flex items-center gap-2 text-sm font-medium text-base-content/50 transition-colors hover:text-primary"
+                class="inline-flex items-center gap-1.5 text-sm text-base-content/50 transition-colors hover:text-base-content"
             >
-                <Icon name="uil:arrow-left" class="size-4 transition-transform group-hover:-translate-x-0.5" />
+                <Icon name="uil:arrow-left" class="size-4" />
                 {{ $t("post.allWriting") }}
             </NuxtLink>
 
-            <article class="mt-10 sm:mt-14">
-                <header v-motion-slide-bottom suppressHydrationWarning class="mx-auto max-w-4xl">
-                    <div class="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                        <span>{{ $t("post.articleOf", { current: currentIndex + 1, total: posts.length }) }}</span>
-                        <span aria-hidden="true" class="h-px w-10 bg-primary/50" />
-                    </div>
-                    <h1 class="text-4xl font-bold leading-[1.12] text-base-content sm:text-5xl lg:text-6xl">
-                        {{ post!.title }}
-                    </h1>
-                    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-base-content/65 sm:text-xl">
-                        {{ post!.content }}
+            <header class="mt-10 sm:mt-14">
+                <h1 class="text-3xl leading-tight text-base-content sm:text-4xl">
+                    {{ post!.title }}
+                </h1>
+                <p class="mt-5 text-lg leading-relaxed text-base-content/60">
+                    {{ post!.content }}
+                </p>
+
+                <div class="mt-8 flex items-center justify-between gap-4 text-sm text-base-content/50">
+                    <p>
+                        <time :datetime="post!.date">{{ formatDate(post!.date) }}</time>
+                        <span aria-hidden="true"> · </span>
+                        {{ $t("post.minRead", { count: readingTime }) }}
                     </p>
+                    <button
+                        type="button"
+                        class="inline-flex cursor-pointer items-center gap-1.5 transition-colors hover:text-base-content"
+                        :aria-label="shareLabel"
+                        @click="sharePost"
+                    >
+                        <Icon name="uil:share-alt" class="size-4" />
+                        <span aria-live="polite">{{ shareLabel }}</span>
+                    </button>
+                </div>
+            </header>
 
-                    <div class="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-base-content/10 pt-5">
-                        <div class="flex flex-wrap items-center gap-3 text-sm text-base-content/50">
-                            <time :datetime="post!.date" class="font-medium text-base-content/70">
-                                {{ formatDate(post!.date) }}
-                            </time>
-                            <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
-                            <span class="inline-flex items-center gap-1.5">
-                                <Icon name="uil:clock" class="size-4" />
-                                {{ $t("post.minRead", { count: readingTime }) }}
-                            </span>
-                        </div>
-                        <button
-                            type="button"
-                            class="btn btn-ghost btn-sm gap-2 text-base-content/60 hover:text-primary"
-                            :aria-label="`${shareLabel} this article`"
-                            @click="sharePost"
-                        >
-                            <Icon name="uil:share-alt" class="size-4" />
-                            {{ shareLabel }}
-                        </button>
-                    </div>
-                </header>
+            <figure class="mt-8 aspect-[16/9] overflow-hidden rounded-lg bg-base-200 sm:-mx-8 sm:mt-10">
+                <PostsPostImage variant="hero" :post="post!" />
+            </figure>
 
-                <figure
-                    v-motion-slide-bottom
-                    suppressHydrationWarning
-                    class="relative mt-10 aspect-[16/10] w-full overflow-hidden rounded-2xl bg-base-200 ring-1 ring-base-content/10 sm:mt-12"
+            <div class="post-content mt-12 sm:mt-14">
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <div v-html="articleHtml" />
+            </div>
+
+            <nav
+                v-if="olderPost || newerPost"
+                class="mt-20 grid gap-8 border-t border-base-content/10 pt-8 sm:grid-cols-2"
+                aria-label="Post navigation"
+            >
+                <NuxtLink v-if="olderPost" :to="`/posts/${olderPost.id}`" class="group">
+                    <span class="text-sm text-base-content/45">← {{ $t("post.older") }}</span>
+                    <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
+                        {{ olderPost.title }}
+                    </span>
+                </NuxtLink>
+                <span v-else class="hidden sm:block" />
+
+                <NuxtLink
+                    v-if="newerPost"
+                    :to="`/posts/${newerPost.id}`"
+                    class="group sm:text-right"
                 >
-                    <PostsPostImage variant="hero" :post="post!" />
-                </figure>
-
-                <div class="post-content mx-auto mt-12 max-w-3xl sm:mt-16">
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <div v-html="articleHtml" />
-                </div>
-            </article>
-
-            <nav class="mx-auto mt-16 max-w-4xl border-t border-base-content/10 pt-8 sm:mt-24" aria-label="Post navigation">
-                <div class="mb-5 flex items-center justify-between">
-                    <h2 class="text-lg font-bold text-base-content">{{ $t("post.keepReading") }}</h2>
-                    <NuxtLink to="/posts" class="text-sm text-base-content/45 transition-colors hover:text-primary">
-                        {{ $t("post.browseAll") }}
-                    </NuxtLink>
-                </div>
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <NuxtLink
-                        v-if="olderPost"
-                        :to="`/posts/${olderPost.id}`"
-                        class="group rounded-xl border border-base-content/10 p-5 transition hover:border-primary/30 hover:bg-base-200/40"
-                    >
-                        <span class="mb-2 flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
-                            <Icon name="uil:arrow-left" class="size-4" /> {{ $t("post.older") }}
-                        </span>
-                        <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
-                            {{ olderPost.title }}
-                        </span>
-                    </NuxtLink>
-                    <div v-else class="hidden sm:block" />
-
-                    <NuxtLink
-                        v-if="newerPost"
-                        :to="`/posts/${newerPost.id}`"
-                        class="group rounded-xl border border-base-content/10 p-5 text-right transition hover:border-primary/30 hover:bg-base-200/40"
-                    >
-                        <span class="mb-2 flex items-center justify-end gap-1 text-xs font-semibold uppercase tracking-wider text-base-content/40">
-                            {{ $t("post.newer") }} <Icon name="uil:arrow-right" class="size-4" />
-                        </span>
-                        <span class="line-clamp-2 font-bold leading-snug text-base-content transition-colors group-hover:text-primary">
-                            {{ newerPost.title }}
-                        </span>
-                    </NuxtLink>
-                </div>
+                    <span class="text-sm text-base-content/45">{{ $t("post.newer") }} →</span>
+                    <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
+                        {{ newerPost.title }}
+                    </span>
+                </NuxtLink>
             </nav>
-        </main>
+        </article>
     </div>
 </template>

@@ -85,24 +85,15 @@
   },
   "blog": {
     "subtitle": "My thoughts and experiences in one place.",
-    "latest": "Latest",
     "minRead": "{count} min read",
-    "minShort": "{count} min",
-    "readArticle": "Read the article",
-    "moreFromBlog": "More from the blog",
-    "newestFirst": "Newest first",
-    "article": "article",
-    "articles": "articles"
+    "minShort": "{count} min"
   },
   "post": {
     "allWriting": "All writing",
-    "articleOf": "Article {current} of {total}",
     "minRead": "{count} min read",
     "share": "Share",
     "linkCopied": "Link copied",
     "tryAgain": "Try again",
-    "keepReading": "Keep reading",
-    "browseAll": "Browse all",
     "older": "Older",
     "newer": "Newer"
   },
