@@ -85,8 +85,7 @@
   },
   "blog": {
     "subtitle": "Meus pensamentos e experiências em um só lugar.",
-    "minRead": "{count} min de leitura",
-    "minShort": "{count} min"
+    "minRead": "{count} min de leitura"
   },
   "post": {
     "allWriting": "Todos os textos",

@@ -2,14 +2,12 @@
 import type { Post } from "~/utils/postsData";
 import { posts as postsData } from "~/utils/postsData";
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 
 useSeoMeta({
     title: () => t("seo.blog"),
     description: () => t("blog.subtitle"),
 });
-
-const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
 const posts = [...postsData].reverse();
 
@@ -24,18 +22,6 @@ const postsByYear = computed(() => {
     }
     return groups;
 });
-
-const formatDate = (date: string) =>
-    new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale.value, {
-        month: "short",
-        day: "numeric",
-    });
-
-const getReadingTime = (post: Post) => {
-    const text = post.htmlContent.replace(/<[^>]*>/g, " ");
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    return Math.max(1, Math.ceil(words / 200));
-};
 </script>
 
 <template>
@@ -66,32 +52,7 @@ const getReadingTime = (post: Post) => {
                     :key="post.id"
                     class="border-base-content/10 not-last:border-b"
                 >
-                    <NuxtLink
-                        :to="`/posts/${post.id}`"
-                        class="group flex items-start gap-6 py-6 sm:py-8"
-                    >
-                        <div class="min-w-0 flex-1">
-                            <h3 class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover:text-primary sm:text-xl">
-                                {{ post.title }}
-                            </h3>
-                            <p class="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-base-content/60">
-                                {{ post.content }}
-                            </p>
-                            <p class="mt-3 text-sm text-base-content/40">
-                                <time :datetime="post.date">{{ formatDate(post.date) }}</time>
-                                <span aria-hidden="true"> · </span>
-                                {{ $t("blog.minRead", { count: getReadingTime(post) }) }}
-                            </p>
-                        </div>
-
-                        <div class="hidden aspect-[4/3] w-32 shrink-0 overflow-hidden rounded-md bg-base-200 sm:block">
-                            <PostsPostImage
-                                variant="thumbnail"
-                                :post="post"
-                                class="opacity-90 transition-opacity duration-300 group-hover:opacity-100"
-                            />
-                        </div>
-                    </NuxtLink>
+                    <PostsPostItem :post="post" hide-year />
                 </li>
             </ul>
         </section>

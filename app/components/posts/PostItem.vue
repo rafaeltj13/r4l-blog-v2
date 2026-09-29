@@ -3,17 +3,20 @@ import type { Post } from "~/utils/postsData";
 
 const props = defineProps<{
     post: Post;
+    // Drop the year when the surrounding list already groups posts by year.
+    hideYear?: boolean;
 }>();
 
 const { locale } = useI18n();
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
-const formatDate = (date: string) =>
-    new Date(`${date}T12:00:00`).toLocaleDateString(dateLocale.value, {
-        year: "numeric",
+const formattedDate = computed(() =>
+    new Date(`${props.post.date}T12:00:00`).toLocaleDateString(dateLocale.value, {
+        year: props.hideYear ? undefined : "numeric",
         month: "short",
         day: "numeric",
-    });
+    }),
+);
 
 const readingTime = computed(() => {
     const text = props.post.htmlContent.replace(/<[^>]*>/g, " ");
@@ -25,28 +28,28 @@ const readingTime = computed(() => {
 <template>
     <NuxtLink
         :to="`/posts/${post.id}`"
-        class="group/item grid grid-cols-[6rem_1fr] gap-4 border-b border-base-content/10 pb-6 sm:grid-cols-[7.5rem_1fr] sm:gap-6"
+        class="group/item flex items-start gap-6 py-6 sm:py-8"
     >
-        <div class="aspect-square overflow-hidden rounded-xl bg-base-200 sm:aspect-[4/3]">
+        <div class="min-w-0 flex-1">
+            <h3 class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-xl">
+                {{ post.title }}
+            </h3>
+            <p class="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-base-content/60">
+                {{ post.content }}
+            </p>
+            <p class="mt-3 text-sm text-base-content/40">
+                <time :datetime="post.date">{{ formattedDate }}</time>
+                <span aria-hidden="true"> · </span>
+                {{ $t("blog.minRead", { count: readingTime }) }}
+            </p>
+        </div>
+
+        <div class="hidden aspect-[4/3] w-32 shrink-0 overflow-hidden rounded-md bg-base-200 sm:block">
             <PostsPostImage
                 variant="thumbnail"
                 :post="post"
-                class="transition-transform duration-500 group-hover/item:scale-105"
+                class="opacity-90 transition-opacity duration-300 group-hover/item:opacity-100"
             />
-        </div>
-
-        <div class="flex min-w-0 flex-col justify-center">
-            <div class="mb-2 flex items-center gap-2 text-xs text-base-content/45">
-                <time :datetime="post.date">{{ formatDate(post.date) }}</time>
-                <span aria-hidden="true" class="size-1 rounded-full bg-base-content/25" />
-                <span>{{ $t("blog.minShort", { count: readingTime }) }}</span>
-            </div>
-            <h4 class="text-base font-bold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-lg">
-                {{ post.title }}
-            </h4>
-            <p class="mt-2 hidden line-clamp-2 text-sm leading-relaxed text-base-content/60 sm:block">
-                {{ post.content }}
-            </p>
         </div>
     </NuxtLink>
 </template>

@@ -195,7 +195,7 @@ onUnmounted(() => {
 
                 <div id="posts" class="mb-16">
                     <h3 class="text-2xl font-bold mb-6">{{ $t("home.relevantPosts") }}</h3>
-                    <div class="space-y-8">
+                    <div class="divide-y divide-base-content/10 border-y border-base-content/10">
                         <PostsPostItem
                             v-for="post in relevantPosts"
                             :key="post.id"
