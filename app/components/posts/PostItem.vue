@@ -28,7 +28,7 @@ const readingTime = computed(() => {
 <template>
     <NuxtLink
         :to="`/posts/${post.id}`"
-        class="group/item flex items-start gap-6 py-6 sm:py-8"
+        class="group/item flex items-start gap-4 py-6 sm:gap-6 sm:py-8"
     >
         <div class="min-w-0 flex-1">
             <h3 class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-xl">
@@ -44,7 +44,7 @@ const readingTime = computed(() => {
             </p>
         </div>
 
-        <div class="hidden aspect-[4/3] w-32 shrink-0 overflow-hidden rounded-md bg-base-200 sm:block">
+        <div class="aspect-square w-20 shrink-0 overflow-hidden rounded-md bg-base-200 sm:aspect-[4/3] sm:w-32">
             <PostsPostImage
                 variant="thumbnail"
                 :post="post"
