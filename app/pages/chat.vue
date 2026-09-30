@@ -59,6 +59,28 @@ const scrollToBottom = async () => {
     }
 };
 
+// On mobile the message area shrinks when the keyboard opens, which leaves the
+// latest messages hidden. Stay pinned to the bottom unless the visitor scrolled up.
+let isPinnedToBottom = true;
+const updatePinned = () => {
+    const el = messagesContainer.value;
+    if (el) isPinnedToBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
+};
+
+onMounted(() => {
+    const el = messagesContainer.value;
+    if (!el) return;
+    el.addEventListener("scroll", updatePinned, { passive: true });
+    const resizeObserver = new ResizeObserver(() => {
+        if (isPinnedToBottom) el.scrollTop = el.scrollHeight;
+    });
+    resizeObserver.observe(el);
+    onUnmounted(() => {
+        el.removeEventListener("scroll", updatePinned);
+        resizeObserver.disconnect();
+    });
+});
+
 const sendMessage = async () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
@@ -75,10 +97,12 @@ const sendMessage = async () => {
 
     const input = userInput.value;
     userInput.value = "";
+
+    // Show the typing indicator before scrolling so it's included in the scroll.
+    isLoading.value = true;
     await scrollToBottom();
 
     // Call the AI chat API
-    isLoading.value = true;
     try {
         const response = await $fetch<ChatResponse>("/api/chat", {
             method: "POST",
