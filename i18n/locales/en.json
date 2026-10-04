@@ -86,7 +86,8 @@
   "blog": {
     "subtitle": "My thoughts and experiences in one place.",
     "latest": "Latest",
-    "minRead": "{count} min read"
+    "minRead": "{count} min read",
+    "englishOnly": "Available in English only"
   },
   "post": {
     "allWriting": "All writing",
@@ -95,7 +96,11 @@
     "linkCopied": "Link copied",
     "tryAgain": "Try again",
     "older": "Older",
-    "newer": "Newer"
+    "newer": "Newer",
+    "translatedFrom": "Translated from English",
+    "readOriginal": "Read the original",
+    "readTranslation": "Read the translation",
+    "englishOnly": "This post is only available in English."
   },
   "chat": {
     "title": "Chat with Digital Me",

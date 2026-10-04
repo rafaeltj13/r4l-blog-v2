@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { Post } from "~/utils/postsData";
+import type { LocalizedPost } from "~/composables/useLocalizedContent";
 
 const props = defineProps<{
-    post: Post;
+    post: LocalizedPost;
     // Drop the year when the surrounding list already groups posts by year.
     hideYear?: boolean;
 }>();
 
 const { locale } = useI18n();
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
+const isEnglishOnly = computed(() => locale.value === "pt-BR" && props.post.locale === "en");
 
 const formattedDate = computed(() =>
     new Date(`${props.post.date}T12:00:00`).toLocaleDateString(dateLocale.value, {
@@ -31,16 +32,20 @@ const readingTime = computed(() => {
         class="group/item flex items-start gap-4 py-6 sm:gap-6 sm:py-8"
     >
         <div class="min-w-0 flex-1">
-            <h3 class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-xl">
+            <h3 :lang="post.locale" class="font-body text-lg font-semibold leading-snug text-base-content transition-colors group-hover/item:text-primary sm:text-xl">
                 {{ post.title }}
             </h3>
-            <p class="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-base-content/60">
+            <p :lang="post.locale" class="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-base-content/60">
                 {{ post.content }}
             </p>
             <p class="mt-3 text-sm text-base-content/40">
                 <time :datetime="post.date">{{ formattedDate }}</time>
                 <span aria-hidden="true"> · </span>
                 {{ $t("blog.minRead", { count: readingTime }) }}
+                <template v-if="isEnglishOnly">
+                    <span aria-hidden="true"> · </span>
+                    <abbr :title="$t('blog.englishOnly')" class="no-underline">EN</abbr>
+                </template>
             </p>
         </div>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { posts } from "~/utils/postsData";
 import PersonalProjectItem from "~/components/projects/PersonalProjectItem.vue";
 
 const { t } = useI18n();
@@ -10,6 +9,7 @@ useHead({
 
 const localizedExperiences = useLocalizedExperiences();
 const localizedProjects = useLocalizedProjects();
+const localizedPosts = useLocalizedPosts();
 
 const relevantProjects = computed(() =>
     localizedExperiences.value.slice(0, 3),
@@ -17,7 +17,7 @@ const relevantProjects = computed(() =>
 const personalProjects = computed(() =>
     localizedProjects.value.slice(0, 3),
 );
-const relevantPosts = [...posts].reverse().slice(0, 5);
+const relevantPosts = computed(() => [...localizedPosts.value].reverse().slice(0, 5));
 
 const activeSection = ref("about");
 

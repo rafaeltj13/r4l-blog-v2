@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import { posts } from "~/utils/postsData";
-
 const route = useRoute();
 const { t, locale } = useI18n();
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
-const post = computed(() => posts.find((item) => item.id === route.params.id));
+const postId = computed(() => String(route.params.id));
+const localized = useLocalizedPost(postId);
+const posts = useLocalizedPosts();
+
+// English is the original. On a translated post the reader can swap the
+// article to English for this page view; it resets on navigation.
+const showOriginal = ref(false);
+watch(postId, () => (showOriginal.value = false));
+
+const post = computed(() =>
+    showOriginal.value ? localized.value?.original : localized.value?.post,
+);
+const isEnglishOnly = computed(
+    () => locale.value === "pt-BR" && localized.value?.post.isTranslation === false,
+);
 
 if (!post.value) {
     throw createError({
@@ -28,13 +40,13 @@ const readingTime = computed(() => {
 });
 
 const currentIndex = computed(() =>
-    posts.findIndex((item) => item.id === route.params.id),
+    posts.value.findIndex((item) => item.id === postId.value),
 );
 const olderPost = computed(() =>
-    currentIndex.value > 0 ? posts[currentIndex.value - 1] : null,
+    currentIndex.value > 0 ? posts.value[currentIndex.value - 1] : null,
 );
 const newerPost = computed(() =>
-    currentIndex.value < posts.length - 1 ? posts[currentIndex.value + 1] : null,
+    currentIndex.value < posts.value.length - 1 ? posts.value[currentIndex.value + 1] : null,
 );
 
 const formatDate = (date: string) =>
@@ -162,11 +174,43 @@ onMounted(() => {
             </NuxtLink>
 
             <header class="mt-10 sm:mt-14">
-                <h1 class="text-3xl leading-tight text-base-content sm:text-4xl">
+                <h1 :lang="post!.locale" class="text-3xl leading-tight text-base-content sm:text-4xl">
                     {{ post!.title }}
                 </h1>
-                <p class="mt-5 text-lg leading-relaxed text-base-content/60">
+                <p :lang="post!.locale" class="mt-5 text-lg leading-relaxed text-base-content/60">
                     {{ post!.content }}
+                </p>
+
+                <p
+                    v-if="localized?.post.isTranslation"
+                    class="mt-6 text-sm text-base-content/50"
+                >
+                    <template v-if="showOriginal">
+                        <button
+                            type="button"
+                            class="cursor-pointer text-primary hover:underline"
+                            @click="showOriginal = false"
+                        >
+                            {{ $t("post.readTranslation") }}
+                        </button>
+                    </template>
+                    <template v-else>
+                        {{ $t("post.translatedFrom") }}
+                        <span aria-hidden="true"> · </span>
+                        <button
+                            type="button"
+                            class="cursor-pointer text-primary hover:underline"
+                            @click="showOriginal = true"
+                        >
+                            {{ $t("post.readOriginal") }}
+                        </button>
+                    </template>
+                </p>
+                <p
+                    v-else-if="isEnglishOnly"
+                    class="mt-6 text-sm text-base-content/50"
+                >
+                    {{ $t("post.englishOnly") }}
                 </p>
 
                 <div class="mt-8 flex items-center justify-between gap-4 text-sm text-base-content/50">
@@ -191,7 +235,7 @@ onMounted(() => {
                 <PostsPostImage variant="hero" :post="post!" />
             </figure>
 
-            <div class="post-content mt-12 sm:mt-14">
+            <div :lang="post!.locale" class="post-content mt-12 sm:mt-14">
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <div v-html="articleHtml" />
             </div>

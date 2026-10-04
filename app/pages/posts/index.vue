@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Post } from "~/utils/postsData";
-import { posts as postsData } from "~/utils/postsData";
+import type { LocalizedPost } from "~/composables/useLocalizedContent";
 
 const { t, locale } = useI18n();
 
@@ -11,12 +10,17 @@ useSeoMeta({
 
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
 
-const posts = [...postsData].reverse();
-const [featuredPost, ...olderPosts] = posts;
+const localizedPosts = useLocalizedPosts();
+const posts = computed(() => [...localizedPosts.value].reverse());
+const featuredPost = computed(() => posts.value[0]);
+const isFeaturedEnglishOnly = computed(
+    () => locale.value === "pt-BR" && featuredPost.value?.locale === "en",
+);
+const olderPosts = computed(() => posts.value.slice(1));
 
 const featuredDate = computed(() =>
-    featuredPost
-        ? new Date(`${featuredPost.date}T12:00:00`).toLocaleDateString(dateLocale.value, {
+    featuredPost.value
+        ? new Date(`${featuredPost.value.date}T12:00:00`).toLocaleDateString(dateLocale.value, {
               month: "long",
               day: "numeric",
               year: "numeric",
@@ -25,15 +29,15 @@ const featuredDate = computed(() =>
 );
 
 const featuredReadingTime = computed(() => {
-    const text = featuredPost?.htmlContent.replace(/<[^>]*>/g, " ") ?? "";
+    const text = featuredPost.value?.htmlContent.replace(/<[^>]*>/g, " ") ?? "";
     const words = text.trim().split(/\s+/).filter(Boolean).length;
     return Math.max(1, Math.ceil(words / 200));
 });
 
 // Newest year first; posts inside each year keep the newest-first order.
 const postsByYear = computed(() => {
-    const groups: { year: string; posts: Post[] }[] = [];
-    for (const post of olderPosts) {
+    const groups: { year: string; posts: LocalizedPost[] }[] = [];
+    for (const post of olderPosts.value) {
         const year = post.date.slice(0, 4);
         const group = groups.at(-1);
         if (group?.year === year) group.posts.push(post);
@@ -70,11 +74,15 @@ const postsByYear = computed(() => {
                 <time :datetime="featuredPost.date">{{ featuredDate }}</time>
                 <span aria-hidden="true"> · </span>
                 {{ $t("blog.minRead", { count: featuredReadingTime }) }}
+                <template v-if="isFeaturedEnglishOnly">
+                    <span aria-hidden="true"> · </span>
+                    <abbr :title="$t('blog.englishOnly')" class="no-underline">EN</abbr>
+                </template>
             </p>
-            <h2 class="mt-3 font-body text-2xl font-bold leading-tight text-base-content transition-colors group-hover:text-primary sm:text-3xl">
+            <h2 :lang="featuredPost.locale" class="mt-3 font-body text-2xl font-bold leading-tight text-base-content transition-colors group-hover:text-primary sm:text-3xl">
                 {{ featuredPost.title }}
             </h2>
-            <p class="mt-3 text-base leading-relaxed text-base-content/60 sm:text-lg">
+            <p :lang="featuredPost.locale" class="mt-3 text-base leading-relaxed text-base-content/60 sm:text-lg">
                 {{ featuredPost.content }}
             </p>
         </NuxtLink>

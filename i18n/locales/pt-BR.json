@@ -86,7 +86,8 @@
   "blog": {
     "subtitle": "Meus pensamentos e experiências em um só lugar.",
     "latest": "Mais recente",
-    "minRead": "{count} min de leitura"
+    "minRead": "{count} min de leitura",
+    "englishOnly": "Disponível apenas em inglês"
   },
   "post": {
     "allWriting": "Todos os textos",
@@ -95,7 +96,11 @@
     "linkCopied": "Link copiado",
     "tryAgain": "Tente de novo",
     "older": "Mais antigo",
-    "newer": "Mais recente"
+    "newer": "Mais recente",
+    "translatedFrom": "Traduzido do inglês",
+    "readOriginal": "Ler original",
+    "readTranslation": "Ler em português",
+    "englishOnly": "Este post está disponível apenas em inglês."
   },
   "chat": {
     "title": "Converse com o Eu Digital",
