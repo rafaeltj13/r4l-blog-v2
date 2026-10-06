@@ -17,7 +17,7 @@ const relevantProjects = computed(() =>
 const personalProjects = computed(() =>
     localizedProjects.value.slice(0, 3),
 );
-const relevantPosts = computed(() => [...localizedPosts.value].reverse().slice(0, 5));
+const relevantPosts = computed(() => [...localizedPosts.value].reverse().slice(0, 3));
 
 const activeSection = ref("about");
 
@@ -73,9 +73,9 @@ onUnmounted(() => {
                 suppressHydrationWarning
                 class="w-full lg:w-[40%] flex flex-col justify-between h-auto lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:py-12"
             >
-                <div>
+                <div class="lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
                     <NuxtImg
-                        class="rounded-xl mb-4 h-[300px] w-auto mx-auto sm:mx-0 sm:h-auto sm:w-full sm:max-w-[300px] lg:max-w-[300px] xl:max-w-[340px] 2xl:max-w-[360px] aspect-[3/4] object-cover"
+                        class="rounded-xl mb-4 h-[300px] w-auto mx-auto sm:mx-0 sm:h-auto sm:w-full sm:max-w-[300px] lg:flex-1 lg:min-h-0 lg:max-h-[480px] lg:h-auto lg:w-auto lg:max-w-none lg:self-start aspect-[3/4] object-cover"
                         alt="Avatar"
                         src="images/IMG_5076.jpg"
                         width="3024"
@@ -152,7 +152,7 @@ onUnmounted(() => {
 
             <!-- Right Column: Scrollable Content (scrolls with page) -->
             <main v-motion-slide-bottom suppressHydrationWarning class="w-full lg:w-[60%] pt-2 lg:py-12">
-                <div id="about" class="prose prose-lg max-w-none mb-16">
+                <div id="about" class="scroll-mt-20 prose prose-lg max-w-none mb-16">
                     <h3 class="text-2xl font-bold mb-6">{{ $t("home.aboutMe") }}</h3>
                     <p class="mb-6">
                         {{ $t("home.p1") }}
@@ -168,7 +168,7 @@ onUnmounted(() => {
                     </p>
                 </div>
 
-                <div id="projects" class="mb-16">
+                <div id="projects" class="scroll-mt-20 mb-16">
                     <h3 class="text-2xl font-bold mb-6">{{ $t("home.relevantProjects") }}</h3>
                     <div class="space-y-8">
                         <ExperienceItem
@@ -179,7 +179,7 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <div id="personal-projects" class="mb-16">
+                <div id="personal-projects" class="scroll-mt-20 mb-16">
                     <h3 class="text-2xl font-bold mb-2">{{ $t("home.personalProjects") }}</h3>
                     <p class="text-base-content/60 mb-6">
                         {{ $t("home.personalProjectsSubtitle") }}
@@ -193,7 +193,7 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <div id="posts" class="mb-16">
+                <div id="posts" class="scroll-mt-20 mb-16">
                     <h3 class="text-2xl font-bold mb-6">{{ $t("home.relevantPosts") }}</h3>
                     <div class="divide-y divide-base-content/10 border-y border-base-content/10">
                         <PostsPostItem
