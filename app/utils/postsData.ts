@@ -323,5 +323,95 @@ export const posts: Post[] = [
         The weird part is that this will probably change in the next month, so I'm definately looking forward to see how it goes.
       </p>
     </article>`,
-  }
+  },
+  {
+    id: "5",
+    title: "Creating a system to test how my agent performs with different models",
+    date: "2026-10-05",
+    image: "luna-glm-5-3-flash-deepseek-v4-1-flash-pets-terraria-v2",
+    aspectRatio: "16:9",
+    content: "Creating a system to quickly iterate how my agent is performing helped me a lot to improve the chat functionality of my app.",
+    htmlContent: `<article>
+      <p>
+        In the latest <a href="/posts/4">blog post</a> I mentioned that my main side project pivoted to something like a chat for the users to interact and create their ideas
+        about the game. One really important topic at the time was the model I was using. When I started to develop the feature I decided to use a Gemini model, and
+        later migrated to DeepSeek v4 Flash (the first release). We started to get a lot of "flash" models in the last few months, which fits perfectly with the
+        idea for the BrainBot agent: I didn't need it to be super smart, I just needed it to be fast and reliable. At the time I had to manually change the model
+        and test everything by hand, and a simple and fast chat can take up to 2 minutes to be clear and ready to use. I've always seen the potential of the feature,
+        but it never really got to the very good state I wanted it to be in.
+      </p>
+
+      <h2>Why the functionality needs to be in a very good state</h2>
+      <p>
+        <a href="https://d2b.vercel.app" target="_blank" rel="noreferrer">D2Brain</a> is a platform for Dota 2 players, and Dota is kind of an old game. We already have a bunch of sources of data to consume when getting ready for a match,
+        and what I'm building is not aiming to be the same, but giving a solid foundation to an idea about the game is crucial. Dota is a strategy game and minor decisions
+        matter a lot: small adaptations, specific timings, being in the right place at the right time can basically win you the game. The chat itself doesn't solve this problem,
+        but at least it gives a road to what the user should do and buy, and if this is not like 95% aligned with the current state of the game, it's not useful and
+        can actually be harmful to the match sometimes.
+      </p>
+
+      <p>
+        In short, if we recommend something that is objectively wrong, it can be more detrimental to the user than not recommending anything at all. This is a very
+        important part of the concept of creating a chat, so we need to make sure that the things we are returning to the user make sense and are correct for
+        most use cases.
+      </p>
+
+      <h2>Testing manually was not enough</h2>
+      <p>
+        This can look very straightforward from the outside, but when I was developing this functionality all by myself, iterating with the feature itself
+        looked like a viable way to make sure the chat was working as expected, and for a long time it was. But as I mentioned in the previous section, I need to
+        aim for a very high standard on the results of the chat, so eventually I had to take a step back and think about how I could automate that. And I'm not
+        talking about unit or e2e tests, but testing the agent functionality in isolation.
+      </p>
+
+      <h2>Creating a benchmark for the BrainBot functionality</h2>
+      <p>
+        When a new model drops, the first thing I do is check <a href="https://artificialanalysis.ai/" target="_blank" rel="noreferrer">Artificial Analysis</a>. I want to have an initial perspective on how the model performs, especially
+        in cost x intelligence. Honestly, I always wanted to create a benchmark myself just for fun, and when I saw the opportunity to do that I jumped on it as
+        soon as I could. I got too excited at the beginning and probably spent more money than I wanted to, trying a lot of different and also expensive models,
+        but after the hype went away I was able to focus on what mattered, and just running this benchmark made me realize an extremely important thing: the
+        functionality was never going to perform the way I wanted.
+      </p>
+
+      <p>
+        The main goal of the initial versions was to test how the BrainBot functionality worked: populate a state with hero, role, items and
+        timings so that I could see how the model performs in a real-world scenario. Running the bench with that approach, with a lot of different models
+        and different scenarios, showed a very insightful result: the BrainBot functionality was not reliable at all. Sometimes smarter models performed
+        better than the dumber ones, sometimes they didn't, the time to run the tasks was all over the place and I got a lot of failed tests. Funny thing, this was not frustrating
+        at all, it gave me the power to make sure I had a proper way to use the BrainBot functionality.
+      </p>
+
+      <p>
+        Not gonna lie, the idea of spending money to test the app that I was developing myself was not very attractive at the beginning, but creating
+        some real scenarios and a structured way of running them with different models felt like an exponentially better approach. I had all of the failures
+        of each run in a JSON file: how the performance went, how much it cost, everything in one place. I started to feed that into the agentic workflow for improving
+        the functionality and the engine started running really fast.
+      </p>
+
+      <p>
+        Realizing that the current approach for BrainBot was far from perfect made me think about a better way to create a solid and reliable solution
+        for the users of our chat. I completely changed from the mix-and-match structure the agent was doing to an election, where we have PRO matches as candidates
+        and high rank matches as votes to find the medoid, so we can guarantee that, based on the latest matches, the idea we are returning to the user is the one that
+        performed the best. After making this change everything started to make more sense, the chat instantly became more reliable, and I'm not sure how long
+        it would have taken me to get to this point testing the way I was doing it before.
+      </p>
+
+      <figure>
+        <img
+          src="/images/Screenshot_20261006_180303.jpg"
+          alt="Benchmark ranking comparing GPT-6 Luna, GLM 5.3 Flash and DeepSeek V4.1 Flash by intelligence, time and total cost"
+          loading="lazy"
+        />
+        <figcaption>Latest benchmark run: intelligence, time and total cost for each model.</figcaption>
+      </figure>
+
+      <p>
+        Now I'm focused on the models that really make sense for this platform, and I added more use cases to the benchmark so I can also test how the agent behaves and not
+        only the output it spits out. This experiment was extremely helpful overall and definitely helped me improve the core functionality of the app.
+        I also get to have some fun testing new models and checking when it makes sense to use them. If you are working on a similar project that uses AI,
+        don't hesitate to start testing it in an automated way: you can use your favorite harness to easily create a small and direct structure, and you'll
+        feel the benefits right away.
+      </p>
+    </article>`,
+  },
 ];
