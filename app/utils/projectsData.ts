@@ -14,8 +14,6 @@ export interface Project {
   image?: string;
   createdAt: string;
   language: string;
-  stargazers_count: number;
-  forks_count: number;
   open_issues_count: number;
   updated_at: string;
   visibility?: 'Public' | 'Private';
@@ -32,8 +30,6 @@ export const projectsData: Project[] = [
     image: "/images/projects/dodoro.png",
     createdAt: "2026-09-24",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2026-09-25T12:00:00Z",
     visibility: "Private"
@@ -49,8 +45,6 @@ export const projectsData: Project[] = [
     image: "/images/projects/d2brain.png",
     createdAt: "2026-05-01",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2026-09-20T12:00:00Z",
     visibility: "Private"
@@ -66,8 +60,6 @@ export const projectsData: Project[] = [
     image: "/images/projects/r4l-blog-v2.png",
     createdAt: "2026-01-05",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2026-01-12T14:16:46Z",
     visibility: "Public"
@@ -82,8 +74,6 @@ export const projectsData: Project[] = [
     homepage: "https://hooperz.vercel.app",
     createdAt: "2024-12-01",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2025-10-01T14:16:46Z",
     visibility: "Private"
@@ -98,8 +88,6 @@ export const projectsData: Project[] = [
     homepage: "https://blog-weld-two-55.vercel.app",
     createdAt: "2025-01-26",
     language: "Next",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2025-06-04T12:51:23Z",
     visibility: "Public"
@@ -114,8 +102,6 @@ export const projectsData: Project[] = [
     githubUrl: "https://github.com/rafaeltj13/dota2brain",
     createdAt: "2024-10-04",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2024-10-28T12:40:30Z",
     visibility: "Public"
@@ -129,8 +115,6 @@ export const projectsData: Project[] = [
     githubUrl: "https://github.com/rafaeltj13/rpg",
     createdAt: "2024-04-21",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2024-08-29T22:38:02Z",
     visibility: "Public"
@@ -144,8 +128,6 @@ export const projectsData: Project[] = [
     homepage: "https://luana-beauty.vercel.app",
     createdAt: "2023-12-06",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 0,
     updated_at: "2024-07-09T14:52:57Z",
     visibility: "Public"
@@ -160,8 +142,6 @@ export const projectsData: Project[] = [
     homepage: "https://tj-goal.vercel.app",
     createdAt: "2023-04-18",
     language: "Nuxt",
-    stargazers_count: 0,
-    forks_count: 0,
     open_issues_count: 1,
     updated_at: "2023-12-14T16:42:45Z",
     visibility: "Public"

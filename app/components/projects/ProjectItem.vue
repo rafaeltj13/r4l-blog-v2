@@ -86,7 +86,7 @@ const visibilityLabel = computed(() =>
         />
       </div>
 
-      <!-- Footer Stats -->
+      <!-- Project details -->
       <div class="flex items-center gap-4 text-sm text-base-content/60 pt-4 border-t border-base-200/50 mt-auto">
         <!-- Language -->
         <div class="flex items-center gap-1.5">
@@ -94,25 +94,6 @@ const visibilityLabel = computed(() =>
           <span>{{ project.language }}</span>
         </div>
 
-        <!-- Stars -->
-        <div class="flex items-center gap-1 hover:text-base-content transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-          <span>{{ project.stargazers_count }}</span>
-        </div>
-
-        <!-- Forks -->
-        <div class="flex items-center gap-1 hover:text-base-content transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="6" y1="3" x2="6" y2="15"></line>
-            <circle cx="18" cy="6" r="3"></circle>
-            <circle cx="6" cy="18" r="3"></circle>
-            <path d="M18 9a9 9 0 0 1-9 9"></path>
-          </svg>
-          <span>{{ project.forks_count }}</span>
-        </div>
-        
         <!-- Updated At -->
         <div class="ml-auto text-xs">
           {{ $t('common.updated', { date: formatLastUpdated(project.updated_at) }) }}

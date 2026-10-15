@@ -3,8 +3,7 @@
     "posts": "Posts",
     "experience": "Experience",
     "projects": "Projects",
-    "chat": "Chat",
-    "about": "About"
+    "chat": "Chat"
   },
   "header": {
     "openMenu": "Open navigation menu",
@@ -13,7 +12,6 @@
   },
   "seo": {
     "home": "R4L - Rafael Maciel",
-    "about": "R4L - About This Site",
     "experience": "R4L - Experience",
     "projects": "R4L - Projects",
     "chat": "R4L - Chat",
@@ -31,45 +29,6 @@
     "p2": "My path started with classic frameworks like AngularJS and ASP.NET during my university years, but it was discovering mordern frameworks like React and Vue that truly ignited my passion for web development. Today, I focus on creating meaningful digital experiences that combine clean code with thoughtful design.",
     "p3": "I have 8+ years of experience specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
     "p4": "In my spare time, I'm usually playing DotA 2, NBA 2k26, working out, hanging out with my girlfriend and two cats, or watching series."
-  },
-  "about": {
-    "title": "About This Site",
-    "subtitle": "A look at the technologies powering this website.",
-    "whyGreat": "Why it's great:",
-    "techs": {
-      "nuxt": {
-        "description": "The Vue.js meta-framework that powers this blog. Nuxt provides file-based routing, server-side rendering, and an excellent developer experience out of the box.",
-        "why": "Perfect for content-focused sites like blogs. The hybrid rendering modes and automatic code-splitting ensure fast page loads, while the file-based routing makes adding new pages effortless."
-      },
-      "vue": {
-        "description": "A progressive JavaScript framework for building user interfaces with the Composition API and reactivity system.",
-        "why": "Vue's gentle learning curve and excellent documentation make it ideal for personal projects. The Composition API allows for clean, reusable logic without the complexity of larger frameworks."
-      },
-      "bun": {
-        "description": "A fast all-in-one JavaScript runtime and package manager that replaces Node.js and npm.",
-        "why": "Significantly faster than npm for installing dependencies and running scripts. The built-in bundler and test runner reduce the need for additional tooling."
-      },
-      "tailwind": {
-        "description": "A utility-first CSS framework that enables rapid UI development with pre-built classes.",
-        "why": "Speeds up development significantly for solo projects. No need to context-switch between files or come up with class names. The new v4 uses CSS variables for theming, making it even more powerful."
-      },
-      "daisyui": {
-        "description": "A component library built on top of Tailwind CSS that provides beautiful, semantic UI components.",
-        "why": "Adds ready-to-use components like buttons, cards, and modals without sacrificing customization. The theme system makes it easy to switch between light and dark modes."
-      },
-      "typescript": {
-        "description": "A strongly typed programming language that builds on JavaScript, providing better tooling and catching errors at compile time.",
-        "why": "Type safety makes refactoring confident and reduces runtime bugs. The developer experience with autocomplete and inline documentation is invaluable for maintaining code long-term."
-      },
-      "deepseek": {
-        "description": "Powers the Chat feature and the tailored-CV generator, allowing visitors to have AI-powered conversations about my experience and projects.",
-        "why": "Adds an interactive element to the portfolio. The API is easy to integrate via the AI SDK with structured output, and provides a unique way for visitors to learn about my background."
-      },
-      "vercel": {
-        "description": "A cloud platform for deploying and hosting web applications with automatic CI/CD, edge functions, and global CDN.",
-        "why": "Zero-configuration deployments for Nuxt apps. Just push to GitHub and the site is live. The generous free tier is perfect for personal projects."
-      }
-    }
   },
   "experience": {
     "title": "Professional Experience",

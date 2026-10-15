@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+    key: (route) => String(route.params.id),
+});
+
 const route = useRoute();
 const { t, locale } = useI18n();
 const dateLocale = computed(() => (locale.value === "pt-BR" ? "pt-BR" : "en-US"));
@@ -173,7 +177,7 @@ onMounted(() => {
                 {{ $t("post.allWriting") }}
             </NuxtLink>
 
-            <header class="mt-10 sm:mt-14">
+            <header v-motion-slide-left class="mt-10 sm:mt-14">
                 <h1 :lang="post!.locale" class="text-3xl leading-tight text-base-content sm:text-4xl">
                     {{ post!.title }}
                 </h1>
@@ -231,39 +235,41 @@ onMounted(() => {
                 </div>
             </header>
 
-            <figure class="mt-8 aspect-[16/9] overflow-hidden rounded-lg bg-base-200 sm:-mx-8 sm:mt-10">
-                <PostsPostImage variant="hero" :post="post!" />
-            </figure>
+            <div v-motion-slide-bottom>
+                <figure class="mt-8 aspect-[16/9] overflow-hidden rounded-lg bg-base-200 sm:-mx-8 sm:mt-10">
+                    <PostsPostImage variant="hero" :post="post!" />
+                </figure>
 
-            <div :lang="post!.locale" class="post-content mt-12 sm:mt-14">
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div v-html="articleHtml" />
-            </div>
+                <div :lang="post!.locale" class="post-content mt-12 sm:mt-14">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="articleHtml" />
+                </div>
 
-            <nav
-                v-if="olderPost || newerPost"
-                class="mt-20 grid gap-8 border-t border-base-content/10 pt-8 sm:grid-cols-2"
-                aria-label="Post navigation"
-            >
-                <NuxtLink v-if="olderPost" :to="`/posts/${olderPost.id}`" class="group">
-                    <span class="text-sm text-base-content/45">← {{ $t("post.older") }}</span>
-                    <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
-                        {{ olderPost.title }}
-                    </span>
-                </NuxtLink>
-                <span v-else class="hidden sm:block" />
-
-                <NuxtLink
-                    v-if="newerPost"
-                    :to="`/posts/${newerPost.id}`"
-                    class="group sm:text-right"
+                <nav
+                    v-if="olderPost || newerPost"
+                    class="mt-20 grid gap-8 border-t border-base-content/10 pt-8 sm:grid-cols-2"
+                    aria-label="Post navigation"
                 >
-                    <span class="text-sm text-base-content/45">{{ $t("post.newer") }} →</span>
-                    <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
-                        {{ newerPost.title }}
-                    </span>
-                </NuxtLink>
-            </nav>
+                    <NuxtLink v-if="olderPost" :to="`/posts/${olderPost.id}`" class="group">
+                        <span class="text-sm text-base-content/45">← {{ $t("post.older") }}</span>
+                        <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
+                            {{ olderPost.title }}
+                        </span>
+                    </NuxtLink>
+                    <span v-else class="hidden sm:block" />
+
+                    <NuxtLink
+                        v-if="newerPost"
+                        :to="`/posts/${newerPost.id}`"
+                        class="group sm:text-right"
+                    >
+                        <span class="text-sm text-base-content/45">{{ $t("post.newer") }} →</span>
+                        <span class="mt-1 block font-semibold leading-snug text-base-content transition-colors group-hover:text-primary">
+                            {{ newerPost.title }}
+                        </span>
+                    </NuxtLink>
+                </nav>
+            </div>
         </article>
     </div>
 </template>

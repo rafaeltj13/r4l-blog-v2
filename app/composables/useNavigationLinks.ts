@@ -15,6 +15,5 @@ export function useNavigationLinks(): ComputedRef<NavigationLink[]> {
         { label: t("nav.experience"), to: "/experience", icon: "uil:briefcase" },
         { label: t("nav.projects"), to: "/projects", icon: "uil:folder" },
         { label: t("nav.chat"), to: "/chat", icon: "uil:comment-dots" },
-        { label: t("nav.about"), to: "/about", icon: "uil:user" },
     ]);
 }
