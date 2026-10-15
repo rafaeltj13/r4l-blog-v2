@@ -16,33 +16,31 @@ const showcaseUrl = computed(
         :href="showcaseUrl ?? undefined"
         :target="showcaseUrl ? '_blank' : undefined"
         :rel="showcaseUrl ? 'noopener noreferrer' : undefined"
-        class="group/item block mb-12 hover:bg-base-content/5 p-4 rounded-box transition-colors duration-300"
+        class="group/item relative block mb-12 hover:bg-base-content/5 p-4 rounded-box transition-colors duration-300"
         :class="showcaseUrl ? 'cursor-pointer' : 'cursor-default'"
     >
-        <!-- Mouse devices: the screenshot expands above the text on hover. -->
+        <!-- Desktop with a mouse: the screenshot pops out to the left, over the profile column, without moving the content. -->
         <div
             v-if="project.image"
-            class="hidden pointer-fine:grid grid-rows-[0fr] opacity-0 group-hover/item:grid-rows-[1fr] group-hover/item:opacity-100 group-focus-visible/item:grid-rows-[1fr] group-focus-visible/item:opacity-100 transition-all duration-300"
+            class="hidden lg:pointer-fine:block absolute right-full top-4 mr-4 w-[min(28rem,32vw)] z-10 pointer-events-none opacity-0 translate-x-3 group-hover/item:opacity-100 group-hover/item:translate-x-0 group-focus-visible/item:opacity-100 group-focus-visible/item:translate-x-0 transition duration-300"
         >
-            <div class="min-h-0 overflow-hidden">
-                <NuxtImg
-                    :src="project.image"
-                    :alt="$t('projects.screenshotAlt', { name: project.name })"
-                    class="w-full aspect-video object-cover object-top rounded-xl bg-base-200 mb-4"
-                    format="webp"
-                    quality="80"
-                    loading="lazy"
-                    sizes="600px"
-                />
-            </div>
+            <NuxtImg
+                :src="project.image"
+                :alt="$t('projects.screenshotAlt', { name: project.name })"
+                class="w-full aspect-video object-cover object-top rounded-xl bg-base-200 border border-base-content/10 shadow-xl"
+                format="webp"
+                quality="80"
+                loading="lazy"
+                sizes="450px"
+            />
         </div>
-        <div class="flex items-center gap-4 mb-3 pointer-fine:mb-2">
-            <!-- Touch devices have no hover, so the screenshot sits left of the title. -->
+        <div class="flex items-center gap-4 mb-3 lg:pointer-fine:mb-2">
+            <!-- Touch devices and narrow screens: the screenshot sits left of the title. -->
             <NuxtImg
                 v-if="project.image"
                 :src="project.image"
                 :alt="$t('projects.screenshotAlt', { name: project.name })"
-                class="pointer-fine:hidden shrink-0 w-1/2 aspect-video object-cover object-top-left rounded-lg bg-base-200 border border-base-content/10"
+                class="lg:pointer-fine:hidden shrink-0 w-1/2 max-w-xs aspect-video object-cover object-top-left rounded-lg bg-base-200 border border-base-content/10"
                 format="webp"
                 quality="80"
                 loading="lazy"
