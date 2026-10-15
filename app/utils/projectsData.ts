@@ -7,8 +7,9 @@ export interface Project {
   githubUrl?: string;
   homepage?: string;
   /**
-   * Optional screenshot path served from `public/` (e.g. "images/projects/dodoro.png").
-   * Displayed as a banner on the homepage personal projects section.
+   * Optional screenshot path served from `public/` (e.g. "/images/projects/dodoro.png").
+   * Shown on hover on the homepage personal projects section, or as a
+   * thumbnail beside the text on touch devices.
    */
   image?: string;
   createdAt: string;
@@ -27,6 +28,8 @@ export const projectsData: Project[] = [
     description: `dodoro is a study platform for Brazilian public exams (concursos) built around a question-mining methodology.
     It organizes the daily routine into solving questions, creating flashcards from mistakes and reviewing them with consistency across Sprint phases.`,
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "oRPC", "Drizzle", "Cloudflare D1", "Better-Auth", "Tailwind CSS", "DaisyUI"],
+    homepage: "https://dodoro.app",
+    image: "/images/projects/dodoro.png",
     createdAt: "2026-09-24",
     language: "Nuxt",
     stargazers_count: 0,
@@ -42,7 +45,8 @@ export const projectsData: Project[] = [
     of AI (BrainBot assistant), it offers features like summarization and idea generation, plus payments and automated smoke tests.`,
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "Hono", "Cloudflare Workers", "Drizzle", "oRPC", "AI SDK", "Stripe"],
     githubUrl: "https://github.com/rafaeltj13/d2b",
-    homepage: "https://d2b.vercel.app",
+    homepage: "https://d2brain.space",
+    image: "/images/projects/d2brain.png",
     createdAt: "2026-05-01",
     language: "Nuxt",
     stargazers_count: 0,
@@ -59,6 +63,7 @@ export const projectsData: Project[] = [
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "Tailwind CSS", "DaisyUI", "OpenAI"],
     githubUrl: "https://github.com/rafaeltj13/r4l-blog-v2",
     homepage: "https://r4l-blog-v2.vercel.app",
+    image: "/images/projects/r4l-blog-v2.png",
     createdAt: "2026-01-05",
     language: "Nuxt",
     stargazers_count: 0,
