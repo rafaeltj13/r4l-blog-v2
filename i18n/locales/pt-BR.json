@@ -40,7 +40,17 @@
   "projects": {
     "title": "Projetos",
     "subtitle": "Uma coleção de projetos pessoais nos quais trabalhei ao longo dos anos. Eles representam minha exploração de diferentes tecnologias e minha paixão por construir coisas.",
-    "screenshotAlt": "Captura de tela de {name}"
+    "screenshotAlt": "Captura de tela de {name}",
+    "views": {
+      "landing": "Página inicial",
+      "mobile": "Página inicial no celular",
+      "dark": "Página inicial no tema escuro",
+      "examDate": "Seção Data da prova",
+      "heroes": "Página de heróis",
+      "posts": "Página de posts"
+    },
+    "showScreenshot": "Mostrar {name}: {view}",
+    "galleryLabel": "Capturas de tela de {name}"
   },
   "blog": {
     "subtitle": "Meus pensamentos e experiências em um só lugar.",

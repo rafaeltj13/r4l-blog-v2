@@ -1,3 +1,10 @@
+export interface ProjectScreenshot {
+  src: string;
+  /** Translation key describing the view, shared across projects. */
+  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts';
+  portrait?: boolean;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -12,6 +19,7 @@ export interface Project {
    * thumbnail beside the text on touch devices.
    */
   image?: string;
+  screenshots?: ProjectScreenshot[];
   createdAt: string;
   language: string;
   open_issues_count: number;
@@ -28,6 +36,12 @@ export const projectsData: Project[] = [
     technologies: ["Vue.js", "Nuxt.js", "TypeScript", "oRPC", "Drizzle", "Cloudflare D1", "Better-Auth", "Tailwind CSS", "DaisyUI"],
     homepage: "https://dodoro.app",
     image: "/images/projects/dodoro.png",
+    screenshots: [
+      { src: "/images/projects/dodoro.png", view: 'landing' },
+      { src: "/images/projects/dodoro-mobile.webp", view: 'mobile', portrait: true },
+      { src: "/images/projects/dodoro-dark.webp", view: 'dark' },
+      { src: "/images/projects/dodoro-exam-date.webp", view: 'examDate' },
+    ],
     createdAt: "2026-09-24",
     language: "Nuxt",
     open_issues_count: 0,
@@ -43,6 +57,12 @@ export const projectsData: Project[] = [
     githubUrl: "https://github.com/rafaeltj13/d2b",
     homepage: "https://d2brain.space",
     image: "/images/projects/d2brain.png",
+    screenshots: [
+      { src: "/images/projects/d2brain.png", view: 'landing' },
+      { src: "/images/projects/d2brain-mobile.webp", view: 'mobile', portrait: true },
+      { src: "/images/projects/d2brain-dark.webp", view: 'dark' },
+      { src: "/images/projects/d2brain-heroes.webp", view: 'heroes' },
+    ],
     createdAt: "2026-05-01",
     language: "Nuxt",
     open_issues_count: 0,
@@ -58,6 +78,12 @@ export const projectsData: Project[] = [
     githubUrl: "https://github.com/rafaeltj13/r4l-blog-v2",
     homepage: "https://r4l-blog-v2.vercel.app",
     image: "/images/projects/r4l-blog-v2.png",
+    screenshots: [
+      { src: "/images/projects/r4l-blog-v2.png", view: 'landing' },
+      { src: "/images/projects/r4l-blog-v2-mobile.webp", view: 'mobile', portrait: true },
+      { src: "/images/projects/r4l-blog-v2-dark.webp", view: 'dark' },
+      { src: "/images/projects/r4l-blog-v2-posts.webp", view: 'posts' },
+    ],
     createdAt: "2026-01-05",
     language: "Nuxt",
     open_issues_count: 0,

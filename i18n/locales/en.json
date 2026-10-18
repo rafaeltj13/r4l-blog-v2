@@ -40,7 +40,17 @@
   "projects": {
     "title": "Projects",
     "subtitle": "A collection of personal projects I've worked on over the years. These represent my exploration of different technologies and my passion for building things.",
-    "screenshotAlt": "{name} screenshot"
+    "screenshotAlt": "{name} screenshot",
+    "views": {
+      "landing": "Landing page",
+      "mobile": "Mobile landing page",
+      "dark": "Dark theme landing page",
+      "examDate": "Data da prova section",
+      "heroes": "Heroes page",
+      "posts": "Posts page"
+    },
+    "showScreenshot": "Show {name}: {view}",
+    "galleryLabel": "{name} screenshots"
   },
   "blog": {
     "subtitle": "My thoughts and experiences in one place.",
