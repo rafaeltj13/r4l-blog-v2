@@ -12,6 +12,10 @@ export const ptBRProjectDescriptionOverrides: Record<string, string> = {
     de IA (assistente BrainBot), oferece recursos como sumarização e geração de ideias, além de pagamentos e smoke tests automatizados.`,
   "r4l-blog-v2": `Esta é a segunda versão do meu blog, criada com a intenção de finalmente ter um projeto que eu consiga terminar e do qual me orgulhe. Como a maior
     parte do trabalho já estava feita na primeira versão, decidi usá-la como ponto de partida e melhorá-la com novos recursos e outras tecnologias.`,
+  "r4l-launcher": `r4l.launcher é meu launcher pessoal para Android, um fork do Murine Launcher e do AOSP Launcher3. Ele adiciona categorias de apps
+    opcionais e offline com navegação por gestos, uma busca na parte inferior da gaveta que abre acima do teclado e uma identidade R4L em grafite e violeta.`,
+  pandora: `Pandora é um app Android nativo que reúne meus serviços de produtividade em um só lugar, sem backend próprio. As tarefas ficam salvas como
+    eventos do Google Calendar, e a aba Development gerencia issues do GitHub nos meus repositórios.`,
   hooperz: `Hooperz é um jogo de navegador inspirado no projeto TJGoal, no qual trabalhei alguns anos antes, mas em outro contexto. Um jogo de basquete
       em que o jogador precisa pontuar para contribuir com a comunidade do time e vencer partidas.`,
   blog: `A ideia principal de criar um blog era simples: trabalhar em um projeto do início ao fim. Eu vinha trabalhando em projetos paralelos grandes que acabaram

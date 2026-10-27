@@ -25,10 +25,11 @@
     "personalProjects": "Projetos pessoais",
     "personalProjectsSubtitle": "Projetos pessoais que construo no meu tempo livre — incluindo esta plataforma.",
     "relevantPosts": "Posts relevantes",
-    "p1": "Bem-vindo ao meu canto da web! Sou desenvolvedor de Campina Grande, cidade na Paraíba, Brasil, onde minha jornada no desenvolvimento web começou. Aos 27 anos, já vivi uma boa evolução das tecnologias web.",
-    "p2": "Meu caminho começou com frameworks clássicos como AngularJS e ASP.NET nos anos de universidade, mas foi ao descobrir frameworks modernos como React e Vue que minha paixão por desenvolvimento web realmente se acendeu. Hoje, foco em criar experiências digitais significativas que combinam código limpo com design cuidadoso.",
-    "p3": "Tenho mais de 8 anos de experiência com desenvolvimento web full-stack. Proficiência avançada em frameworks TypeScript modernos, incluindo React, Vue.js, Next.js e Node.js. Colaborei com times globais na construção de soluções escaláveis, com comunicação intercultural eficaz.",
-    "p4": "No meu tempo livre, geralmente estou jogando DotA 2, NBA 2k26, treinando, com minha namorada e meus dois gatos, ou assistindo séries."
+    "p1": "Oi! Meu nome é Rafael, e seja bem-vindo ao meu site pessoal! Sou um builder de Campina Grande e atualmente moro em João Pessoa. Tenho 29 anos e trabalho como Engenheiro de Software Sênior.",
+    "p2": "Atualmente estou construindo o {d2brain} e também trabalho em outros produtos, como o {dodoro} e vários outros que você encontra na seção de {projects}. Gosto de experimentar coisas novas, e nos dias de hoje, construir é a melhor forma de fazer isso.",
+    "p2ProjectsLink": "projetos pessoais",
+    "p3": "Tenho mais de 8 anos de experiência com desenvolvimento web full-stack. Colaborei com times globais na construção de soluções escaláveis, com comunicação intercultural eficaz.",
+    "p4": "No meu tempo livre, geralmente estou jogando DotA 2, NBA 2K27 ou Guild Wars 2. Também gosto de treinar e de passar tempo com minha noiva e nossos dois gatos. Ultimamente, tenho curtido muito mandar prompts pelo celular para ver as coisas sendo construídas enquanto estou longe do computador. Para isso, uso o {t3}."
   },
   "experience": {
     "title": "Experiência Profissional",

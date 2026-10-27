@@ -14,6 +14,7 @@ const getLanguageColor = (language: string) => {
     Nuxt: '#41b883',
     Next: '#3178c6',
     JavaScript: '#f1e05a',
+    Kotlin: '#a97bff',
   }
   return colors[language] || '#8b949e'
 }

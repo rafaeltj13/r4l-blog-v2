@@ -91,6 +91,32 @@ export const projectsData: Project[] = [
     visibility: "Public"
   },
   {
+    id: "r4l-launcher",
+    name: "r4l.launcher",
+    description: `r4l.launcher is my personal Android launcher, a fork of Murine Launcher and AOSP Launcher3. It adds optional offline
+    app categories with swipe navigation, a bottom drawer search that opens above the keyboard, and a charcoal and violet R4L identity.`,
+    technologies: ["Kotlin", "Java", "Android", "Launcher3"],
+    githubUrl: "https://github.com/rafaeltj13/r4l.launcher",
+    createdAt: "2026-10-20",
+    language: "Kotlin",
+    open_issues_count: 0,
+    updated_at: "2026-10-27T16:04:45Z",
+    visibility: "Public"
+  },
+  {
+    id: "pandora",
+    name: "Pandora",
+    description: `Pandora is a native Android app that brings my productivity services into one place, with no backend of its own. Tasks live as
+    Google Calendar events, and the Development tab manages GitHub issues across my repositories.`,
+    technologies: ["Kotlin", "Jetpack Compose", "Material 3", "Android", "Google Calendar", "GitHub API"],
+    githubUrl: "https://github.com/rafaeltj13/Pandora",
+    createdAt: "2026-10-10",
+    language: "Kotlin",
+    open_issues_count: 0,
+    updated_at: "2026-10-20T20:47:36Z",
+    visibility: "Public"
+  },
+  {
     id: "hooperz",
     name: "Hooperz",
     description: `Hooperz is a browser game inspired in the TJGoal project I've worked some years prior, but with a different context. A basketball 

@@ -25,10 +25,11 @@
     "personalProjects": "Personal projects",
     "personalProjectsSubtitle": "Personal projects I build in my spare time — including this platform.",
     "relevantPosts": "Relevant posts",
-    "p1": "Welcome to my corner of the web! I'm a developer from Campina Grande, a city in Paraíba, Brazil, where my journey in web development began. At 27, I've already experienced quite an evolution in web technologies.",
-    "p2": "My path started with classic frameworks like AngularJS and ASP.NET during my university years, but it was discovering mordern frameworks like React and Vue that truly ignited my passion for web development. Today, I focus on creating meaningful digital experiences that combine clean code with thoughtful design.",
-    "p3": "I have 8+ years of experience specializing in full-stack web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
-    "p4": "In my spare time, I'm usually playing DotA 2, NBA 2k26, working out, hanging out with my girlfriend and two cats, or watching series."
+    "p1": "Hi! My name is Rafael, and welcome to my personal website! I'm a builder from Campina Grande, currently living in João Pessoa. I'm 29 and work as a Senior Software Engineer.",
+    "p2": "I'm currently building {d2brain}, and I'm also working on other products like {dodoro} and more that you can find in the {projects} section. I like trying new things, and in this era, building stuff is the best way to do it.",
+    "p2ProjectsLink": "personal projects",
+    "p3": "I have 8+ years of experience specializing in full-stack web development. I've collaborated with global teams to build scalable solutions, communicating effectively across cultures.",
+    "p4": "In my spare time, I'm usually playing DotA 2, NBA 2K27, or Guild Wars 2. I also like working out and hanging out with my fiancée and our two cats. Lately, I've been really into prompting from my phone so I can watch things get built while I'm away from my computer. For that, I use {t3}."
   },
   "experience": {
     "title": "Professional Experience",

@@ -157,15 +157,25 @@ onUnmounted(() => {
                     <p class="mb-6">
                         {{ $t("home.p1") }}
                     </p>
-                    <p class="mb-6">
-                        {{ $t("home.p2") }}
-                    </p>
+                    <i18n-t keypath="home.p2" tag="p" class="mb-6" scope="global">
+                        <template #d2brain>
+                            <a href="https://d2brain.space/" target="_blank" rel="noopener noreferrer">d2brain.space</a>
+                        </template>
+                        <template #dodoro>
+                            <a href="https://dodoro.app/" target="_blank" rel="noopener noreferrer">dodoro.app</a>
+                        </template>
+                        <template #projects>
+                            <a href="#personal-projects" @click.prevent="scrollToSection('personal-projects')">{{ $t("home.p2ProjectsLink") }}</a>
+                        </template>
+                    </i18n-t>
                     <p class="mb-6">
                         {{ $t("home.p3") }}
                     </p>
-                    <p>
-                        {{ $t("home.p4") }}
-                    </p>
+                    <i18n-t keypath="home.p4" tag="p" scope="global">
+                        <template #t3>
+                            <a href="https://t3.codes/" target="_blank" rel="noopener noreferrer">t3.codes</a>
+                        </template>
+                    </i18n-t>
                 </div>
 
                 <div id="projects" class="scroll-mt-20 mb-16">
