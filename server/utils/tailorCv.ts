@@ -82,7 +82,9 @@ export async function tailorCv(
 
   const selection = clampToContract(object, content);
   if (selection.experienceIds.length === 0) {
-    throw new Error("AI returned no valid experiences.");
+    throw new Error(
+      `AI returned no valid experiences (got ${JSON.stringify(object.experienceIds).slice(0, 200)}).`,
+    );
   }
   return selection;
 }
@@ -182,7 +184,7 @@ ${projects}
 AVAILABLE SKILLS:
 ${skills}
 
-Return the tailored CV, referencing experiences and projects by their [ID ...] markers above and selecting only skills from AVAILABLE SKILLS.`;
+Return the tailored CV. In experienceIds, projectIds, and bulletOverrides keys use only the bare id from the [ID ...] markers above (e.g. "${content.experiences[0]?.id}", not "[ID ${content.experiences[0]?.id}]"). Select only skills from AVAILABLE SKILLS.`;
 }
 
 /**
@@ -194,10 +196,10 @@ function clampToContract(
   payload: TailoredCvPayload,
   content: DownloadableContent,
 ): CvSelection {
-  const experienceIds = [...new Set(payload.experienceIds)]
+  const experienceIds = [...new Set(payload.experienceIds.map(normalizeId))]
     .filter((id) => content.experienceById.has(id))
     .slice(0, C.maxExperiences);
-  const projectIds = [...new Set(payload.projectIds)]
+  const projectIds = [...new Set(payload.projectIds.map(normalizeId))]
     .filter((id) => content.projectIds.has(id))
     .slice(0, C.maxProjects);
 
@@ -240,9 +242,15 @@ function clampToContract(
     (skills[category] ??= []).push(skill);
   }
 
+  const overridesById = new Map(
+    Object.entries(payload.bulletOverrides).map(([id, list]) => [
+      normalizeId(id),
+      list,
+    ]),
+  );
   const bulletOverrides: Record<string, string[]> = {};
   for (const id of experienceIds) {
-    const clean = (payload.bulletOverrides[id] ?? [])
+    const clean = (overridesById.get(id) ?? [])
       .map((b) => truncate(b, C.maxBulletChars))
       .filter(Boolean)
       .slice(0, C.maxBulletsPerExperience);
@@ -257,6 +265,19 @@ function clampToContract(
     skills,
     bulletOverrides,
   };
+}
+
+/**
+ * Models often echo the prompt's marker back (`[ID foo]`, `ID: foo`) instead
+ * of the bare slug; reduce any of those to `foo`.
+ */
+function normalizeId(raw: string): string {
+  return raw
+    .trim()
+    .replace(/^\[|\]$/g, "")
+    .replace(/^id\s*[:#]?\s*/i, "")
+    .trim()
+    .toLowerCase();
 }
 
 /**
