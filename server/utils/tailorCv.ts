@@ -79,6 +79,10 @@ export async function tailorCv(
     prompt: buildUserPrompt(input.jobDescription, content),
     maxOutputTokens: 1200,
     temperature: 0.5,
+    // DeepSeek V4 thinks by default; reasoning tokens count against
+    // maxOutputTokens and can exhaust it before any JSON is emitted.
+    // Other providers ignore this key.
+    providerOptions: { deepseek: { thinking: { type: "disabled" } } },
   });
 
   const selection = clampToContract(object, content);
