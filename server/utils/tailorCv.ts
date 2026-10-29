@@ -37,24 +37,19 @@ const CV_CONSTRAINTS = {
 
 const C = CV_CONSTRAINTS;
 
+/**
+ * Shape only. DeepSeek has no native structured output (the provider injects
+ * the schema into the system prompt as text), so length / count limits here
+ * would reject an otherwise usable answer. The prompt states the budget and
+ * `clampToContract` enforces it.
+ */
 const TailoredCvSchema = z.object({
-  position: z.string().min(1).max(C.maxPositionChars),
-  summary: z.string().min(1).max(C.maxSummaryChars),
-  experienceIds: z
-    .array(z.string())
-    .min(C.minExperiences)
-    .max(C.maxExperiences),
-  projectIds: z.array(z.string()).max(C.maxProjects).default([]),
-  selectedSkills: z.record(z.string(), z.array(z.string())),
-  bulletOverrides: z
-    .record(
-      z.string(),
-      z
-        .array(z.string().min(1).max(C.maxBulletChars))
-        .min(1)
-        .max(C.maxBulletsPerExperience),
-    )
-    .default({}),
+  position: z.string().min(1),
+  summary: z.string().min(1),
+  experienceIds: z.array(z.string()),
+  projectIds: z.array(z.string()).default([]),
+  selectedSkills: z.record(z.string(), z.array(z.string())).default({}),
+  bulletOverrides: z.record(z.string(), z.array(z.string())).default({}),
 });
 
 type TailoredCvPayload = z.infer<typeof TailoredCvSchema>;
@@ -248,18 +243,32 @@ function clampToContract(
   const bulletOverrides: Record<string, string[]> = {};
   for (const id of experienceIds) {
     const clean = (payload.bulletOverrides[id] ?? [])
-      .map((b) => b.replace(/\s+/g, " ").trim().slice(0, C.maxBulletChars))
+      .map((b) => truncate(b, C.maxBulletChars))
       .filter(Boolean)
       .slice(0, C.maxBulletsPerExperience);
     if (clean.length > 0) bulletOverrides[id] = clean;
   }
 
   return {
-    position: payload.position.slice(0, C.maxPositionChars),
-    summary: payload.summary.slice(0, C.maxSummaryChars),
+    position: truncate(payload.position, C.maxPositionChars),
+    summary: truncate(payload.summary, C.maxSummaryChars),
     experienceIds,
     projectIds,
     skills,
     bulletOverrides,
   };
+}
+
+/**
+ * Collapse whitespace and fit `max` chars, cutting at the last sentence end
+ * when one exists in the second half, else at a word boundary with "…".
+ */
+function truncate(text: string, max: number): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const sentenceEnd = cut.lastIndexOf(". ");
+  if (sentenceEnd >= max / 2) return cut.slice(0, sentenceEnd + 1);
+  const wordEnd = cut.lastIndexOf(" ", max - 1);
+  return `${cut.slice(0, wordEnd > 0 ? wordEnd : max - 1).trimEnd()}…`;
 }
