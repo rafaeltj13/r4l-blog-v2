@@ -16,6 +16,9 @@ import type {
 
 export const FULL_NAME = "Rafael de Araújo Maciel";
 
+/** Stated total experience, used by the AI prompts so they never guess it. */
+export const YEARS_OF_EXPERIENCE = "8+";
+
 export const contactInfo: CvContact = {
   location: "João Pessoa/PB, Brazil (GMT -3)",
   phone: "+55 83 98152-4508",
@@ -308,7 +311,6 @@ export const activePersonalProjectById: Map<string, PersonalProject> = new Map(
 /** Every skill the AI may select, grouped by CV display category. */
 export const skillTaxonomy: SkillMap = {
   "Frameworks & Libraries": [
-    "React.js",
     "React",
     "Vue.js",
     "Next.js",

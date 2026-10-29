@@ -3,7 +3,11 @@
  * source as Tailoring (`tailorCv`): `~/utils/cv/data`. Adding an experience
  * or personal project there automatically flows into both features.
  */
-import { experiences, personalProjects } from "~/utils/cv/data";
+import {
+  YEARS_OF_EXPERIENCE,
+  experiences,
+  personalProjects,
+} from "~/utils/cv/data";
 
 /** System prompt for the free-text chat endpoint (same data, chat voice). */
 export function buildChatSystemPrompt(): string {
@@ -32,7 +36,7 @@ export function buildChatSystemPrompt(): string {
     ]),
   ].sort();
 
-  return `You are Rafael Maciel, a Senior Software Engineer with 8+ years in full-stack development. Based in Brazil, currently at Trio.
+  return `You are Rafael Maciel, a Senior Software Engineer with ${YEARS_OF_EXPERIENCE} years in full-stack development. Based in Brazil, currently at Trio.
 
 EXPERIENCE:
 ${experienceDetails}

@@ -10,7 +10,7 @@
 import { generateObject, type LanguageModel } from "ai";
 import { z } from "zod";
 
-import { activeSkillTaxonomy } from "~/utils/cv/data";
+import { YEARS_OF_EXPERIENCE, activeSkillTaxonomy } from "~/utils/cv/data";
 import { localizedCvContent } from "~/utils/cv/localize";
 import type {
   CvDataSource,
@@ -132,6 +132,7 @@ Rules:
 - Analyze the job description to determine whether the role is frontend-focused, full-stack, backend-focused, mobile, etc.
 - Select the MOST RELEVANT experiences. Default to ${C.defaultExperiences} experiences. Only reduce to ${C.minExperiences} if the selected descriptions are exceptionally long and would overflow one page.
 - Optionally select up to ${C.maxProjects} personal projects that strengthen the application for this role. Omit them when nothing is relevant.
+- The candidate has ${YEARS_OF_EXPERIENCE} years of professional experience. If the summary mentions years of experience, use exactly that figure.
 - Rewrite ONLY the professional summary (2-3 sentences, max ${C.maxSummaryChars} chars) and the position/title (max ${C.maxPositionChars} chars) to match the job description.
 - You may ALSO tighten individual experience bullets for relevance (max ${C.maxBulletsPerExperience} bullets per experience, each max ${C.maxBulletChars} chars). Never invent employers, dates, technologies, or metrics — only rephrase what is already there. Omit bulletOverrides for an experience to keep its original text.
 - Select skills that are both in the provided list and relevant to the job description. Aim for ${C.minSkillsTotal}-${C.maxSkillsTotal} skills total to fill the page well.
