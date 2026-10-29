@@ -1,18 +1,13 @@
-import {
-  sanitizeTailoredPayload,
-  type TailoredCvPayload,
-} from "~/utils/cv/schema";
 import type { CvSelection } from "~/utils/cv/types";
 
 /**
  * State + fetching for the "Generate a tailored CV" dialog.
- * The server returns a `TailoredCvPayload` validated by `generateObject`
- * against `TailoredCvSchema`, i.e. the same structure the PDF resolves via
- * `buildCvDocument()`. We re-sanitize client-side as a cheap guard against
- * data drift (unknown ids / skills).
+ * The server (`tailorCv`) returns a finished `CvSelection` in the current
+ * content locale; it is used as-is and resolved via `buildCvDocument()`.
  */
 export function useTailoredCv() {
   const { t } = useI18n();
+  const contentLocale = useContentLocale();
   const jobDescription = ref("");
   const isGenerating = ref(false);
   const optimizeError = ref<string | null>(null);
@@ -26,33 +21,20 @@ export function useTailoredCv() {
     optimizeError.value = null;
 
     try {
-      const payload = await $fetch<TailoredCvPayload>("/api/cv/optimize", {
+      const selection = await $fetch<CvSelection>("/api/cv/optimize", {
         method: "POST",
-        body: { jobDescription: description },
+        body: { jobDescription: description, locale: contentLocale.value },
       });
-
-      const sanitized = sanitizeTailoredPayload(payload);
-
-      if (sanitized.experienceIds.length === 0) {
-        throw new Error(t("resume.generateError"));
-      }
-
-      const selection: CvSelection = {
-        position: sanitized.position,
-        summary: sanitized.summary,
-        experienceIds: sanitized.experienceIds,
-        projectIds: sanitized.projectIds,
-        skills: sanitized.skills,
-        bulletOverrides: sanitized.bulletOverrides,
-      };
       tailoredSelection.value = selection;
       return selection;
     } catch (err: unknown) {
       console.error("Tailored CV error:", err);
+      const status =
+        err && typeof err === "object" && "statusCode" in err
+          ? err.statusCode
+          : undefined;
       optimizeError.value =
-        err instanceof Error && err.message
-          ? err.message
-          : t("resume.generateError");
+        status === 429 ? t("resume.rateLimited") : t("resume.generateError");
       return null;
     } finally {
       isGenerating.value = false;

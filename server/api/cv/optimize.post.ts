@@ -1,11 +1,11 @@
-import { generateObject } from "ai";
 import { createDeepSeek } from "@ai-sdk/deepseek";
+import { z } from "zod";
 
-import { TailoredCvSchema, sanitizeTailoredPayload } from "~/utils/cv/schema";
+// Note: tailorCv / CV_LOCALES / checkRateLimit come from server/utils
+// (auto-imported) — no explicit import, Nitro can't resolve relative
+// directory imports at bundle time.
 
-// Note: buildCvSystemPrompt / buildCvUserPrompt / checkRateLimit come from
-// server/utils (auto-imported) — no explicit import, Nitro can't resolve
-// relative directory imports at bundle time.
+const MAX_JOB_DESCRIPTION_CHARS = 12000;
 
 export default defineEventHandler(async (event) => {
   try {
@@ -17,21 +17,25 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const body = await readBody(event);
-    const { jobDescription } = body;
+    const body = z
+      .object({
+        jobDescription: z.string().trim().min(1),
+        locale: z.enum(CV_LOCALES).default("en"),
+      })
+      .safeParse(await readBody(event));
 
-    if (!jobDescription || typeof jobDescription !== "string") {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Job description is required and must be a string",
-      });
-    }
-
-    if (jobDescription.length > 12000) {
+    if (!body.success) {
       throw createError({
         statusCode: 400,
         statusMessage:
-          "Job description is too long. Please keep it under 12000 characters.",
+          "Job description is required and locale must be 'en' or 'pt-BR'",
+      });
+    }
+
+    if (body.data.jobDescription.length > MAX_JOB_DESCRIPTION_CHARS) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Job description is too long. Please keep it under ${MAX_JOB_DESCRIPTION_CHARS} characters.`,
       });
     }
 
@@ -46,32 +50,7 @@ export default defineEventHandler(async (event) => {
     }
 
     const deepseek = createDeepSeek({ apiKey });
-
-    /**
-     * Structured output: the model MUST conform to `TailoredCvSchema` —
-     * the same contract `buildCvDocument()` resolves into the `CvDocument`
-     * the PDF renders. No JSON scraping, no index-based ids.
-     */
-    const { object } = await generateObject({
-      model: deepseek("deepseek-v4-pro"),
-      schema: TailoredCvSchema,
-      system: buildCvSystemPrompt(),
-      prompt: buildCvUserPrompt(jobDescription),
-      maxOutputTokens: 1200,
-      temperature: 0.5,
-    });
-
-    // Defense in depth: drop unknown ids / skills a model might hallucinate.
-    const sanitized = sanitizeTailoredPayload(object);
-
-    if (sanitized.experienceIds.length === 0) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "AI returned no valid experiences. Please try again.",
-      });
-    }
-
-    return sanitized;
+    return await tailorCv(body.data, deepseek("deepseek-v4-pro"));
   } catch (error: unknown) {
     console.error("CV Optimize API Error:", error);
 

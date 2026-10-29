@@ -208,10 +208,3 @@ export function groupByCompany(
   });
 }
 
-/** All known technologies across work + personal projects (chat context). */
-export function getAllTechnologies(extra: PersonalProject[] = []): string[] {
-  const set = new Set<string>();
-  experiences.forEach((e) => e.technologies.forEach((t) => set.add(t)));
-  extra.forEach((p) => p.technologies.forEach((t) => set.add(t)));
-  return [...set].sort();
-}

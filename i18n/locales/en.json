@@ -104,6 +104,7 @@
     "generateTailored": "Generate Tailored CV",
     "generating": "Generating...",
     "generateError": "Failed to generate tailored CV. Please try again.",
+    "rateLimited": "You have reached the hourly limit for AI requests. Please try again later.",
     "summary": "Summary",
     "skills": "Skills",
     "professionalExperience": "Professional Experience",

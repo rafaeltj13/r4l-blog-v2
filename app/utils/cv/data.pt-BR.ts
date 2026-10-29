@@ -5,7 +5,7 @@ import type { CvEducation } from "./types";
  *
  * English in `./data` is the source of truth: only fields that differ are
  * listed here, keyed by the same stable ids. Anything missing falls back
- * to English automatically (see `useLocalizedCv`).
+ * to English automatically (see `localizedCvContent`).
  */
 
 export interface ExperienceContentOverride {
