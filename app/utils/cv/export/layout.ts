@@ -17,7 +17,7 @@ export interface CvSectionLabels {
 }
 
 /** Fixed CV accent: the PDF never follows the site's daisyUI theme. */
-const ACCENT = "#1e3a5f";
+const ACCENT = "#1d4ed8";
 const TEXT = "#1e293b";
 const MUTED = "#475569";
 const FAINT = "#64748b";
