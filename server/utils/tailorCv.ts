@@ -22,10 +22,10 @@ import type {
 } from "~/utils/cv/types";
 
 /**
- * One-page budget shared by the prompt and the clamp. Experiences are
- * deliberately generous: the client (`fitTailoredToOnePage`) drops the last,
- * least relevant ones until the page fits, so asking for more fills the page
- * instead of leaving a gap at the bottom.
+ * One-page budget shared by the prompt and the clamp. Content is
+ * deliberately generous: the client's One-page fit (`fitToOnePage`) trims
+ * bullets, projects, then the last, least relevant experiences until the
+ * page fits, so asking for more fills the page instead of leaving a gap.
  */
 const CV_CONSTRAINTS = {
   minExperiences: 2,

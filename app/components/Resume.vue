@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { FULL_NAME } from "~/utils/cv/data";
 import { groupByCompany } from "~/utils/cv/document";
-import { A4_HEIGHT_PX, generateResumePDF, measureResumeHeight } from "~/utils/cv/pdf";
-import { cvPresets } from "~/utils/cv/presets";
+import { exportCv, type CvSectionLabels } from "~/utils/cv/export";
 import { resolveCv } from "~/utils/cv/resolve";
-import type { CvDocument, CvPresetId } from "~/utils/cv/types";
+import type { CvDocument, CvPresetId, CvSelection } from "~/utils/cv/types";
 import { useTailoredCv } from "~/composables/useTailoredCv";
 
 const props = withDefaults(
@@ -17,41 +16,22 @@ const props = withDefaults(
 );
 
 const { dialogRef, open, close } = useDialog();
-
-/**
- * What the PDF preview is currently rendering:
- * - "all":      full history (page default)
- * - "front":    frontend preset behind the Frontend CV button
- * - "full":     full-stack preset behind the Full-stack CV button
- * - "tailored": AI selection from the job-description dialog
- *
- * Every mode resolves through `buildCvDocument()`, so the rendered
- * `CvDocument` always has the exact shape the AI was asked to return.
- */
-type ViewMode = CvPresetId | "tailored";
-const activeMode = ref<ViewMode>("all");
+const { t } = useI18n();
 
 const {
     jobDescription,
     isGenerating,
     optimizeError,
-    tailoredSelection,
     generateTailoredSelection,
     resetTailored,
 } = useTailoredCv();
 
 const contentLocale = useContentLocale();
 
-/** The single document the template renders — presets and AI go through here. */
-const resolvedCv = computed(() =>
-    resolveCv(
-        activeMode.value === "tailored"
-            ? (tailoredSelection.value ?? "all")
-            : activeMode.value,
-        contentLocale.value,
-    ),
+/** The page always shows the full history; downloads never change it. */
+const cvDocument = computed<CvDocument>(
+    () => resolveCv("all", contentLocale.value).document,
 );
-const cvDocument = computed<CvDocument>(() => resolvedCv.value.document);
 
 const groupedExperience = computed(() =>
     groupByCompany(cvDocument.value.experiences, {
@@ -59,70 +39,30 @@ const groupedExperience = computed(() =>
     }),
 );
 
-/**
- * Ensure tailored content fits a single A4 page by dropping the least
- * relevant (last) experience until it measures within the page height.
- */
-const fitTailoredToOnePage = async (minExperiences = 2): Promise<void> => {
-    const safetyMargin = 10;
-    const maxHeight = A4_HEIGHT_PX - safetyMargin;
+const sectionLabels = (): CvSectionLabels => ({
+    summary: t("resume.summary"),
+    skills: t("resume.skills"),
+    professionalExperience: t("resume.professionalExperience"),
+    personalProjects: t("resume.personalProjects"),
+    education: t("resume.education"),
+});
 
-    while (
-        tailoredSelection.value &&
-        tailoredSelection.value.experienceIds.length > minExperiences
-    ) {
-        await nextTick();
-        await new Promise((resolve) => setTimeout(resolve, 50));
-
-        const height = measureResumeHeight();
-        if (height <= maxHeight) break;
-
-        tailoredSelection.value = {
-            ...tailoredSelection.value,
-            experienceIds: tailoredSelection.value.experienceIds.slice(0, -1),
-        };
-    }
-};
-
-const resetResumeState = () => {
-    activeMode.value = "all";
-    resetTailored();
+const download = async (choice: Exclude<CvPresetId, "all"> | CvSelection) => {
+    const { document, filename } = resolveCv(choice, contentLocale.value);
+    await exportCv(document, filename, sectionLabels());
 };
 
 const downloadCV = async (type: Exclude<CvPresetId, "all"> = "front") => {
-    activeMode.value = type;
-
-    // Wait for Vue reactivity and DOM updates
-    await nextTick();
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    await generateResumePDF(cvPresets[type].filename, { fitSinglePage: true });
+    await download(type);
     close();
-
-    // Reset to showing everything on the page
-    resetResumeState();
 };
 
 const downloadTailoredCV = async () => {
     const selection = await generateTailoredSelection();
     if (!selection) return;
-
-    activeMode.value = "tailored";
-
-    // Wait for Vue reactivity and DOM updates
-    await nextTick();
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Ensure the tailored content fits on a single A4 page
-    await fitTailoredToOnePage();
-
-    await generateResumePDF(resolvedCv.value.filename, {
-        fitSinglePage: true,
-    });
+    await download(selection);
     close();
-
-    // Reset state
-    resetResumeState();
+    resetTailored();
 };
 </script>
 
