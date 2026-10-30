@@ -82,6 +82,7 @@ const tabs = computed(() => [
         <!-- Resume Content -->
         <div v-else v-motion-slide-bottom suppressHydrationWarning>
             <Resume />
+            <CvDownloadDialog />
         </div>
     </div>
 </template>

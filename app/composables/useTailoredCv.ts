@@ -13,6 +13,12 @@ export function useTailoredCv() {
   const optimizeError = ref<string | null>(null);
   const tailoredSelection = ref<CvSelection | null>(null);
 
+  // A result belongs to the description it was generated from.
+  watch(jobDescription, () => {
+    tailoredSelection.value = null;
+    optimizeError.value = null;
+  });
+
   const generate = async (): Promise<CvSelection | null> => {
     const description = jobDescription.value.trim();
     if (!description) return null;
