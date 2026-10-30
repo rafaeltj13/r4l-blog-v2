@@ -1,15 +1,29 @@
+import { experiences, skillTaxonomy } from "./data";
 import type { CvPresetId, CvSelection } from "./types";
 
+export interface CvPreset extends CvSelection {
+  filename: string;
+  /** Keep Deprecated entries (page view only, never a download). */
+  includeDeprecated?: boolean;
+}
+
 /**
- * Static presets behind the two classic download buttons.
- * Keeping them as data (instead of filter logic inside Resume.vue) means the
- * PDF path is identical for presets and AI-tailored output: selection in,
- * `CvDocument` out.
+ * Hand-written CV Selections. `all` is the full history shown on the page;
+ * `front` / `full` sit behind the two classic download buttons. Resolved via
+ * `resolveCv()`, the same path AI-tailored output takes.
  */
-export const cvPresets: Record<
-  CvPresetId,
-  CvSelection & { filename: string }
-> = {
+export const cvPresets: Record<CvPresetId, CvPreset> = {
+  all: {
+    filename: "Rafael_Maciel_CV.pdf",
+    includeDeprecated: true,
+    position: "Senior Software Engineer",
+    summary:
+      "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.",
+    experienceIds: experiences.map((e) => e.id),
+    // Only D2Brain is showcased on the page.
+    projectIds: ["d2brain"],
+    skills: skillTaxonomy,
+  },
   front: {
     filename: "Rafael_Maciel_Frontend_CV.pdf",
     position: "Senior Frontend Engineer",

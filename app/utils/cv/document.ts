@@ -118,6 +118,7 @@ export function buildCvDocument(
     bullets,
     contact: data.contact,
     education: data.education,
+    locale: opts.locale ?? "en",
   };
 }
 

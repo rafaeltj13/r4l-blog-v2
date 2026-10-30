@@ -16,17 +16,17 @@ export interface LocalizedCv {
   skillCategories?: Record<string, string>;
   /**
    * Localized position/summary, or null when English so callers keep
-   * their own source-of-truth strings (presets, FULL_SUMMARY).
+   * their own source-of-truth strings (`cvPresets`).
    */
-  position: (preset: CvPresetId | "all") => string | null;
-  summary: (preset: CvPresetId | "all") => string | null;
+  position: (preset: CvPresetId) => string | null;
+  summary: (preset: CvPresetId) => string | null;
 }
 
 /**
  * Full CV content in `locale`: English source of truth with the pt-BR
  * override deltas merged on top (English fallback per field). Plain function
- * so both the page (`useLocalizedCv`) and the server (`tailorCv`) use the
- * same merge.
+ * so the page and downloads (`resolveCv`) and the server (`tailorCv`) use
+ * the same merge.
  */
 export function localizedCvContent(locale: CvLocale): LocalizedCv {
   if (locale !== "pt-BR") {

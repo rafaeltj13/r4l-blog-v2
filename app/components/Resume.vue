@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { FULL_NAME } from "~/utils/cv/data";
-import { buildCvDocument, groupByCompany } from "~/utils/cv/document";
+import { groupByCompany } from "~/utils/cv/document";
 import { A4_HEIGHT_PX, generateResumePDF, measureResumeHeight } from "~/utils/cv/pdf";
 import { cvPresets } from "~/utils/cv/presets";
-import type { CvDocument, CvPresetId, CvSelection } from "~/utils/cv/types";
+import { resolveCv } from "~/utils/cv/resolve";
+import type { CvDocument, CvPresetId } from "~/utils/cv/types";
 import { useTailoredCv } from "~/composables/useTailoredCv";
 
 const props = withDefaults(
@@ -27,7 +28,7 @@ const { dialogRef, open, close } = useDialog();
  * Every mode resolves through `buildCvDocument()`, so the rendered
  * `CvDocument` always has the exact shape the AI was asked to return.
  */
-type ViewMode = CvPresetId | "all" | "tailored";
+type ViewMode = CvPresetId | "tailored";
 const activeMode = ref<ViewMode>("all");
 
 const {
@@ -39,60 +40,21 @@ const {
     resetTailored,
 } = useTailoredCv();
 
-const FULL_SUMMARY =
-    "Senior Software Engineer with 8+ years of expertise specializing in web development. Advanced proficiency in modern TypeScript frameworks including React, Vue.js, Next.js, and Node.js. Successfully collaborated with global teams to build scalable solutions, demonstrating effective cross-cultural communication.";
-
-/** Localized content source (English source of truth + pt-BR overrides). */
 const contentLocale = useContentLocale();
-const localizedCv = useLocalizedCv();
-const localizedSkills = useLocalizedSkillTaxonomy();
-
-const activeSelection = computed<CvSelection | null>(() => {
-    if (activeMode.value === "tailored") return tailoredSelection.value;
-    if (activeMode.value === "front" || activeMode.value === "full") {
-        const preset = cvPresets[activeMode.value];
-        return {
-            ...preset,
-            position:
-                localizedCv.value.position(activeMode.value) ??
-                preset.position,
-            summary:
-                localizedCv.value.summary(activeMode.value) ?? preset.summary,
-        };
-    }
-    return null;
-});
 
 /** The single document the template renders — presets and AI go through here. */
-const cvDocument = computed<CvDocument>(() => {
-    const data = localizedCv.value.data;
-    const documentOpts = {
-        data,
-        skillCategories: localizedCv.value.skillCategories,
-        locale: contentLocale.value,
-    };
-    const selection = activeSelection.value;
-    if (selection) return buildCvDocument(selection, documentOpts);
-    // Page default: everything, including deprecated entries (page display,
-    // not a download — downloads always go through front/full/tailored).
-    // Only D2Brain is showcased as personal project here.
-    return buildCvDocument(
-        {
-            position:
-                localizedCv.value.position("all") ??
-                "Senior Software Engineer",
-            summary: localizedCv.value.summary("all") ?? FULL_SUMMARY,
-            experienceIds: data.experiences.map((e) => e.id),
-            projectIds: ["d2brain"],
-            skills: localizedSkills.value,
-        },
-        { ...documentOpts, includeDeprecated: true },
-    );
-});
+const resolvedCv = computed(() =>
+    resolveCv(
+        activeMode.value === "tailored"
+            ? (tailoredSelection.value ?? "all")
+            : activeMode.value,
+        contentLocale.value,
+    ),
+);
+const cvDocument = computed<CvDocument>(() => resolvedCv.value.document);
 
 const groupedExperience = computed(() =>
     groupByCompany(cvDocument.value.experiences, {
-        history: localizedCv.value.data.experiences,
         locale: contentLocale.value,
     }),
 );
@@ -127,7 +89,7 @@ const resetResumeState = () => {
     resetTailored();
 };
 
-const downloadCV = async (type: CvPresetId = "front") => {
+const downloadCV = async (type: Exclude<CvPresetId, "all"> = "front") => {
     activeMode.value = type;
 
     // Wait for Vue reactivity and DOM updates
@@ -154,7 +116,7 @@ const downloadTailoredCV = async () => {
     // Ensure the tailored content fits on a single A4 page
     await fitTailoredToOnePage();
 
-    await generateResumePDF("Rafael_Maciel_Tailored_CV.pdf", {
+    await generateResumePDF(resolvedCv.value.filename, {
         fitSinglePage: true,
     });
     close();

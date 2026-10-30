@@ -1,12 +1,5 @@
-import {
-  experiences,
-  skillTaxonomy,
-} from "~/utils/cv/data";
-import {
-  ptBRExperienceOverrides,
-  ptBRSkillCategories,
-} from "~/utils/cv/data.pt-BR";
-import { localizedCvContent, type LocalizedCv } from "~/utils/cv/localize";
+import { experiences } from "~/utils/cv/data";
+import { ptBRExperienceOverrides } from "~/utils/cv/data.pt-BR";
 import type { CvLocale } from "~/utils/cv/types";
 import { posts, type Post } from "~/utils/postsData";
 import { ptBRPostTranslations } from "~/utils/postsData.pt-BR";
@@ -95,24 +88,5 @@ export function useLocalizedPost(id: MaybeRefOrGetter<string>) {
       post: localizePost(original, contentLocale.value),
       original: localizePost(original, "en"),
     };
-  });
-}
-
-/** Full CV content source (experiences, projects, contact, education). */
-export function useLocalizedCv(): ComputedRef<LocalizedCv> {
-  const contentLocale = useContentLocale();
-  return computed(() => localizedCvContent(contentLocale.value));
-}
-
-/** Skill taxonomy for the "show everything" Resume view. */
-export function useLocalizedSkillTaxonomy() {
-  const contentLocale = useContentLocale();
-  return computed(() => {
-    if (!isPtBR(contentLocale.value)) return skillTaxonomy;
-    const result: Record<string, string[]> = {};
-    for (const [category, skills] of Object.entries(skillTaxonomy)) {
-      result[ptBRSkillCategories[category] ?? category] = skills;
-    }
-    return result;
   });
 }

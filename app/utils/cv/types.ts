@@ -92,9 +92,12 @@ export interface CvDocument {
   bullets: Record<string, string[]>;
   contact: CvContact;
   education: CvEducation;
+  /** Content locale the document was resolved in (dates, labels). */
+  locale: CvLocale;
 }
 
-export type CvPresetId = "front" | "full";
+/** `all` is the full history shown on the page; `front`/`full` are downloads. */
+export type CvPresetId = "all" | "front" | "full";
 
 /** Locales with content translations. English is the source of truth. */
 export type CvLocale = "en" | "pt-BR";
