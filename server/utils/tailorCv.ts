@@ -37,6 +37,8 @@ const CV_CONSTRAINTS = {
   maxPositionChars: 80,
   maxSummaryChars: 400,
   maxBulletsPerExperience: 4,
+  /** Prompt target only; short bullets are what left the page half-empty. */
+  minBulletChars: 120,
   maxBulletChars: 220,
   /**
    * Hard cap for the clamp. Higher than `maxBulletChars` (what the prompt
@@ -145,7 +147,7 @@ Rules:
 - Select 1-${C.maxProjects} personal projects that are relevant to this role (the closest match counts if none is a perfect fit). Omit them only when none relates to the role at all.
 - The candidate has ${YEARS_OF_EXPERIENCE} years of professional experience. If the summary mentions years of experience, use exactly that figure.
 - Rewrite ONLY the professional summary (2-3 sentences, max ${C.maxSummaryChars} chars) and the position/title (max ${C.maxPositionChars} chars) to match the job description.
-- You may ALSO tighten individual experience bullets for relevance (max ${C.maxBulletsPerExperience} bullets per experience, each max ${C.maxBulletChars} chars). Never invent employers, dates, technologies, or metrics — only rephrase what is already there. Omit bulletOverrides for an experience to keep its original text.
+- You may ALSO rephrase individual experience bullets to emphasize what is relevant to the job (up to ${C.maxBulletsPerExperience} bullets per experience — as many as the original description supports, without padding — each ${C.minBulletChars}-${C.maxBulletChars} chars). Keep the original level of detail: do NOT compress bullets into short one-liners; the CV must fill the page. Never invent employers, dates, technologies, or metrics — only rephrase what is already there. Omit bulletOverrides for an experience to keep its original text.
 - Select skills that are both in the provided list and relevant to the job description. Aim for ${C.minSkillsTotal}-${C.maxSkillsTotal} skills total to fill the page well.
 - Respect the existing category names. Only include categories that have selected skills.
 ${LANGUAGE_RULES[locale]}`;
