@@ -21,11 +21,16 @@ import type {
   SkillMap,
 } from "~/utils/cv/types";
 
-/** One-page budget shared by the schema, the prompt, and the clamp. */
+/**
+ * One-page budget shared by the prompt and the clamp. Experiences are
+ * deliberately generous: the client (`fitTailoredToOnePage`) drops the last,
+ * least relevant ones until the page fits, so asking for more fills the page
+ * instead of leaving a gap at the bottom.
+ */
 const CV_CONSTRAINTS = {
   minExperiences: 2,
-  maxExperiences: 4,
-  defaultExperiences: 4,
+  maxExperiences: 5,
+  defaultExperiences: 5,
   maxProjects: 2,
   minSkillsTotal: 8,
   maxSkillsTotal: 12,
@@ -33,6 +38,12 @@ const CV_CONSTRAINTS = {
   maxSummaryChars: 400,
   maxBulletsPerExperience: 4,
   maxBulletChars: 220,
+  /**
+   * Hard cap for the clamp. Higher than `maxBulletChars` (what the prompt
+   * asks for) because models copy original bullets that run a little over,
+   * and a cut-off "…" bullet reads worse on a CV than a longer one.
+   */
+  bulletHardCapChars: 360,
 } as const;
 
 const C = CV_CONSTRAINTS;
@@ -130,8 +141,8 @@ You will receive:
 
 Rules:
 - Analyze the job description to determine whether the role is frontend-focused, full-stack, backend-focused, mobile, etc.
-- Select the MOST RELEVANT experiences. Default to ${C.defaultExperiences} experiences. Only reduce to ${C.minExperiences} if the selected descriptions are exceptionally long and would overflow one page.
-- Optionally select up to ${C.maxProjects} personal projects that strengthen the application for this role. Omit them when nothing is relevant.
+- Select the MOST RELEVANT experiences, ordered from most to least relevant. Default to ${C.defaultExperiences} experiences (never fewer than ${C.minExperiences}). The page is filled top to bottom and the last experiences are dropped automatically if it overflows, so prefer selecting more over leaving the page short.
+- Select 1-${C.maxProjects} personal projects that are relevant to this role (the closest match counts if none is a perfect fit). Omit them only when none relates to the role at all.
 - The candidate has ${YEARS_OF_EXPERIENCE} years of professional experience. If the summary mentions years of experience, use exactly that figure.
 - Rewrite ONLY the professional summary (2-3 sentences, max ${C.maxSummaryChars} chars) and the position/title (max ${C.maxPositionChars} chars) to match the job description.
 - You may ALSO tighten individual experience bullets for relevance (max ${C.maxBulletsPerExperience} bullets per experience, each max ${C.maxBulletChars} chars). Never invent employers, dates, technologies, or metrics — only rephrase what is already there. Omit bulletOverrides for an experience to keep its original text.
@@ -252,7 +263,7 @@ function clampToContract(
   const bulletOverrides: Record<string, string[]> = {};
   for (const id of experienceIds) {
     const clean = (overridesById.get(id) ?? [])
-      .map((b) => truncate(b, C.maxBulletChars))
+      .map((b) => truncate(b, C.bulletHardCapChars))
       .filter(Boolean)
       .slice(0, C.maxBulletsPerExperience);
     if (clean.length > 0) bulletOverrides[id] = clean;
