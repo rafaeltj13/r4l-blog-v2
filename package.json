@@ -24,8 +24,6 @@
     "baseline-browser-mapping": "^2.11.1",
     "caniuse-lite": "^1.0.30001806",
     "eslint": "^9.0.0",
-    "html2canvas-pro": "^2.0.2",
-    "jspdf": "^4.0.0",
     "nuxt": "^4.2.2",
     "openai": "^6.16.0",
     "pdfmake": "^0.3.13",
