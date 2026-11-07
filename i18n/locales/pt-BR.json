@@ -52,7 +52,7 @@
       "search": "Busca na parte inferior da gaveta",
       "categoryPicker": "Seletor de categorias",
       "categories": "Abas de categorias na gaveta de apps",
-      "home": "Tela inicial"
+      "categorySettings": "Configurações de categorias"
     },
     "showScreenshot": "Mostrar {name}: {view}",
     "galleryLabel": "Capturas de tela de {name}"

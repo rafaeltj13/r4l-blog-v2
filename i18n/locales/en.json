@@ -52,7 +52,7 @@
       "search": "Bottom drawer search",
       "categoryPicker": "Category picker",
       "categories": "App drawer category tabs",
-      "home": "Home screen"
+      "categorySettings": "Category settings"
     },
     "showScreenshot": "Show {name}: {view}",
     "galleryLabel": "{name} screenshots"
