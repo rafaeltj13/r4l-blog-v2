@@ -49,10 +49,10 @@
       "examDate": "Seção Data da prova",
       "heroes": "Página de heróis",
       "posts": "Página de posts",
-      "cover": "Capa do projeto",
-      "categories": "Abas de categorias na gaveta de apps",
       "search": "Busca na parte inferior da gaveta",
-      "categoryPicker": "Seletor de categorias"
+      "categoryPicker": "Seletor de categorias",
+      "categories": "Abas de categorias na gaveta de apps",
+      "home": "Tela inicial"
     },
     "showScreenshot": "Mostrar {name}: {view}",
     "galleryLabel": "Capturas de tela de {name}"

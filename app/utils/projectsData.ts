@@ -1,7 +1,7 @@
 export interface ProjectScreenshot {
   src: string;
   /** Translation key describing the view, shared across projects. */
-  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts' | 'cover' | 'categories' | 'search' | 'categoryPicker';
+  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts' | 'home' | 'categories' | 'search' | 'categoryPicker';
   portrait?: boolean;
 }
 
@@ -76,10 +76,10 @@ export const projectsData: Project[] = [
     app categories with swipe navigation, a bottom drawer search that opens above the keyboard, and a charcoal and violet R4L identity.`,
     technologies: ["Kotlin", "Java", "Android", "Launcher3"],
     githubUrl: "https://github.com/rafaeltj13/r4l.launcher",
-    image: "/images/projects/r4l-launcher.webp",
+    image: "/images/projects/r4l-launcher-categories.webp",
     screenshots: [
-      { src: "/images/projects/r4l-launcher.webp", view: 'cover' },
       { src: "/images/projects/r4l-launcher-categories.webp", view: 'categories', portrait: true },
+      { src: "/images/projects/r4l-launcher-home.webp", view: 'home', portrait: true },
       { src: "/images/projects/r4l-launcher-search.webp", view: 'search', portrait: true },
       { src: "/images/projects/r4l-launcher-category-picker.webp", view: 'categoryPicker', portrait: true },
     ],

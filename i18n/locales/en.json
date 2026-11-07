@@ -49,10 +49,10 @@
       "examDate": "Data da prova section",
       "heroes": "Heroes page",
       "posts": "Posts page",
-      "cover": "Project cover",
-      "categories": "App drawer category tabs",
       "search": "Bottom drawer search",
-      "categoryPicker": "Category picker"
+      "categoryPicker": "Category picker",
+      "categories": "App drawer category tabs",
+      "home": "Home screen"
     },
     "showScreenshot": "Show {name}: {view}",
     "galleryLabel": "{name} screenshots"
