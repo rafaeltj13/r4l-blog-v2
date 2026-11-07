@@ -48,7 +48,11 @@
       "dark": "Página inicial no tema escuro",
       "examDate": "Seção Data da prova",
       "heroes": "Página de heróis",
-      "posts": "Página de posts"
+      "posts": "Página de posts",
+      "cover": "Capa do projeto",
+      "categories": "Abas de categorias na gaveta de apps",
+      "search": "Busca na parte inferior da gaveta",
+      "categoryPicker": "Seletor de categorias"
     },
     "showScreenshot": "Mostrar {name}: {view}",
     "galleryLabel": "Capturas de tela de {name}"
@@ -92,7 +96,8 @@
     "daysAgo": "há {count} dias",
     "public": "Público",
     "private": "Privado",
-    "close": "Fechar"
+    "close": "Fechar",
+    "opensInNewTab": "(abre em uma nova aba)"
   },
   "resume": {
     "downloadCv": "Baixar CV",

@@ -1,7 +1,7 @@
 export interface ProjectScreenshot {
   src: string;
   /** Translation key describing the view, shared across projects. */
-  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts';
+  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts' | 'cover' | 'categories' | 'search' | 'categoryPicker';
   portrait?: boolean;
 }
 
@@ -70,6 +70,26 @@ export const projectsData: Project[] = [
     visibility: "Private"
   },
   {
+    id: "r4l-launcher",
+    name: "r4l.launcher",
+    description: `r4l.launcher is my personal Android launcher, a fork of Murine Launcher and AOSP Launcher3. It adds optional offline
+    app categories with swipe navigation, a bottom drawer search that opens above the keyboard, and a charcoal and violet R4L identity.`,
+    technologies: ["Kotlin", "Java", "Android", "Launcher3"],
+    githubUrl: "https://github.com/rafaeltj13/r4l.launcher",
+    image: "/images/projects/r4l-launcher.webp",
+    screenshots: [
+      { src: "/images/projects/r4l-launcher.webp", view: 'cover' },
+      { src: "/images/projects/r4l-launcher-categories.webp", view: 'categories', portrait: true },
+      { src: "/images/projects/r4l-launcher-search.webp", view: 'search', portrait: true },
+      { src: "/images/projects/r4l-launcher-category-picker.webp", view: 'categoryPicker', portrait: true },
+    ],
+    createdAt: "2026-10-20",
+    language: "Kotlin",
+    open_issues_count: 0,
+    updated_at: "2026-10-27T16:04:45Z",
+    visibility: "Public"
+  },
+  {
     id: "r4l-blog-v2",
     name: "R4L Blog v2",
     description: `This is the second version of my blog, initially created with the intent to finally have a project that I can finish and be proud of. Since most of the work
@@ -88,19 +108,6 @@ export const projectsData: Project[] = [
     language: "Nuxt",
     open_issues_count: 0,
     updated_at: "2026-01-12T14:16:46Z",
-    visibility: "Public"
-  },
-  {
-    id: "r4l-launcher",
-    name: "r4l.launcher",
-    description: `r4l.launcher is my personal Android launcher, a fork of Murine Launcher and AOSP Launcher3. It adds optional offline
-    app categories with swipe navigation, a bottom drawer search that opens above the keyboard, and a charcoal and violet R4L identity.`,
-    technologies: ["Kotlin", "Java", "Android", "Launcher3"],
-    githubUrl: "https://github.com/rafaeltj13/r4l.launcher",
-    createdAt: "2026-10-20",
-    language: "Kotlin",
-    open_issues_count: 0,
-    updated_at: "2026-10-27T16:04:45Z",
     visibility: "Public"
   },
   {

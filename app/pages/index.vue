@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PersonalProjectItem from "~/components/projects/PersonalProjectItem.vue";
+import AppInlineLink from "~/components/ui/AppInlineLink.vue";
 
 const { t } = useI18n();
 
@@ -159,13 +160,13 @@ onUnmounted(() => {
                     </p>
                     <i18n-t keypath="home.p2" tag="p" class="mb-6" scope="global">
                         <template #d2brain>
-                            <a href="https://d2brain.space/" target="_blank" rel="noopener noreferrer">d2brain.space</a>
+                            <AppInlineLink href="https://d2brain.space/">d2brain.space</AppInlineLink>
                         </template>
                         <template #dodoro>
-                            <a href="https://dodoro.app/" target="_blank" rel="noopener noreferrer">dodoro.app</a>
+                            <AppInlineLink href="https://dodoro.app/">dodoro.app</AppInlineLink>
                         </template>
                         <template #projects>
-                            <a href="#personal-projects" @click.prevent="scrollToSection('personal-projects')">{{ $t("home.p2ProjectsLink") }}</a>
+                            <AppInlineLink href="#personal-projects" @click.prevent="scrollToSection('personal-projects')">{{ $t("home.p2ProjectsLink") }}</AppInlineLink>
                         </template>
                     </i18n-t>
                     <p class="mb-6">
@@ -173,7 +174,7 @@ onUnmounted(() => {
                     </p>
                     <i18n-t keypath="home.p4" tag="p" scope="global">
                         <template #t3>
-                            <a href="https://t3.codes/" target="_blank" rel="noopener noreferrer">t3.codes</a>
+                            <AppInlineLink href="https://t3.codes/">t3.codes</AppInlineLink>
                         </template>
                     </i18n-t>
                 </div>

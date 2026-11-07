@@ -48,7 +48,11 @@
       "dark": "Dark theme landing page",
       "examDate": "Data da prova section",
       "heroes": "Heroes page",
-      "posts": "Posts page"
+      "posts": "Posts page",
+      "cover": "Project cover",
+      "categories": "App drawer category tabs",
+      "search": "Bottom drawer search",
+      "categoryPicker": "Category picker"
     },
     "showScreenshot": "Show {name}: {view}",
     "galleryLabel": "{name} screenshots"
@@ -92,7 +96,8 @@
     "daysAgo": "{count} days ago",
     "public": "Public",
     "private": "Private",
-    "close": "Close"
+    "close": "Close",
+    "opensInNewTab": "(opens in a new tab)"
   },
   "resume": {
     "downloadCv": "Download CV",

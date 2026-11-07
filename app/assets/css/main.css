@@ -40,6 +40,22 @@ textarea {
   font-family: inherit;
 }
 
+/* Links inside running text, such as the homepage about section. */
+.inline-link {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--color-primary) 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 150ms;
+}
+
+.inline-link:hover,
+.inline-link:focus-visible {
+  text-decoration-color: var(--color-primary);
+}
+
 /* Editorial rhythm for post bodies, including older HTML entries. */
 .post-content {
   color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
