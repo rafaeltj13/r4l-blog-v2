@@ -52,7 +52,11 @@
       "search": "Bottom drawer search",
       "categoryPicker": "Category picker",
       "categories": "App drawer category tabs",
-      "categorySettings": "Category settings"
+      "categorySettings": "Category settings",
+      "signIn": "Sign-in screen",
+      "idle": "Ready to connect",
+      "connected": "Connected through the tunnel",
+      "optimize": "Optimize menu"
     },
     "showScreenshot": "Show {name}: {view}",
     "galleryLabel": "{name} screenshots"

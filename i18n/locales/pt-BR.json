@@ -52,7 +52,11 @@
       "search": "Busca na parte inferior da gaveta",
       "categoryPicker": "Seletor de categorias",
       "categories": "Abas de categorias na gaveta de apps",
-      "categorySettings": "Configurações de categorias"
+      "categorySettings": "Configurações de categorias",
+      "signIn": "Tela de login",
+      "idle": "Pronto para conectar",
+      "connected": "Conectado pelo túnel",
+      "optimize": "Menu de otimização"
     },
     "showScreenshot": "Mostrar {name}: {view}",
     "galleryLabel": "Capturas de tela de {name}"

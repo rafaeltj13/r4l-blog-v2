@@ -45,6 +45,24 @@ const activeScreenshot = computed(() => props.screenshots[activeIndex.value]!);
                             </div>
                         </div>
                     </div>
+                    <div
+                        v-else-if="screenshot.window"
+                        class="min-h-0 overflow-hidden p-2"
+                        :aria-hidden="index === 0 ? true : undefined"
+                        @mouseenter="index > 0 && (activeIndex = index - 1)"
+                    >
+                        <div class="pointer-events-none flex h-full items-center justify-center">
+                            <NuxtImg
+                                :src="screenshot.src"
+                                :alt="index === 0 ? '' : `${$t('projects.screenshotAlt', { name })}: ${$t(`projects.views.${screenshot.view}`)}`"
+                                class="max-h-full w-auto max-w-full rounded-lg border border-base-content/20 object-contain shadow-lg"
+                                format="webp"
+                                quality="85"
+                                loading="lazy"
+                                sizes="250px"
+                            />
+                        </div>
+                    </div>
                     <NuxtImg
                         v-else
                         :src="screenshot.src"

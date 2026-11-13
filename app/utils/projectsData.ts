@@ -1,8 +1,10 @@
 export interface ProjectScreenshot {
   src: string;
   /** Translation key describing the view, shared across projects. */
-  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts' | 'categorySettings' | 'categories' | 'search' | 'categoryPicker';
+  view: 'landing' | 'mobile' | 'dark' | 'examDate' | 'heroes' | 'posts' | 'categorySettings' | 'categories' | 'search' | 'categoryPicker' | 'signIn' | 'idle' | 'connected' | 'optimize';
   portrait?: boolean;
+  /** Desktop app window: shown whole, centered on the gallery background, without a device frame. */
+  window?: boolean;
 }
 
 export interface Project {
@@ -67,6 +69,26 @@ export const projectsData: Project[] = [
     language: "Nuxt",
     open_issues_count: 0,
     updated_at: "2026-09-20T12:00:00Z",
+    visibility: "Private"
+  },
+  {
+    id: "r4l-nolag",
+    name: "r4l.nolag",
+    description: `r4l.nolag is a one-button desktop app that lowers Dota 2 ping from Brazil to Europe. It sends only Valve's European relay traffic
+    through my own WireGuard servers so it crosses the EllaLink cable from Fortaleza to Lisbon instead of detouring through the US, and keeps the tunnel on only when it beats the direct route.
+    It also fixes bufferbloat with CAKE traffic shaping and unlocks with a paid d2brain.space plan.`,
+    technologies: ["Rust", "Tauri", "JavaScript", "WireGuard", "NetworkManager", "Linux"],
+    image: "/images/projects/r4l-nolag-connected.webp",
+    screenshots: [
+      { src: "/images/projects/r4l-nolag-connected.webp", view: 'connected', window: true },
+      { src: "/images/projects/r4l-nolag-idle.webp", view: 'idle', window: true },
+      { src: "/images/projects/r4l-nolag-optimize.webp", view: 'optimize', window: true },
+      { src: "/images/projects/r4l-nolag-login.webp", view: 'signIn', window: true },
+    ],
+    createdAt: "2026-11-11",
+    language: "Rust",
+    open_issues_count: 0,
+    updated_at: "2026-11-13T11:20:01-03:00",
     visibility: "Private"
   },
   {

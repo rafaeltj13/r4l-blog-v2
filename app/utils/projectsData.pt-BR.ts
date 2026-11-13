@@ -12,6 +12,9 @@ export const ptBRProjectDescriptionOverrides: Record<string, string> = {
     de IA (assistente BrainBot), oferece recursos como sumarização e geração de ideias, além de pagamentos e smoke tests automatizados.`,
   "r4l-blog-v2": `Esta é a segunda versão do meu blog, criada com a intenção de finalmente ter um projeto que eu consiga terminar e do qual me orgulhe. Como a maior
     parte do trabalho já estava feita na primeira versão, decidi usá-la como ponto de partida e melhorá-la com novos recursos e outras tecnologias.`,
+  "r4l-nolag": `r4l.nolag é um app desktop de um botão que reduz o ping do Dota 2 do Brasil para a Europa. Ele envia só o tráfego dos relays europeus da Valve
+    pelos meus próprios servidores WireGuard, para que cruze o cabo EllaLink de Fortaleza a Lisboa em vez de desviar pelos EUA, e mantém o túnel ligado só quando ele vence a rota direta.
+    Também corrige o bufferbloat com traffic shaping CAKE e é liberado com um plano pago do d2brain.space.`,
   "r4l-launcher": `r4l.launcher é meu launcher pessoal para Android, um fork do Murine Launcher e do AOSP Launcher3. Ele adiciona categorias de apps
     opcionais e offline com navegação por gestos, uma busca na parte inferior da gaveta que abre acima do teclado e uma identidade R4L em grafite e violeta.`,
   pandora: `Pandora é um app Android nativo que reúne meus serviços de produtividade em um só lugar, sem backend próprio. As tarefas ficam salvas como
